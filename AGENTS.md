@@ -14,7 +14,7 @@ Se confirman al crear cada scaffold. Si un comando no existe o falla, avísame y
 * Ejecutar frontend: `cd frontend && npm start` (`localhost:4200`)
 * Migraciones y datos demo: `cd backend && alembic upgrade head && python -m app.db.seed`
 * Tests: `cd backend && pytest` y `cd frontend && npm test`
-* Lint/formato: `cd backend && ruff check . && ruff format .` y `cd frontend && npm run lint`
+* Lint/formato: `cd backend && ruff check . && ruff format . && mypy .` y `cd frontend && npm run lint`
 
 ## Estilo y convenciones
 
