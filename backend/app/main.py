@@ -30,11 +30,12 @@ def create_app(database_url: str | None = None, frontend_origin: str | None = No
     # "/pricing/quote/" is an unknown route (404), not a redirect to "/pricing/quote" (CA-6.7).
     app.router.redirect_slashes = False
     app.state.session_factory = create_session_factory(engine)
-    # Only the dashboard may call the API from a browser (RF-9, plan 002 DT-7).
+    # Only the dashboard may call the API from a browser (RF-9, plan 002 DT-7). GET is listed
+    # too: a simple GET needs no permission, but its preflight would be refused (003 CA-8.2).
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[frontend_origin or get_frontend_origin()],
-        allow_methods=["POST"],
+        allow_methods=["GET", "POST"],
         allow_headers=["Content-Type"],
     )
     register_error_handlers(app)
