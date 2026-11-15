@@ -1,6 +1,8 @@
-"""Cumulative tiered pricing (spec 001 RF-1, RF-2). Pure domain: standard library only."""
+"""Cumulative tiered pricing (spec 001 RF-1, RF-2, RF-3). Pure domain: standard library only."""
 
 from dataclasses import dataclass
+
+from app.domain.errors import InvalidUsersError
 
 MAX_USERS = 100_000
 
@@ -28,6 +30,17 @@ TIERS: tuple[Tier, ...] = (
     Tier(number=2, from_users=11, to_users=50, unit_price_cents=800),
     Tier(number=3, from_users=51, to_users=None, unit_price_cents=500),
 )
+
+
+def validate_users(users: int) -> int:
+    """Return ``users`` if it is an integer between 0 and MAX_USERS, both included (RF-3).
+
+    Raises InvalidUsersError otherwise.
+    """
+    # bool is a subclass of int, so isinstance() would accept True as 1 (CA-3.4).
+    if type(users) is not int or not 0 <= users <= MAX_USERS:
+        raise InvalidUsersError(users)
+    return users
 
 
 def tier_breakdown(users: int) -> tuple[TierLine, ...]:
