@@ -21,7 +21,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 | --- | --- | --- |
 | 0 — Preparación | T-01 a T-03 | ✅ Completada: instalación desde cero sin conflictos, los mismos 188 tests tras mover las fixtures, 190 en verde con los de configuración; ruff y mypy en verde |
 | 1 — Esqueleto y errores globales | T-04, T-05 | ✅ Completada: 198 tests; ruff y mypy en verde; el test de la barra final detecta la redirección si se reactiva |
-| 2 — Piezas de validación | T-06 a T-10 | Pendiente |
+| 2 — Piezas de validación | T-06 a T-10 | ✅ Completada: 278 tests (80 nuevos); ruff y mypy en verde; `quote` y `set_tax_rate` sin cambios |
 | 3 — Endpoint | T-11 a T-15 | Pendiente |
 | 4 — Cierre | T-16 a T-18 | Pendiente |
 
@@ -60,7 +60,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 
 ## Fase 2 — Piezas de validación
 
-- [ ] **T-06. Normalizar el país**
+- [x] **T-06. Normalizar el país** · ✅ completada · commit `a7f76a8`
   - **RF:** RF-3 (CA-3.1, CA-3.2, CA-3.6). **Depende de:** T-01.
   - **Archivos:** `app/schemas/__init__.py`, `app/schemas/pricing.py` (`normalize_country`) y `tests/unit/test_quote_schema.py`.
   - **Rojo (U):**
@@ -68,7 +68,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
     - Rechaza los de E-18 a E-25 (`"ESP"`, `"E"`, `"12"`, `"E S"`, ancho completo, espacio no separable, solo espacios, vacío) y también `"ß"`.
   - **Hecho cuando:** pasan todos esos casos U, y el código no usa `str.strip()` sin argumentos ni `str.upper()` (plan DT-3).
 
-- [ ] **T-07. Esquema de la petición y traducción de errores**
+- [x] **T-07. Esquema de la petición y traducción de errores** · ✅ completada · commit `df42031`
   - **RF:** RF-2 (CA-2.1 a CA-2.3), RF-3 (CA-3.3, CA-3.5), RF-5 (CA-5.1, CA-5.2) y RF-6 (CA-6.3). **Depende de:** T-06.
   - **Archivos:** `app/schemas/pricing.py` (`QuoteRequest` estricto con `extra="forbid"` y los mensajes de campo), `app/api/validation.py` (`field_errors`) y `tests/unit/test_quote_schema.py`.
   - **Rojo (U):**
@@ -76,19 +76,19 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
     - `-0` se acepta como 0.
   - **Hecho cuando:** todos esos casos U pasan, con un solo elemento por campo (E-15) y los dos detalles en E-31 y E-36.
 
-- [ ] **T-08. Esquema de la respuesta**
+- [x] **T-08. Esquema de la respuesta** · ✅ completada · commit `43fee6c`
   - **RF:** RF-4 (CA-4.1 a CA-4.4). **Depende de:** T-06.
   - **Archivos:** `app/schemas/pricing.py` (`TierLineResponse`, `QuoteResponse.from_quote` y el ejemplo para `/docs`) y `tests/unit/test_quote_schema.py`.
   - **Rojo (U):** `QuoteResponse.from_quote(build_quote(15, 2100))` serializado a JSON es igual al ejemplo de la sección 5 de la spec.
   - **Hecho cuando:** ese JSON coincide campo a campo, con `"to_users": null` en el tramo 3, `"currency": "EUR"` y todos los números enteros.
 
-- [ ] **T-09. Saber si un país está soportado**
+- [x] **T-09. Saber si un país está soportado** · ✅ completada · commit `d17f835`
   - **RF:** RF-3 (CA-3.4). **Depende de:** T-02.
   - **Archivos:** `app/services/pricing.py` (`country_is_supported`, sin tocar `quote`) y `tests/integration/test_quote_service.py`.
   - **Rojo (D):** `ES` está soportado; `XX`, `es` y `""` no lo están; tras borrar la tasa de `PT`, deja de estarlo.
   - **Hecho cuando:** pasan esos casos y los 188 tests de 001 siguen en verde.
 
-- [ ] **T-10. Leer el cuerpo de la petición**
+- [x] **T-10. Leer el cuerpo de la petición** · ✅ completada · commit `3b35410`
   - **RF:** RF-7 (CA-7.1 a CA-7.3). **Depende de:** T-05.
   - **Archivos:** `app/api/validation.py` (`read_json_object`) y `tests/unit/test_read_json_object.py`, con peticiones de Starlette construidas a mano, sin servidor.
   - **Rojo (U):**
