@@ -9,7 +9,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 | 0 — Preparación | T-01 | ✅ Completada (2026-11-14) | Instalación desde cero; ruff y mypy en verde |
 | 1 — Dominio puro | T-02 a T-06 | ✅ Completada (2026-11-15) | 116 tests; ruff y mypy en verde |
 | 2 — Datos | T-07 a T-09 | ✅ Completada (2026-11-15) | 144 tests; ruff y mypy en verde; `alembic upgrade head`, `current` y `check` por línea de comandos |
-| 3 — Servicio | T-10, T-11 | Pendiente | — |
+| 3 — Servicio | T-10, T-11 | ✅ Completada (2026-11-15) | 187 tests; ruff y mypy en verde; los 29 CA y los 42 casos de la spec citados en tests |
 | 4 — Cierre | T-12 | Pendiente | — |
 
 ## Reglas de ejecución
@@ -171,6 +171,8 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-10. Servicio `quote`
 
+- **Estado:** ✅ completada (2026-11-15) · commit `33210f1`
+
 - **Archivos:** `app/services/pricing.py` (el protocolo `TaxRateSource` y `quote`) y `tests/integration/test_quote_service.py`.
 - **Depende de:** T-05 y T-09.
 - **Cubre:** CA-3.5, CA-4.1, CA-4.6, CA-4.7 y CA-13.3. Casos P-1 a P-10 (con US), T-1 a T-10, X-1, X-2 y X-4 a X-7, y el ejemplo de la sección 5 de la spec.
@@ -182,6 +184,8 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 - **Hecho cuando:** pasan todos los casos y la verificación completa está en verde.
 
 ### T-11. `set_tax_rate` y configuración de tasas
+
+- **Estado:** ✅ completada (2026-11-15) · commit `975f07f`
 
 - **Archivos:** `app/services/pricing.py` (`set_tax_rate`) y `tests/integration/test_tax_rate_config.py`.
 - **Depende de:** T-10.
