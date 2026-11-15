@@ -25,7 +25,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 | 2 — Dominio del identificador fiscal | T-04 a T-06 | ✅ Completada: 462 tests (68 nuevos); tablas 6.1 y 6.2 completas sin base de datos ni servidor; el test de arquitectura del dominio cubre `tax_id.py`; ruff y mypy en verde |
 | 3 — Persistencia | T-07 a T-10 | ✅ Completada: 531 tests (69 nuevos); migración 0002 sin tocar la 0001; los modelos coinciden con el esquema migrado; ruff y mypy en verde |
 | 4 — API | T-11 a T-17 | ✅ Completada: 720 tests (189 nuevos); las tablas 6.3 a 6.9 pasan por HTTP; ningún archivo supera las 300 líneas ni ninguna función las 40; ruff y mypy en verde. Una decisión del plan corregida en T-11 (entrada 18 del log) |
-| 5 — Datos de demostración | T-18 | Pendiente |
+| 5 — Datos de demostración | T-18 | ✅ Completada: 736 tests (16 nuevos); el seed es idempotente y usa el mismo esquema y servicio que la API; ruff y mypy en verde |
 | 6 — Cierre | T-19, T-20 | Pendiente |
 
 ## Fase 1 — Errores globales (nivel I con rutas de prueba)
@@ -140,7 +140,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 
 ## Fase 5 — Datos de demostración (nivel D)
 
-- [ ] **T-18. Seed de clientes**
+- [x] **T-18. Seed de clientes** · ✅ completada · commit `f8f1d3a`
   - **RF:** RF-10 (CA-10.1 a CA-10.4), RNF-5. Casos SE-1 a SE-5. **Depende de:** T-10 y T-11.
   - **Archivos:** `app/db/seed.py` y `tests/integration/test_seed.py`.
   - **Rojo (D):** esos casos. Hoy el módulo no existe.
