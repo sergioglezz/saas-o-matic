@@ -16,6 +16,7 @@ from app.schemas.pricing import COUNTRY_UNSUPPORTED_MESSAGE, USERS_INVALID_MESSA
 
 VALIDATION_ERROR_MESSAGE = "Datos no válidos"
 NOT_FOUND_MESSAGE = "Recurso no encontrado"
+METHOD_NOT_ALLOWED_MESSAGE = "Método no permitido"
 INTERNAL_ERROR_MESSAGE = "Error interno del servidor"
 
 
@@ -81,6 +82,16 @@ async def _handle_http_exception(request: Request, exc: Exception) -> Response:
     assert isinstance(exc, StarletteHTTPException)
     if exc.status_code == 404:
         return error_response(ApiError(status=404, code="not_found", message=NOT_FOUND_MESSAGE))
+    if exc.status_code == 405:
+        # Starlette puts the allowed methods in the Allow header; it must survive (CA-8.1).
+        return error_response(
+            ApiError(
+                status=405,
+                code="method_not_allowed",
+                message=METHOD_NOT_ALLOWED_MESSAGE,
+                headers=dict(exc.headers or {}),
+            )
+        )
     # Statuses this spec does not map yet keep FastAPI's default response.
     return await http_exception_handler(request, exc)
 
