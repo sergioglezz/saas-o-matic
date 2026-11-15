@@ -3,10 +3,12 @@ point it at a temporary database (plan 002 DT-8)."""
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.pricing import restore_openapi_examples
 from app.api.pricing import router as pricing_router
 from app.core.config import get_frontend_origin
 from app.core.errors import register_error_handlers
@@ -36,6 +38,12 @@ def create_app(database_url: str | None = None, frontend_origin: str | None = No
     register_error_handlers(app)
     app.include_router(pricing_router)
 
+    generate_openapi = app.openapi
+
+    def openapi() -> dict[str, Any]:
+        return restore_openapi_examples(generate_openapi())
+
+    app.openapi = openapi  # type: ignore[method-assign]  # FastAPI's documented customization
     return app
 
 

@@ -10,7 +10,7 @@ from typing import Annotated, Self
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.domain.pricing import MAX_USERS, PriceQuote
+from app.domain.pricing import MAX_USERS, PriceQuote, build_quote
 
 USERS_INVALID_MESSAGE = "Debe ser un número entero entre 0 y 100000"
 COUNTRY_INVALID_MESSAGE = "Debe ser un código de país de 2 letras"
@@ -78,3 +78,11 @@ class QuoteResponse(BaseModel):
     def from_quote(cls, quote: PriceQuote) -> Self:
         # PriceQuote already uses the contract's field names (plan 001 DT-9).
         return cls.model_validate(dataclasses.asdict(quote))
+
+
+# Examples for the interactive docs (RNF-5). The response one is built with the real
+# calculation (15 users at the ES default rate), so it cannot drift from the code.
+QUOTE_REQUEST_EXAMPLE: dict[str, object] = {"users": 15, "country": "ES"}
+QUOTE_RESPONSE_EXAMPLE: dict[str, object] = QuoteResponse.from_quote(
+    build_quote(15, 2100)
+).model_dump(mode="json")
