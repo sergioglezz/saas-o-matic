@@ -8,13 +8,17 @@ in app.api.error_mapping (spec 003 RF-7).
 from dataclasses import dataclass, field
 
 from fastapi import FastAPI, Request
-from fastapi.exception_handlers import http_exception_handler
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 VALIDATION_ERROR_MESSAGE = "Datos no válidos"
 NOT_FOUND_MESSAGE = "Recurso no encontrado"
 METHOD_NOT_ALLOWED_MESSAGE = "Método no permitido"
+CONFLICT_MESSAGE = "El recurso ya existe"
+HTTP_ERROR_MESSAGE = "Error en la petición"
+# For a parameter the framework rejects before any route code runs (spec 003 CA-7.3).
+INVALID_VALUE_MESSAGE = "Valor no válido"
 INTERNAL_ERROR_MESSAGE = "Error interno del servidor"
 
 
@@ -35,6 +39,16 @@ class ApiError(Exception):
     headers: dict[str, str] = field(default_factory=dict)
 
 
+def not_found() -> ApiError:
+    """404 not_found, for unknown routes and for resources that do not exist (002 CA-6.7)."""
+    return ApiError(status=404, code="not_found", message=NOT_FOUND_MESSAGE)
+
+
+def conflict(details: list[FieldError]) -> ApiError:
+    """409 conflict with the field that collides (spec 003 CA-7.1)."""
+    return ApiError(status=409, code="conflict", message=CONFLICT_MESSAGE, details=details)
+
+
 def error_response(error: ApiError) -> JSONResponse:
     body = {
         "error": {
@@ -48,6 +62,7 @@ def error_response(error: ApiError) -> JSONResponse:
 
 def register_error_handlers(app: FastAPI) -> None:
     app.add_exception_handler(ApiError, _handle_api_error)
+    app.add_exception_handler(RequestValidationError, _handle_request_validation_error)
     app.add_exception_handler(StarletteHTTPException, _handle_http_exception)
     app.add_exception_handler(Exception, _handle_unexpected_error)
 
@@ -57,10 +72,25 @@ async def _handle_api_error(_request: Request, exc: Exception) -> Response:
     return error_response(exc)
 
 
-async def _handle_http_exception(request: Request, exc: Exception) -> Response:
+async def _handle_request_validation_error(_request: Request, exc: Exception) -> Response:
+    """Safety net: the routes validate by hand, but a typed parameter must not change the format."""
+    assert isinstance(exc, RequestValidationError)
+    # loc is ("path" | "query" | "body", name, ...): the name is what the client sent wrong.
+    fields = dict.fromkeys(
+        str(item["loc"][1 if len(item["loc"]) > 1 else 0]) for item in exc.errors()
+    )
+    details = [FieldError(field=name, message=INVALID_VALUE_MESSAGE) for name in fields]
+    return error_response(
+        ApiError(
+            status=422, code="validation_error", message=VALIDATION_ERROR_MESSAGE, details=details
+        )
+    )
+
+
+async def _handle_http_exception(_request: Request, exc: Exception) -> Response:
     assert isinstance(exc, StarletteHTTPException)
     if exc.status_code == 404:
-        return error_response(ApiError(status=404, code="not_found", message=NOT_FOUND_MESSAGE))
+        return error_response(not_found())
     if exc.status_code == 405:
         # Starlette puts the allowed methods in the Allow header; it must survive (CA-8.1).
         return error_response(
@@ -71,8 +101,15 @@ async def _handle_http_exception(request: Request, exc: Exception) -> Response:
                 headers=dict(exc.headers or {}),
             )
         )
-    # Statuses this spec does not map yet keep FastAPI's default response.
-    return await http_exception_handler(request, exc)
+    # Any other status keeps its code and headers, but never its internal text (003 CA-7.4).
+    return error_response(
+        ApiError(
+            status=exc.status_code,
+            code="http_error",
+            message=HTTP_ERROR_MESSAGE,
+            headers=dict(exc.headers or {}),
+        )
+    )
 
 
 async def _handle_unexpected_error(_request: Request, _exc: Exception) -> Response:
