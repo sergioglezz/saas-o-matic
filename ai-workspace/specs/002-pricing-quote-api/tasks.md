@@ -20,7 +20,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 | Fase | Tareas | Estado |
 | --- | --- | --- |
 | 0 — Preparación | T-01 a T-03 | ✅ Completada: instalación desde cero sin conflictos, los mismos 188 tests tras mover las fixtures, 190 en verde con los de configuración; ruff y mypy en verde |
-| 1 — Esqueleto y errores globales | T-04, T-05 | Pendiente |
+| 1 — Esqueleto y errores globales | T-04, T-05 | ✅ Completada: 198 tests; ruff y mypy en verde; el test de la barra final detecta la redirección si se reactiva |
 | 2 — Piezas de validación | T-06 a T-10 | Pendiente |
 | 3 — Endpoint | T-11 a T-15 | Pendiente |
 | 4 — Cierre | T-16 a T-18 | Pendiente |
@@ -45,12 +45,12 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 
 ## Fase 1 — Esqueleto de la API y errores globales
 
-- [ ] **T-04. Factoría de la aplicación y dependencias**
+- [x] **T-04. Factoría de la aplicación y dependencias** · ✅ completada · commit `e81dd27`
   - **RF:** base de RF-1 (plan DT-8 y DT-9). **Depende de:** T-02.
   - **Archivos:** `app/main.py` (`create_app`, `app` y `lifespan` con el motor), `app/api/__init__.py` y `app/api/dependencies.py` (`get_db_session` y `get_rate_source`), y `tests/api/conftest.py` (fixture `client` sobre una base de datos migrada temporal).
   - **Hecho cuando:** un test crea la aplicación con una base de datos temporal, `GET /docs` y `GET /openapi.json` responden 200, y `from app.main import app` funciona.
 
-- [ ] **T-05. Formato único: 404 y 500**
+- [x] **T-05. Formato único: 404 y 500** · ✅ completada · commit `033efb2`
   - **RF:** RF-6 (CA-6.1, CA-6.2, CA-6.5, CA-6.6, CA-6.7). Casos O-13 y O-14. **Depende de:** T-04.
   - **Archivos:** `app/core/errors.py` (`ApiError`, `FieldError`, textos de primer nivel y manejadores de 404 y de `Exception`), `app/main.py` (`redirect_slashes = False`) y `tests/api/test_error_format.py`.
   - **Rojo:**
