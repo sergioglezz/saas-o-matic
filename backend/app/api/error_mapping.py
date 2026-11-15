@@ -10,8 +10,22 @@ from fastapi import FastAPI, Request
 from fastapi.responses import Response
 
 from app.api.validation import validation_error
-from app.core.errors import ApiError, FieldError, error_response
-from app.domain.errors import InvalidUsersError, UnsupportedCountryError
+from app.core.errors import ApiError, FieldError, conflict, error_response, not_found
+from app.domain.errors import (
+    CustomerNotFoundError,
+    DuplicateTaxIdError,
+    InvalidSpanishTaxIdError,
+    InvalidTaxIdFormatError,
+    InvalidUsersError,
+    UnsupportedCountryError,
+    UnsupportedTaxIdTypeError,
+)
+from app.schemas.customers import (
+    TAX_ID_DUPLICATED_MESSAGE,
+    TAX_ID_INVALID_MESSAGE,
+    TAX_ID_SPANISH_MESSAGE,
+    TAX_ID_UNSUPPORTED_TYPE_MESSAGE,
+)
 from app.schemas.pricing import COUNTRY_UNSUPPORTED_MESSAGE, USERS_INVALID_MESSAGE
 
 
@@ -22,6 +36,14 @@ def _invalid_field(field: str, message: str) -> Callable[[], ApiError]:
 _DOMAIN_ERRORS: dict[type[Exception], Callable[[], ApiError]] = {
     UnsupportedCountryError: _invalid_field("country", COUNTRY_UNSUPPORTED_MESSAGE),
     InvalidUsersError: _invalid_field("users", USERS_INVALID_MESSAGE),
+    InvalidTaxIdFormatError: _invalid_field("tax_id", TAX_ID_INVALID_MESSAGE),
+    InvalidSpanishTaxIdError: _invalid_field("tax_id", TAX_ID_SPANISH_MESSAGE),
+    UnsupportedTaxIdTypeError: _invalid_field("tax_id", TAX_ID_UNSUPPORTED_TYPE_MESSAGE),
+    # The detail names the field so the form can show the text next to it (flow 1 of the 00).
+    DuplicateTaxIdError: lambda: conflict(
+        [FieldError(field="tax_id", message=TAX_ID_DUPLICATED_MESSAGE)]
+    ),
+    CustomerNotFoundError: not_found,
 }
 
 
