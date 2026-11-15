@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.routing import Match
 
 VALIDATION_ERROR_MESSAGE = "Datos no válidos"
 NOT_FOUND_MESSAGE = "Recurso no encontrado"
@@ -20,6 +21,8 @@ HTTP_ERROR_MESSAGE = "Error en la petición"
 # For a parameter the framework rejects before any route code runs (spec 003 CA-7.3).
 INVALID_VALUE_MESSAGE = "Valor no válido"
 INTERNAL_ERROR_MESSAGE = "Error interno del servidor"
+
+_HTTP_METHODS = ("DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT")
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,18 +90,17 @@ async def _handle_request_validation_error(_request: Request, exc: Exception) ->
     )
 
 
-async def _handle_http_exception(_request: Request, exc: Exception) -> Response:
+async def _handle_http_exception(request: Request, exc: Exception) -> Response:
     assert isinstance(exc, StarletteHTTPException)
     if exc.status_code == 404:
         return error_response(not_found())
     if exc.status_code == 405:
-        # Starlette puts the allowed methods in the Allow header; it must survive (CA-8.1).
         return error_response(
             ApiError(
                 status=405,
                 code="method_not_allowed",
                 message=METHOD_NOT_ALLOWED_MESSAGE,
-                headers=dict(exc.headers or {}),
+                headers={"Allow": _allowed_methods(request)},
             )
         )
     # Any other status keeps its code and headers, but never its internal text (003 CA-7.4).
@@ -110,6 +112,25 @@ async def _handle_http_exception(_request: Request, exc: Exception) -> Response:
             headers=dict(exc.headers or {}),
         )
     )
+
+
+def _allowed_methods(request: Request) -> str:
+    """Methods served on the requested path by any route (002 CA-8.1, 003 CA-7.2).
+
+    Starlette's own Allow header names only the first route that matches the path, so a path
+    served by two routes (GET and POST /customers) would advertise half of its methods. Each
+    method is tried against the routes instead of reading their ``methods``: an included router
+    is one nested route that only tells whether it matches.
+    """
+    routes = request.app.routes
+    allowed = [
+        method
+        for method in _HTTP_METHODS
+        if any(
+            route.matches({**request.scope, "method": method})[0] == Match.FULL for route in routes
+        )
+    ]
+    return ", ".join(allowed)
 
 
 async def _handle_unexpected_error(_request: Request, _exc: Exception) -> Response:
