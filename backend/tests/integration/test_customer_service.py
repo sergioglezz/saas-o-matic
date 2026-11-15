@@ -23,7 +23,7 @@ from app.domain.errors import (
 from app.repositories.customers import CustomerRepository
 from app.repositories.tax_rates import TaxRateRepository
 from app.services.customers import get_customer, register_customer, search_customers
-from tests.integration.test_customer_repository import ALL_BY_NAME, TABLE_6_6_CUSTOMERS
+from tests.customers_data import ALL_BY_NAME, TABLE_6_6_CUSTOMERS
 
 NOW = datetime(2026, 11, 13, 10, 0, 0, 123_456, tzinfo=UTC)
 ACME = NewCustomer(

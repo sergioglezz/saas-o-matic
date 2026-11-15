@@ -18,9 +18,9 @@ from tests.api.customer_requests import (
     total_customers,
 )
 from tests.api.quote_requests import details_of
+from tests.customers_data import ALL_BY_NAME
 from tests.unit.test_customer_schema import TABLE_6_7
 
-ALL_BY_NAME = [5, 6, 2, 3, 4, 1]
 SQL_TEXT = "'; DROP TABLE customers;--"
 
 

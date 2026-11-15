@@ -13,6 +13,7 @@ from app.db.session import create_session_factory
 from app.domain.customers import Customer, NewCustomer
 from app.domain.errors import DuplicateTaxIdError
 from app.repositories.customers import CustomerRepository
+from tests.customers_data import ALL_BY_NAME, TABLE_6_6_CUSTOMERS
 
 CREATED_AT = "2026-11-13T10:00:00Z"
 ACME = NewCustomer(
@@ -23,17 +24,6 @@ ACME = NewCustomer(
     plan="business",
 )
 ZETA = dataclasses.replace(ACME, company_name="Zeta Redes S.A.", tax_id="A00000000")
-
-# The six customers of spec table 6.6, in creation order (ids 1 to 6).
-TABLE_6_6_CUSTOMERS = [
-    ("Zeta Redes S.A.", "A00000000", "ES"),
-    ("acme telecom s.l.", "B12345674", "ES"),
-    ("COMPAÑÍA Ñandú", "12345678Z", "ES"),
-    ("Telefónica Demo", "PT123456789", "PT"),
-    ("100% Fibra GmbH", "DE1234567", "DE"),
-    ("Acme Cloud Ltd", "GB7654321", "GB"),
-]
-ALL_BY_NAME = [5, 6, 2, 3, 4, 1]
 
 
 def _count(session: Session) -> int:

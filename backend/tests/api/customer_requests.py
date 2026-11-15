@@ -6,6 +6,8 @@ from datetime import UTC, datetime
 from fastapi.testclient import TestClient
 from httpx import Response
 
+from tests.customers_data import TABLE_6_6_CUSTOMERS
+
 CUSTOMERS_PATH = "/customers"
 JSON = "application/json"
 
@@ -20,16 +22,6 @@ AL_1: dict[str, object] = {
     "plan": "business",
 }
 AL_1_RESPONSE: dict[str, object] = {"id": 1, **AL_1, "created_at": "2026-11-13T10:00:00Z"}
-
-# The six customers of spec table 6.6, in creation order (ids 1 to 6).
-TABLE_6_6_CUSTOMERS = [
-    ("Zeta Redes S.A.", "A00000000", "ES"),
-    ("acme telecom s.l.", "B12345674", "ES"),
-    ("COMPAÑÍA Ñandú", "12345678Z", "ES"),
-    ("Telefónica Demo", "PT123456789", "PT"),
-    ("100% Fibra GmbH", "DE1234567", "DE"),
-    ("Acme Cloud Ltd", "GB7654321", "GB"),
-]
 
 
 def customer(*without: str, **changes: object) -> dict[str, object]:
