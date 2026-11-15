@@ -32,6 +32,15 @@ def quote(users: int, country: str, rates: TaxRateSource) -> PriceQuote:
     return build_quote(valid_users, rate_bp)
 
 
+def country_is_supported(country: str, rates: TaxRateSource) -> bool:
+    """True when the exact code ``country`` has a configured tax rate (001 CA-4.2).
+
+    Lets the API report "país no soportado" together with other field errors (spec 002 E-35),
+    which ``quote`` cannot do because it stops at the users error first.
+    """
+    return rates.get_rate_bp(country) is not None
+
+
 def set_tax_rate(country: str, rate_bp: int, repository: TaxRateRepository) -> None:
     """Configure the tax rate of ``country`` (CA-13.1, CA-13.2).
 

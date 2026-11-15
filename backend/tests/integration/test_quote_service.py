@@ -2,6 +2,7 @@
 
 Covers CA-3.5, CA-4.1, CA-4.6, CA-4.7 and CA-13.3 with tables 6.1 (P-1 to P-10, country US),
 6.2 (T-1 to T-10), 6.5 (X-1, X-2, X-4 to X-7) and the example of spec section 5.
+Also country_is_supported, added by spec 002 task T-09 (CA-3.4).
 """
 
 import dataclasses
@@ -12,7 +13,7 @@ from sqlalchemy.orm import Session
 from app.domain.errors import InvalidUsersError, UnsupportedCountryError
 from app.domain.pricing import PriceQuote, TierLine
 from app.repositories.tax_rates import TaxRateRepository
-from app.services.pricing import TaxRateSource, quote
+from app.services.pricing import TaxRateSource, country_is_supported, quote
 
 # (case id, users, (units, amount_cents) for tiers 1..3, subtotal_cents)
 TABLE_6_1: list[tuple[str, int, tuple[tuple[int, int], ...], int]] = [
@@ -160,3 +161,33 @@ def test_each_quote_reads_the_rate_exactly_once(rates: TaxRateRepository) -> Non
 
     quote(60, "ES", spy)
     assert spy.calls == 2
+
+
+# --- spec 002, T-09: country_is_supported (002 CA-3.4) ------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("country", "expected"),
+    [
+        pytest.param("ES", True, id="configured"),
+        pytest.param("XX", False, id="unknown"),
+        pytest.param("es", False, id="not-normalized"),
+        pytest.param("", False, id="empty"),
+    ],
+)
+def test_country_is_supported_only_with_a_configured_rate(
+    rates: TaxRateRepository, country: str, expected: bool
+) -> None:
+    """002 CA-3.4: supported means it has a rate for the exact code (001 CA-4.2, CA-4.7)."""
+    assert country_is_supported(country, rates) is expected
+
+
+def test_country_stops_being_supported_when_its_rate_is_removed(
+    rates: TaxRateRepository,
+) -> None:
+    """002 CA-3.4: the answer follows the table, not a fixed list."""
+    assert country_is_supported("PT", rates) is True
+
+    rates.delete("PT")
+
+    assert country_is_supported("PT", rates) is False
