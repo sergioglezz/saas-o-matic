@@ -7,14 +7,21 @@ code and the storage is behind CustomerStore.
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import ValidationError
 
 from app.api.countries import invalid_request
 from app.api.dependencies import get_customer_store, get_now, get_rate_source
-from app.api.validation import read_json_object
-from app.schemas.customers import CUSTOMER_INVALID_MESSAGES, CustomerCreate, CustomerResponse
-from app.services.customers import CustomerStore, register_customer
+from app.api.validation import field_errors, read_json_object, validation_error
+from app.schemas.customers import (
+    CUSTOMER_INVALID_MESSAGES,
+    LIST_INVALID_MESSAGES,
+    CustomerCreate,
+    CustomerListQuery,
+    CustomerListResponse,
+    CustomerResponse,
+)
+from app.services.customers import CustomerStore, register_customer, search_customers
 from app.services.pricing import TaxRateSource
 
 router = APIRouter()
@@ -36,3 +43,33 @@ def post_customer(
     # app.api.error_mapping turns both into responses.
     customer = register_customer(request.to_new_customer(), customers, rates, now)
     return CustomerResponse.from_customer(customer)
+
+
+@router.get("/customers", response_model=CustomerListResponse)
+def list_customers(
+    customers: Annotated[CustomerStore, Depends(get_customer_store)],
+    q: Annotated[
+        str | None,
+        Query(description="Texto que debe aparecer en el nombre o en el identificador fiscal."),
+    ] = None,
+    limit: Annotated[
+        str | None,
+        Query(description="Máximo de clientes devueltos: entero de 1 a 100. Por defecto, 50."),
+    ] = None,
+    offset: Annotated[
+        str | None,
+        Query(description="Posición del primer cliente: entero de 0 a 1000000. Por defecto, 0."),
+    ] = None,
+) -> CustomerListResponse:
+    """List the customers, or search them by company name or tax id (RF-5)."""
+    # Declared as text so the framework never rejects them with its own format:
+    # CustomerListQuery validates them and words the error (plan 003 DT-7).
+    received = {"q": q, "limit": limit, "offset": offset}
+    try:
+        query = CustomerListQuery.model_validate(
+            {name: value for name, value in received.items() if value is not None}
+        )
+    except ValidationError as error:
+        raise validation_error(field_errors(error, LIST_INVALID_MESSAGES)) from None
+    page = search_customers(query.q, query.limit, query.offset, customers)
+    return CustomerListResponse.from_page(page)
