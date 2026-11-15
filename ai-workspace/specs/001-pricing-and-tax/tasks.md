@@ -120,7 +120,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-07. Configuración, sesión y modelo `TaxRate`
 
-- **Estado:** ✅ completada (2026-11-15) · sin commit
+- **Estado:** ✅ completada (2026-11-15) · commit `aae98cc`
 
 - **Archivos:** `app/core/config.py`, `app/db/session.py`, `app/db/models.py` y `tests/integration/test_session.py`.
 - **Depende de:** T-01.
@@ -136,7 +136,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-08. Alembic y migración `0001_create_tax_rates`
 
-- **Estado:** ✅ completada (2026-11-15) · sin commit · migración congelada desde aquí
+- **Estado:** ✅ completada (2026-11-15) · commit `4891732` · migración congelada desde aquí
 
 - **Archivos:** `backend/alembic.ini`, `app/db/migrations/env.py`, `app/db/migrations/versions/0001_create_tax_rates.py`, `tests/integration/conftest.py` y `tests/integration/test_tax_rates_migration.py`.
 - **Depende de:** T-07.
@@ -154,7 +154,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-09. Repositorio de tasas
 
-- **Estado:** ✅ completada (2026-11-15) · sin commit
+- **Estado:** ✅ completada (2026-11-15) · commit `220c747`
 
 - **Archivos:** `app/repositories/tax_rates.py` (`TaxRateRepository`: `get_rate_bp`, `upsert` y `delete`) y `tests/integration/test_tax_rate_repository.py`.
 - **Depende de:** T-08.
