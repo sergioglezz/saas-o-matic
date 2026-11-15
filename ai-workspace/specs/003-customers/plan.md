@@ -32,11 +32,12 @@ Los comportamientos de FastAPI, Starlette, Pydantic y SQLite en los que se apoya
 | `app/db/seed.py` (nuevo) | Clientes de demostración y `main()` | `schemas`, `services`, `repositories` y `db` | 10 |
 | `app/schemas/customers.py` (nuevo) | `CustomerCreate`, `CustomerListQuery`, `CustomerResponse`, `CustomerListResponse`, los mensajes y los ejemplos | `pydantic`, `domain.*` y `schemas.pricing` (país) | 1, 2, 3, 5 |
 | `app/api/customers.py` (nuevo) | Los tres endpoints: leen, validan, llaman al servicio y responden | `schemas`, `services`, `api.*` y `core.errors` | 1, 2, 5, 6 |
+| `app/api/customers_docs.py` (nuevo, añadido en T-17) | Ejemplos y errores documentados de las tres rutas, y la limpieza del 422 propio del framework en `/openapi.json`. Separado para que el router siga siendo corto | `schemas.customers` y `core.errors` | RNF-4 |
 | `app/api/countries.py` (nuevo) | `unsupported_country_detail`: añade «País no soportado» cuando hay otros errores. Lo usan la cotización y el alta | `schemas.pricing`, `services.pricing` y `core.errors` | 2 |
 | `app/api/error_mapping.py` (nuevo) | El único punto donde un error de dominio se convierte en respuesta HTTP | `domain.errors`, `schemas.*`, `api.validation` y `core.errors` | 4, 6, 7 |
-| `app/api/validation.py` (ampliado) | `field_errors` respeta el mensaje de los errores propios (tipo `api.*`) | Como en 002 | 2, 3 |
+| `app/api/validation.py` (ampliado) | `field_errors` respeta el mensaje de un validador que lanza `InvalidFieldError` | Como en 002 | 2, 3 |
 | `app/api/dependencies.py` (ampliado) | `get_customer_store` y `get_now` | `db`, `repositories`, `services` y `core.clock` | 1 |
-| `app/core/errors.py` (cambiado) | Formato único: `ApiError`, 404, 405 con `Allow` completa, 409, errores de validación y HTTP del framework, 500. Ya no conoce ninguna funcionalidad | `fastapi` y `starlette` | 7 |
+| `app/core/errors.py` (cambiado) | Formato único: `ApiError`, 404, 405 con `Allow` completa, 409, errores de validación y HTTP del framework, 500, y `InvalidFieldError` para los validadores con mensaje propio. Ya no conoce ninguna funcionalidad | `fastapi` y `starlette` | 7 |
 | `app/core/clock.py` (nuevo) | `utc_now()` y `to_timestamp(datetime) -> str` | Biblioteca estándar | 1 |
 | `app/main.py` (ampliado) | Incluye el router de clientes, registra el mapeo de errores y permite `GET` en CORS | `api`, `core` y `db` | 7, 8 |
 
@@ -160,7 +161,7 @@ CustomerCreate valida cada campo (el país se declara antes que tax_id):
     country: normalize_country (002)
     plan: uno de PLANS
     tax_id: validate_tax_id(value, país ya validado o None)
-            los errores español y K/L/M llevan su mensaje (tipo api.*); el básico, el de formato
+            los errores español y K/L/M llevan su mensaje (InvalidFieldError); el básico, el de formato
 
 register_customer(new, customers, rates, now):
     si el país no tiene tasa: raise UnsupportedCountryError       # VA-17
@@ -202,7 +203,7 @@ CustomerRepository.search(name_fragment, tax_id_fragment, limit, offset):
 | --- | --- | --- | --- | --- |
 | DT-1 | El control español se invoca desde el validador de `tax_id` del esquema, con el país ya validado (`info.data`) | Comprobado: el validador ve el país validado aunque llegue después en el JSON, y no lo ve si falló. Así se informa de todos los campos a la vez (VA-25) | Validar el identificador solo en el servicio: se pararía en el primer error | 2, 3 |
 | DT-2 | El servicio vuelve a validar país e identificador | El dominio no depende del borde: el seed y cualquier llamada futura pasan por las mismas reglas (plan 001 DT-4) | Confiar en el esquema | 3, 10 |
-| DT-3 | Errores propios de Pydantic con tipo `api.*`, cuyo mensaje respeta `field_errors` | Un campo puede fallar por tres motivos con tres textos (TID, ESP, KLM). No cambia nada para la cotización | Un mensaje por campo, como en 002 | 3 |
+| DT-3 | Un validador que necesita otro texto lanza `InvalidFieldError` (un `ValueError` propio con su mensaje), y `field_errors` lo respeta | Un campo puede fallar por tres motivos con tres textos (TID, ESP, KLM). No cambia nada para la cotización. Corregida al implementar T-11: la primera versión usaba `PydanticCustomError`, que obligaba a importar `pydantic_core`, un paquete que `requirements.txt` no declara (entrada 18 del log) | Un mensaje por campo, como en 002 | 3 |
 | DT-4 | La unicidad la decide la restricción UNIQUE; `add` traduce el error de SQLite | Un solo dueño de la regla y sin carrera. Comprobado: el texto del error es `UNIQUE constraint failed: customers.tax_id` | Consultar antes de insertar | 4 |
 | DT-5 | `CustomerRepository.add` confirma la transacción | El alta es una única escritura; confirmar en el router rompería las capas, y hacerlo al cerrar la dependencia llegaría tarde para informar de un 409 | Confirmar en la dependencia de sesión | 1, 4 |
 | DT-6 | Función SQL `casefold`, registrada en cada conexión junto al `PRAGMA` | Comprobado: `lower()` de SQLite deja `Ñ` y `Í` como están; con `str.casefold` la búsqueda y el orden ignoran mayúsculas en cualquier letra | `LIKE`, que además obliga a escapar comodines | 5 |
@@ -274,7 +275,7 @@ Los RNF: RNF-1, test de arquitectura y tablas 6.1 y 6.2 sin base de datos; RNF-2
 | Error HTTP con otro estado (418) | Sale con `{"detail": ...}` | DT-8 |
 | `GET` con `Origin` y solo `POST` permitido en CORS | Lleva `Access-Control-Allow-Origin`, pero su preflight responde 400 | DT-12 |
 | Validador de campo con `info.data` | Ve el país validado sea cual sea el orden del JSON; no lo ve si el país falló | DT-1 |
-| `PydanticCustomError` | Conserva el tipo y el mensaje propios en `errors()` | DT-3 |
+| `PydanticCustomError` | Conserva el tipo y el mensaje propios en `errors()`, pero se importa de `pydantic_core`. Un `ValueError` propio llega igual, en `ctx["error"]` | DT-3 |
 | `lower()` de SQLite con `COMPAÑÍA` | Devuelve `compaÑÍa` | DT-6 |
 | Función `casefold` registrada en la conexión, con `instr` | Encuentra `compañía ñ`; `%` y `_` son literales; el orden ignora mayúsculas | DT-6 |
 | Duplicar `tax_id` | `IntegrityError` con `UNIQUE constraint failed: customers.tax_id` | DT-4 |

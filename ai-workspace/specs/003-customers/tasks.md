@@ -24,7 +24,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 | 1 — Errores globales | T-01 a T-03 | ✅ Completada: 394 tests (11 nuevos); ruff y mypy en verde; los 383 tests de 001 y 002 pasan sin tocarlos. Un fallo propio corregido en T-03 (entrada 17 del log) |
 | 2 — Dominio del identificador fiscal | T-04 a T-06 | ✅ Completada: 462 tests (68 nuevos); tablas 6.1 y 6.2 completas sin base de datos ni servidor; el test de arquitectura del dominio cubre `tax_id.py`; ruff y mypy en verde |
 | 3 — Persistencia | T-07 a T-10 | ✅ Completada: 531 tests (69 nuevos); migración 0002 sin tocar la 0001; los modelos coinciden con el esquema migrado; ruff y mypy en verde |
-| 4 — API | T-11 a T-17 | Pendiente |
+| 4 — API | T-11 a T-17 | ✅ Completada: 720 tests (189 nuevos); las tablas 6.3 a 6.9 pasan por HTTP; ningún archivo supera las 300 líneas ni ninguna función las 40; ruff y mypy en verde. Una decisión del plan corregida en T-11 (entrada 18 del log) |
 | 5 — Datos de demostración | T-18 | Pendiente |
 | 6 — Cierre | T-19, T-20 | Pendiente |
 
@@ -96,43 +96,43 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 
 ## Fase 4 — API (niveles U e I)
 
-- [ ] **T-11. Esquemas de clientes**
+- [x] **T-11. Esquemas de clientes** · ✅ completada · commit `8ee56cd`
   - **RF:** RF-2 (CA-2.1 a CA-2.7, CA-2.9), RF-3 (CA-3.3, CA-3.7, CA-3.9) y RF-5 (CA-5.8 a CA-5.10). **Depende de:** T-10.
-  - **Archivos:** `app/schemas/customers.py`, `app/api/validation.py` (errores `api.*`) y `tests/unit/test_customer_schema.py`.
+  - **Archivos:** `app/schemas/customers.py`, `app/api/validation.py` (mensajes propios con `InvalidFieldError`) y `tests/unit/test_customer_schema.py`.
   - **Rojo (U):** con los datos ya decodificados de VA-1 a VA-27 (salvo los que necesitan la base de datos: VA-17, VA-26 y VA-27), `field_errors` devuelve exactamente los detalles de la tabla 6.4; y con los parámetros de LP-1 a LP-15, los de la tabla 6.7.
   - **Hecho cuando:** pasan, los tests de `field_errors` de 002 no cambian y `CustomerResponse` serializa el ejemplo de la sección 5.
 
-- [ ] **T-12. `POST /customers`: altas válidas**
+- [x] **T-12. `POST /customers`: altas válidas** · ✅ completada · commit `e0d73ad`
   - **RF:** RF-1 (CA-1.1 a CA-1.4). Casos AL-1 a AL-9. **Depende de:** T-11.
   - **Archivos:** `app/api/customers.py` (ruta del alta y lectura mínima de la ficha y el listado solo si AL-4 lo necesita: se deja para T-14 y T-15), `app/api/dependencies.py` (`get_customer_store`, `get_now`), `app/main.py`, `tests/api/customer_requests.py` y `tests/api/test_customers_create.py`.
   - **Rojo (I):** AL-1 a AL-3 y AL-5 a AL-9. AL-4 se escribe en T-15, cuando existen las dos lecturas.
   - **Hecho cuando:** AL-1 devuelve exactamente la respuesta de la sección 5 y el resto pasa.
 
-- [ ] **T-13. `POST /customers`: validación y conflictos**
+- [x] **T-13. `POST /customers`: validación y conflictos** · ✅ completada · commit `98c3d95`
   - **RF:** RF-2 (CA-2.1 a CA-2.9), RF-3 (CA-3.2, CA-3.3, CA-3.7 a CA-3.9), RF-4 (CA-4.1 a CA-4.3), RF-1 (CA-1.5). Casos VA-1 a VA-28 y CO-1 a CO-4. **Depende de:** T-12.
   - **Archivos:** `app/api/customers.py` (camino de error), `app/api/countries.py` (compartido con la cotización), `app/api/pricing.py` (usa el compartido), `app/api/error_mapping.py` (errores de clientes) y `tests/api/test_customers_create.py`.
   - **Rojo (I):** esos casos. Hoy dan 500 porque los errores no se traducen.
   - **Hecho cuando:** los detalles coinciden como conjunto con las tablas 6.4 y 6.5, y ningún caso rechazado deja una fila.
 
-- [ ] **T-14. `GET /customers`: listado y búsqueda**
+- [x] **T-14. `GET /customers`: listado y búsqueda** · ✅ completada · commit `411cab8`
   - **RF:** RF-5 (CA-5.1 a CA-5.11). Casos LI-1 a LI-20, LP-1 a LP-15 y CO-5. **Depende de:** T-13.
   - **Archivos:** `app/api/customers.py` y `tests/api/test_customers_list.py`.
   - **Rojo (I):** esos casos. Hoy la ruta responde 405.
   - **Hecho cuando:** cada fila de las tablas 6.6 y 6.7 devuelve los `id`, el orden y el `total` indicados.
 
-- [ ] **T-15. `GET /customers/{id}`: ficha**
+- [x] **T-15. `GET /customers/{id}`: ficha** · ✅ completada · commit `28e32ee`
   - **RF:** RF-6 (CA-6.1 a CA-6.3), RF-1 (CA-1.4). Casos FI-1 a FI-9 y AL-4. **Depende de:** T-14.
   - **Archivos:** `app/api/customers.py` y `tests/api/test_customers_detail.py`.
   - **Rojo (I):** esos casos. Hoy la ruta no existe.
   - **Hecho cuando:** pasan, y FI-8 no produce un error interno.
 
-- [ ] **T-16. Protocolo, fallo interno y CORS**
+- [x] **T-16. Protocolo, fallo interno y CORS** · ✅ completada · commit `5646baf`
   - **RF:** RF-7 (CA-7.2, CA-7.5) y RF-8 (CA-8.1 a CA-8.3). Casos ER-1 a ER-5 y ER-8 a ER-11. **Depende de:** T-15.
   - **Archivos:** `app/main.py` (`GET` en CORS) y `tests/api/test_customers_protocol.py`.
   - **Rojo (I):** ER-9 (la preflight de `GET` responde hoy 400). El resto debe pasar ya con lo construido; si alguno falla, se corrige aquí.
   - **Hecho cuando:** pasan todos, y los tests de CORS de 002 siguen en verde.
 
-- [ ] **T-17. Documentación interactiva**
+- [x] **T-17. Documentación interactiva** · ✅ completada · commit `e6fa3cd`
   - **RF:** RNF-4. **Depende de:** T-15.
   - **Archivos:** `app/api/customers.py` (cuerpo y ejemplos declarados) y `tests/api/test_customers_docs.py`.
   - **Rojo (I):** `/openapi.json` no describe hoy el cuerpo de `POST /customers`, porque se lee a mano.
