@@ -1,0 +1,17 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local configuration and data
+.env
+*.db
+
+# Frontend
+node_modules/
+
+# Test task source (not part of the deliverable)
+*.docx
