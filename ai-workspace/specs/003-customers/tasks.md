@@ -22,7 +22,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 | Fase | Tareas | Estado |
 | --- | --- | --- |
 | 1 — Errores globales | T-01 a T-03 | ✅ Completada: 394 tests (11 nuevos); ruff y mypy en verde; los 383 tests de 001 y 002 pasan sin tocarlos. Un fallo propio corregido en T-03 (entrada 17 del log) |
-| 2 — Dominio del identificador fiscal | T-04 a T-06 | Pendiente |
+| 2 — Dominio del identificador fiscal | T-04 a T-06 | ✅ Completada: 462 tests (68 nuevos); tablas 6.1 y 6.2 completas sin base de datos ni servidor; el test de arquitectura del dominio cubre `tax_id.py`; ruff y mypy en verde |
 | 3 — Persistencia | T-07 a T-10 | Pendiente |
 | 4 — API | T-11 a T-17 | Pendiente |
 | 5 — Datos de demostración | T-18 | Pendiente |
@@ -50,19 +50,19 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 
 ## Fase 2 — Dominio del identificador fiscal (nivel U)
 
-- [ ] **T-04. Normalización y formato básico**
+- [x] **T-04. Normalización y formato básico** · ✅ completada · commit `b38b20d`
   - **RF:** RF-3 (CA-3.1, CA-3.2, CA-3.8, CA-3.9). Casos TG-1 a TG-12. **Depende de:** ninguna.
   - **Archivos:** `app/domain/errors.py` (`CustomerError` y sus cinco subclases), `app/domain/tax_id.py` (`normalize_tax_id` y `validate_tax_id` sin el control español) y `tests/unit/test_tax_id.py`.
   - **Rojo (U):** TG-1 a TG-11 y la normalización de TI-5 y TI-23.
   - **Hecho cuando:** pasan esos casos; con `country` distinto de `ES` o ausente solo se aplica el formato básico. TG-12 se completa en T-05.
 
-- [ ] **T-05. DNI y NIE**
+- [x] **T-05. DNI y NIE** · ✅ completada · commit `1781b77`
   - **RF:** RF-3 (CA-3.3 a CA-3.5). Casos TI-1 a TI-9, TI-23 a TI-25 y TG-12. **Depende de:** T-04.
   - **Archivos:** `app/domain/tax_id.py` y `tests/unit/test_tax_id.py`.
   - **Rojo (U):** esos casos con `country` = `ES`. Hoy los inválidos se aceptan.
   - **Hecho cuando:** pasan todos, y un identificador español que no es DNI ni NIE se rechaza como «español no válido».
 
-- [ ] **T-06. CIF y NIF no soportados**
+- [x] **T-06. CIF y NIF no soportados** · ✅ completada · commit `3f96e48`
   - **RF:** RF-3 (CA-3.3, CA-3.6, CA-3.7). Casos TI-10 a TI-22, TI-26 y TI-27. **Depende de:** T-05.
   - **Archivos:** `app/domain/tax_id.py` y `tests/unit/test_tax_id.py`.
   - **Rojo (U):** esos casos. Hoy los CIF válidos se rechazan y `K`, `L` y `M` no tienen su propio error.
