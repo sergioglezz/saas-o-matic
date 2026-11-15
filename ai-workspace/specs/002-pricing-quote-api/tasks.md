@@ -19,7 +19,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 
 | Fase | Tareas | Estado |
 | --- | --- | --- |
-| 0 — Preparación | T-01 a T-03 | Pendiente |
+| 0 — Preparación | T-01 a T-03 | ✅ Completada: instalación desde cero sin conflictos, los mismos 188 tests tras mover las fixtures, 190 en verde con los de configuración; ruff y mypy en verde |
 | 1 — Esqueleto y errores globales | T-04, T-05 | Pendiente |
 | 2 — Piezas de validación | T-06 a T-10 | Pendiente |
 | 3 — Endpoint | T-11 a T-15 | Pendiente |
@@ -27,20 +27,20 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 
 ## Fase 0 — Preparación
 
-- [ ] **T-01. Dependencias de la API**
+- [x] **T-01. Dependencias de la API** · ✅ completada · commit `37f1ad1`
   - **RF:** soporte de RF-1 a RF-9 (plan §1). **Depende de:** ninguna.
   - **Archivos:** `backend/requirements.txt` (`fastapi`, `pydantic`, `starlette`, `uvicorn`) y `backend/requirements-dev.txt` (`httpx`).
   - **Pasos:** instalar, fijar las versiones exactas instaladas y confirmar que todo lo de 001 sigue igual.
   - **Hecho cuando:** una instalación desde cero con `requirements-dev.txt` funciona y siguen pasando los 188 tests, ruff y mypy.
 
-- [ ] **T-02. Fixtures de base de datos compartidas**
+- [x] **T-02. Fixtures de base de datos compartidas** · ✅ completada · commit `f5ed03d`
   - **RF:** soporte de los tests I (plan §7). **Depende de:** T-01.
   - **Archivos:** `tests/integration/conftest.py` pasa a `tests/conftest.py`; nuevo `tests/api/__init__.py`; se ajusta el import de `tests/integration/test_tax_rates_migration.py`.
   - **Hecho cuando:** pytest recoge exactamente los mismos 188 tests y todos pasan; no cambia ningún test.
 
-- [ ] **T-03. Origen del frontend configurable**
+- [x] **T-03. Origen del frontend configurable** · ✅ completada · commit `cbab93b`
   - **RF:** RF-9 (CA-9.1). **Depende de:** T-01.
-  - **Archivos:** `app/core/config.py` (`get_frontend_origin`), `backend/.env.example` (`FRONTEND_ORIGIN`) y `tests/integration/test_session.py` (o un test U nuevo de configuración).
+  - **Archivos:** `app/core/config.py` (`get_frontend_origin`), `backend/.env.example` (`FRONTEND_ORIGIN`) y `tests/unit/test_config.py` (test U nuevo de configuración).
   - **Hecho cuando:** un test comprueba que, sin `FRONTEND_ORIGIN`, el valor es `http://localhost:4200` y que, con la variable, se respeta; la verificación completa está en verde.
 
 ## Fase 1 — Esqueleto de la API y errores globales
