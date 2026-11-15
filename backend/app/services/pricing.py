@@ -7,6 +7,8 @@ from typing import Protocol
 
 from app.domain.errors import UnsupportedCountryError
 from app.domain.pricing import PriceQuote, build_quote, validate_users
+from app.domain.tax import validate_rate_bp
+from app.repositories.tax_rates import TaxRateRepository
 
 
 class TaxRateSource(Protocol):
@@ -28,3 +30,12 @@ def quote(users: int, country: str, rates: TaxRateSource) -> PriceQuote:
     if rate_bp is None:
         raise UnsupportedCountryError(country)
     return build_quote(valid_users, rate_bp)
+
+
+def set_tax_rate(country: str, rate_bp: int, repository: TaxRateRepository) -> None:
+    """Configure the tax rate of ``country`` (CA-13.1, CA-13.2).
+
+    The rate is validated before touching the database, so an invalid value raises
+    InvalidTaxRateError and leaves the previous rate untouched. The caller commits.
+    """
+    repository.upsert(country, validate_rate_bp(rate_bp))
