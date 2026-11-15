@@ -12,6 +12,12 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import ValidationError
 
 from app.api.countries import invalid_request
+from app.api.customers_docs import (
+    DETAIL_RESPONSES,
+    LIST_RESPONSES,
+    REGISTER_BODY_DOC,
+    REGISTER_RESPONSES,
+)
 from app.api.dependencies import get_customer_store, get_now, get_rate_source
 from app.api.validation import field_errors, read_json_object, validation_error
 from app.core.errors import not_found
@@ -38,7 +44,13 @@ _CUSTOMER_ID = re.compile(r"[1-9][0-9]{0,18}")
 _LARGEST_ID = 2**63 - 1  # the largest integer SQLite can hold
 
 
-@router.post("/customers", status_code=201, response_model=CustomerResponse)
+@router.post(
+    "/customers",
+    status_code=201,
+    response_model=CustomerResponse,
+    openapi_extra=REGISTER_BODY_DOC,
+    responses=REGISTER_RESPONSES,
+)
 def post_customer(
     payload: Annotated[dict[str, object], Depends(read_json_object)],
     customers: Annotated[CustomerStore, Depends(get_customer_store)],
@@ -56,7 +68,7 @@ def post_customer(
     return CustomerResponse.from_customer(customer)
 
 
-@router.get("/customers", response_model=CustomerListResponse)
+@router.get("/customers", response_model=CustomerListResponse, responses=LIST_RESPONSES)
 def list_customers(
     customers: Annotated[CustomerStore, Depends(get_customer_store)],
     q: Annotated[
@@ -86,7 +98,7 @@ def list_customers(
     return CustomerListResponse.from_page(page)
 
 
-@router.get("/customers/{customer_id}", response_model=CustomerResponse)
+@router.get("/customers/{customer_id}", response_model=CustomerResponse, responses=DETAIL_RESPONSES)
 def get_customer_detail(
     customer_id: str, customers: Annotated[CustomerStore, Depends(get_customer_store)]
 ) -> CustomerResponse:
