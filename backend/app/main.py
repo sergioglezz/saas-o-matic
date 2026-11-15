@@ -8,6 +8,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.error_mapping import register_domain_error_handlers
 from app.api.pricing import restore_openapi_examples
 from app.api.pricing import router as pricing_router
 from app.core.config import get_frontend_origin
@@ -36,6 +37,7 @@ def create_app(database_url: str | None = None, frontend_origin: str | None = No
         allow_headers=["Content-Type"],
     )
     register_error_handlers(app)
+    register_domain_error_handlers(app)
     app.include_router(pricing_router)
 
     generate_openapi = app.openapi
