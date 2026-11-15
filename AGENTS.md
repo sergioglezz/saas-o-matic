@@ -10,7 +10,7 @@ El backend va por capas: `api` → `services` → (`repositories`, `domain`). `d
 
 Se confirman al crear cada scaffold. Si un comando no existe o falla, avísame y propón el cambio; no lo inventes.
 
-* Ejecutar backend: `cd backend && uvicorn app.main:app --reload` (API en `localhost:8000`, documentación en `/docs`)
+* Ejecutar backend: `cd backend && uvicorn app.main:app --reload` (API en `localhost:8000`, documentación en `/docs`). ✅ Confirmado (002 T-16), con el entorno virtual activado y la base de datos migrada (`alembic upgrade head`).
 * Ejecutar frontend: `cd frontend && npm start` (`localhost:4200`)
 * Migraciones y datos demo: `cd backend && alembic upgrade head && python -m app.db.seed`
 * Tests: `cd backend && pytest` y `cd frontend && npm test`
