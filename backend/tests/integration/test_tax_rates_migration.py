@@ -12,7 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db.models import Base
-from tests.integration.conftest import alembic_config
+from tests.conftest import alembic_config
 
 DEFAULT_RATES_BP = {"ES": 2100, "PT": 2300, "FR": 2000, "DE": 1900, "IT": 2200, "GB": 2000, "US": 0}
 

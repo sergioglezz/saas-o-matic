@@ -1,4 +1,7 @@
-"""Level-D fixtures: a fresh SQLite file per test, built with the real migrations (DT-10)."""
+"""Shared database fixtures: a fresh SQLite file per test, built with the real migrations.
+
+Used by the level-D tests (tests/integration, plan 001 DT-10) and the HTTP tests (tests/api).
+"""
 
 from collections.abc import Iterator
 from pathlib import Path
@@ -11,7 +14,7 @@ from sqlalchemy.orm import Session
 
 from app.db.session import create_db_engine, create_session_factory
 
-BACKEND_DIR = Path(__file__).resolve().parents[2]
+BACKEND_DIR = Path(__file__).resolve().parents[1]
 
 
 def alembic_config(database_url: str) -> Config:
