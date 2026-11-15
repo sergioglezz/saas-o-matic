@@ -501,7 +501,7 @@ Se entregan tres cosas en un solo repositorio: la aplicación funcionando, la ca
 
 **Cómo entregar [P]**
 
-- Responder al correo de Andrea con el enlace al repositorio, antes del jueves 19 de noviembre a las 23:00. Lo ideal es entregar el miércoles por la noche o el jueves a mediodía.
+- Responder al correo de Andrea con el enlace al repositorio antes del límite indicado en el correo (23:00 del último día). Lo ideal es entregar la noche anterior o a mediodía del último día.
 - Mantener el repositorio privado mientras se trabaja; hacerlo público al entregar o invitar a quien indique la empresa.
 - No subir el `.docx` de la prueba, `.env`, `node_modules`, `.venv` ni la base de datos.
 - Probar el README clonando el repositorio en una carpeta limpia antes de enviar.
@@ -513,7 +513,7 @@ El enunciado deja 14 huecos. Dos conviene preguntarlos a Andrea y el resto se do
 | # | Tema | Qué dice el enunciado | Supuesto adoptado | Acción |
 | --- | --- | --- | --- | --- |
 | 1 | Almacenamiento y llamadas API | Se registran en la simulación, pero la tarifa solo define tramos por usuario | Se guardan y no cambian el precio | **Preguntar** |
-| 2 | Fecha límite | El correo decía «lunes 19 de noviembre»; el 19 es jueves | Jueves 19 de noviembre de 2026, 23:00 | **Preguntar** (confirmar por escrito) |
+| 2 | Fecha límite | El día de la semana del correo no coincide con el día del mes indicado | Se toma el día del mes indicado, a las 23:00 | **Preguntar** (confirmar por escrito) |
 | 3 | Planes | «Plan elegido», sin lista | `starter`, `business`, `enterprise`, sin efecto en precio | Documentar |
 | 4 | Tasas de impuesto | «Impuesto correspondiente al país», sin valores | Tabla de 7 países (7.2) | Documentar |
 | 5 | País fuera de la lista | No dice | Error 422 «País no soportado» | Documentar |
@@ -529,17 +529,17 @@ El enunciado deja 14 huecos. Dos conviene preguntarlos a Andrea y el resto se do
 
 ## 11. Orden de implementación y prompt de arranque
 
-Se trabaja en seis jornadas, de hoy viernes 13 al jueves 19 de noviembre, siempre en orden: dominio, base de datos, API, frontend y revisión. Cada pieza sigue el mismo ciclo: spec, pedir tests, pedir código, revisar, anotar lo corregido. **[P]**
+Se trabaja en seis jornadas más un día de entrega, siempre en orden: dominio, base de datos, API, frontend y revisión. Cada pieza sigue el mismo ciclo: spec, pedir tests, pedir código, revisar, anotar lo corregido. **[P]**
 
-| Fecha | Objetivo | Entregable de la jornada |
+| Jornada | Objetivo | Entregable de la jornada |
 | --- | --- | --- |
-| Vie 13 nov | Entender y preparar | Repositorio con el kit, este documento revisado, correo a Andrea enviado |
-| Sáb 14 nov | Specs y arquitectura | Specs del backend, modelo de datos y ADRs; commit `docs:` antes de programar |
-| Dom 15 nov | Backend | Dominio con tests, base de datos y endpoints |
-| Lun 16 nov | Frontend (1) | Cliente de API, servicio de divisas, dashboard y buscador |
-| Mar 17 nov | Frontend (2) | Ficha del cliente, simulador, estados de carga y error, responsive |
-| Mié 18 nov | Revisión y README | Pasada de revisor independiente, correcciones, README, resumen de `ai-workspace`, prueba en carpeta limpia |
-| Jue 19 nov | Colchón y entrega | Enviar antes de mediodía; el límite es a las 23:00 |
+| 1 | Entender y preparar | Repositorio con el kit, este documento revisado, correo a Andrea enviado |
+| 2 | Specs y arquitectura | Specs del backend, modelo de datos y ADRs; commit `docs:` antes de programar |
+| 3 | Backend | Dominio con tests, base de datos y endpoints |
+| 4 | Frontend (1) | Cliente de API, servicio de divisas, dashboard y buscador |
+| 5 | Frontend (2) | Ficha del cliente, simulador, estados de carga y error, responsive |
+| 6 | Revisión y README | Pasada de revisor independiente, correcciones, README, resumen de `ai-workspace`, prueba en carpeta limpia |
+| Entrega | Colchón y entrega | Enviar antes de mediodía; el límite es a las 23:00 |
 
 **Orden de construcción**
 
@@ -580,7 +580,7 @@ Vamos con la feature: <nombre>.
 No añadas nada fuera de la spec. Si algo es ambiguo, pregúntame.
 ```
 
-**Prompt de revisor independiente (miércoles, en una sesión nueva)**
+**Prompt de revisor independiente (jornada 6, en una sesión nueva)**
 
 ```markdown
 Actúa como revisor independiente: no has escrito este código. Revisa el repositorio con esta lista: 1) corrección de las reglas RN-1 a RN-11, 2) seguridad (SQL, validación de entrada, CORS, secretos), 3) manejo de errores y estados de carga, 4) mantenibilidad (archivos largos, capas rotas, duplicación), 5) tests que faltan. Devuelve los hallazgos ordenados por gravedad, con archivo y línea, sin modificar nada.

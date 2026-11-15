@@ -1,6 +1,6 @@
 # 001 — Precios por tramos e impuestos
 
-Estado: v1.2 aprobada (2026-11-14) · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Consumida por: `ai-workspace/specs/002-pricing-quote-api/spec.md` y la futura spec de simulaciones
+Estado: v1.2 aprobada · ✅ Completada: implementada, verificada y con los 11 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Consumida por: `ai-workspace/specs/002-pricing-quote-api/spec.md` y la futura spec de simulaciones
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al aclarar o revisar esta spec.
 
@@ -248,20 +248,20 @@ En el nivel D se configura para ES la tasa de la columna `tax_rate_bp` antes de 
 
 **Funcionalidad**
 
-- [ ] Cada fila de las tablas 6.1 a 6.5 tiene un test automático en los niveles que indica (U, D o ambos) y todos pasan.
-- [ ] Cada criterio CA-x vigente de la sección 4 está cubierto por al menos un test que lo cita por su identificador.
-- [ ] El cálculo con `users` = 15 y `country` = ES devuelve exactamente la salida de la sección 5.
-- [ ] Una base de datos recién preparada, sin datos de demostración, contiene las 7 tasas de CA-4.3 (C-6).
+- [x] Cada fila de las tablas 6.1 a 6.5 tiene un test automático en los niveles que indica (U, D o ambos) y todos pasan.
+- [x] Cada criterio CA-x vigente de la sección 4 está cubierto por al menos un test que lo cita por su identificador.
+- [x] El cálculo con `users` = 15 y `country` = ES devuelve exactamente la salida de la sección 5.
+- [x] Una base de datos recién preparada, sin datos de demostración, contiene las 7 tasas de CA-4.3 (C-6).
 
 **Cumplimiento de la constitución** (comprobación en revisión)
 
-- [ ] Principio 1: no se añade ninguna dependencia sin ADR en `ai-workspace/architecture/adr/` (mypy: ADR 0008).
-- [ ] Principio 2: cada commit de código cita el RF-x o CA-x que implementa.
-- [ ] Principio 3: el cálculo de precio e impuesto no importa nada del framework web ni del acceso a datos; los tests U lo ejecutan sin servidor ni base de datos.
-- [ ] Principio 4: ningún importe ni tasa pasa por números en coma flotante; el esquema de la tabla de tasas se crea con una migración.
-- [ ] Principio 5: la suite completa pasa antes de cada commit; cada regla de negocio tiene test U. Los tests de integración del endpoint son de 002.
-- [ ] Principio 5: el código generado por IA está revisado y las correcciones están anotadas en `ai-workspace/ai-review-log.md`.
-- [ ] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores en el backend. ESLint y TypeScript strict no aplican: esta funcionalidad no toca el frontend.
+- [x] Principio 1: no se añade ninguna dependencia sin ADR en `ai-workspace/architecture/adr/` (mypy: ADR 0008).
+- [x] Principio 2: cada commit de código cita el RF-x o CA-x que implementa. El commit de T-07 se reescribió para citar RF-4 y RF-13 (entrada 8 de `ai-review-log.md`). El commit `1cedbc1` (T-01) no implementa ningún RF.
+- [x] Principio 3: el cálculo de precio e impuesto no importa nada del framework web ni del acceso a datos; los tests U lo ejecutan sin servidor ni base de datos.
+- [x] Principio 4: ningún importe ni tasa pasa por números en coma flotante; el esquema de la tabla de tasas se crea con una migración.
+- [x] Principio 5: la suite completa pasa antes de cada commit; cada regla de negocio tiene test U. Los tests de integración del endpoint son de 002.
+- [x] Principio 5: el código generado por IA está revisado y las correcciones están anotadas en `ai-workspace/ai-review-log.md`.
+- [x] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores en el backend. ESLint y TypeScript strict no aplican: esta funcionalidad no toca el frontend.
 
 ## 11. Decisiones cerradas
 
@@ -273,8 +273,9 @@ En el nivel D se configura para ES la tasa de la columna `tax_rate_bp` antes de 
 
 ## 12. Historial de cambios
 
-| Versión | Fecha | Cambio |
-| --- | --- | --- |
-| 1.0 | 2026-11-14 | Versión inicial aprobada |
-| 1.1 | 2026-11-14 | Revisión QA: 38 hallazgos resueltos. Mensajes de error fijados; definición de entero JSON; normalización del país acotada; RF-11 (cuerpo), RF-12 (métodos) y RF-13 (configuración de tasas); niveles U/I en los casos; tablas 6.4 y 6.6 nuevas; dudas D-1 a D-3 cerradas; checklist alineado con la constitución. Aprobada |
-| 1.2 | 2026-11-14 | División: el endpoint, la validación JSON, la normalización del país, los mensajes y RNF-5 a RNF-8 pasan a la spec 002. Se añaden los errores de dominio (CA-3.3 a CA-3.5, CA-4.6, CA-4.7), los casos C-6 y X-1 a X-7, y las decisiones D-4 y D-5. Los niveles de test pasan a U y D. Ningún comportamiento observable de la v1.1 se pierde: lo que sale de aquí está en 002. Aprobada |
+| Versión | Cambio |
+| --- | --- |
+| 1.0 | Versión inicial aprobada |
+| 1.1 | Revisión QA: 38 hallazgos resueltos. Mensajes de error fijados; definición de entero JSON; normalización del país acotada; RF-11 (cuerpo), RF-12 (métodos) y RF-13 (configuración de tasas); niveles U/I en los casos; tablas 6.4 y 6.6 nuevas; dudas D-1 a D-3 cerradas; checklist alineado con la constitución. Aprobada |
+| 1.2 | División: el endpoint, la validación JSON, la normalización del país, los mensajes y RNF-5 a RNF-8 pasan a la spec 002. Se añaden los errores de dominio (CA-3.3 a CA-3.5, CA-4.6, CA-4.7), los casos C-6 y X-1 a X-7, y las decisiones D-4 y D-5. Los niveles de test pasan a U y D. Ningún comportamiento observable de la v1.1 se pierde: lo que sale de aquí está en 002. Aprobada |
+| 1.2 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 188 tests en verde, cada CA con al menos un test que lo cita, y los 11 criterios de la sección 10 marcados. Spec completada |

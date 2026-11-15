@@ -1,16 +1,16 @@
 # Tareas — 001 Precios por tramos e impuestos
 
-Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.md` (aprobado)
+Estado: aprobado · ✅ Todas las tareas completadas · Spec: `spec.md` v1.2 (completada) · Plan: `plan.md` (aprobado)
 
 ## Progreso
 
 | Fase | Tareas | Estado | Verificación del bloque |
 | --- | --- | --- | --- |
-| 0 — Preparación | T-01 | ✅ Completada (2026-11-14) | Instalación desde cero; ruff y mypy en verde |
-| 1 — Dominio puro | T-02 a T-06 | ✅ Completada (2026-11-15) | 116 tests; ruff y mypy en verde |
-| 2 — Datos | T-07 a T-09 | ✅ Completada (2026-11-15) | 144 tests; ruff y mypy en verde; `alembic upgrade head`, `current` y `check` por línea de comandos |
-| 3 — Servicio | T-10, T-11 | ✅ Completada (2026-11-15) | 187 tests; ruff y mypy en verde; los 29 CA y los 42 casos de la spec citados en tests |
-| 4 — Cierre | T-12 | Pendiente | — |
+| 0 — Preparación | T-01 | ✅ Completada | Instalación desde cero; ruff y mypy en verde |
+| 1 — Dominio puro | T-02 a T-06 | ✅ Completada | 116 tests; ruff y mypy en verde |
+| 2 — Datos | T-07 a T-09 | ✅ Completada | 144 tests; ruff y mypy en verde; `alembic upgrade head`, `current` y `check` por línea de comandos |
+| 3 — Servicio | T-10, T-11 | ✅ Completada | 187 tests; ruff y mypy en verde; los 42 casos de la spec en sus niveles |
+| 4 — Cierre | T-12 | ✅ Completada | Clon limpio y entorno virtual nuevo: ruff, mypy y `alembic check` en verde; los 11 commits de código en verde uno a uno; el mensaje de T-07 se reescribió para cumplir el principio 2. La revisión requisito por requisito añadió el test de CA-4.2 (entrada 11 del log): 188 tests, y los 29 CA tienen cada uno al menos un test que los cita y pasa. Los 11 puntos de la sección 10 de la spec, marcados |
 
 ## Reglas de ejecución
 
@@ -28,7 +28,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-01. Esqueleto del backend y herramientas
 
-- **Estado:** ✅ completada (2026-11-14) · commit `1cedbc1`
+- **Estado:** ✅ completada · commit `1cedbc1`
 
 - **Archivos:**
   - `backend/app/__init__.py` y los paquetes vacíos `domain/`, `services/`, `repositories/`, `db/` y `core/`.
@@ -52,7 +52,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-02. Errores de dominio y desglose por tramos
 
-- **Estado:** ✅ completada (2026-11-15) · commit `e0403c5`
+- **Estado:** ✅ completada · commit `e0403c5`
 
 - **Archivos:** `app/domain/errors.py`, `app/domain/pricing.py` (`Tier`, `TierLine`, `TIERS`, `MAX_USERS`, `tier_breakdown`) y `tests/unit/test_tier_breakdown.py`.
 - **Depende de:** T-01.
@@ -65,7 +65,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-03. Validación del número de usuarios
 
-- **Estado:** ✅ completada (2026-11-15) · commit `40b5f00`
+- **Estado:** ✅ completada · commit `40b5f00`
 
 - **Archivos:** `app/domain/pricing.py` (`validate_users`) y `tests/unit/test_validate_users.py`.
 - **Depende de:** T-02.
@@ -79,7 +79,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-04. Impuesto y redondeo
 
-- **Estado:** ✅ completada (2026-11-15) · commit `4dc076e`
+- **Estado:** ✅ completada · commit `4dc076e`
 
 - **Archivos:** `app/domain/tax.py` (`tax_cents` y `validate_rate_bp`) y `tests/unit/test_tax.py`.
 - **Depende de:** T-02.
@@ -93,7 +93,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-05. Resultado completo: `build_quote` y `PriceQuote`
 
-- **Estado:** ✅ completada (2026-11-15) · commit `214c28c`
+- **Estado:** ✅ completada · commit `214c28c`
 
 - **Archivos:** `app/domain/pricing.py` (`PriceQuote` y `build_quote`) y `tests/unit/test_build_quote.py`.
 - **Depende de:** T-03 y T-04.
@@ -107,7 +107,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-06. Test de arquitectura del dominio
 
-- **Estado:** ✅ completada (2026-11-15) · commit `bd0aad9`
+- **Estado:** ✅ completada · commit `bd0aad9`
 
 - **Archivos:** `tests/unit/test_domain_architecture.py`.
 - **Depende de:** T-05.
@@ -120,7 +120,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-07. Configuración, sesión y modelo `TaxRate`
 
-- **Estado:** ✅ completada (2026-11-15) · commit `aae98cc`
+- **Estado:** ✅ completada · commit `56a9f98`
 
 - **Archivos:** `app/core/config.py`, `app/db/session.py`, `app/db/models.py` y `tests/integration/test_session.py`.
 - **Depende de:** T-01.
@@ -136,7 +136,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-08. Alembic y migración `0001_create_tax_rates`
 
-- **Estado:** ✅ completada (2026-11-15) · commit `4891732` · migración congelada desde aquí
+- **Estado:** ✅ completada · commit `332451f` · migración congelada desde aquí
 
 - **Archivos:** `backend/alembic.ini`, `app/db/migrations/env.py`, `app/db/migrations/versions/0001_create_tax_rates.py`, `tests/integration/conftest.py` y `tests/integration/test_tax_rates_migration.py`.
 - **Depende de:** T-07.
@@ -154,7 +154,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-09. Repositorio de tasas
 
-- **Estado:** ✅ completada (2026-11-15) · commit `220c747`
+- **Estado:** ✅ completada · commit `6079c5a`
 
 - **Archivos:** `app/repositories/tax_rates.py` (`TaxRateRepository`: `get_rate_bp`, `upsert` y `delete`) y `tests/integration/test_tax_rate_repository.py`.
 - **Depende de:** T-08.
@@ -171,7 +171,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-10. Servicio `quote`
 
-- **Estado:** ✅ completada (2026-11-15) · commit `33210f1`
+- **Estado:** ✅ completada · commit `cf74340`
 
 - **Archivos:** `app/services/pricing.py` (el protocolo `TaxRateSource` y `quote`) y `tests/integration/test_quote_service.py`.
 - **Depende de:** T-05 y T-09.
@@ -185,7 +185,7 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 
 ### T-11. `set_tax_rate` y configuración de tasas
 
-- **Estado:** ✅ completada (2026-11-15) · commit `975f07f`
+- **Estado:** ✅ completada · commit `19b8c39`
 
 - **Archivos:** `app/services/pricing.py` (`set_tax_rate`) y `tests/integration/test_tax_rate_config.py`.
 - **Depende de:** T-10.
@@ -202,6 +202,8 @@ Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Plan: `plan.
 ## Fase 4 — Cierre
 
 ### T-12. Comprobación final y documentación
+
+- **Estado:** ✅ completada · commit `7649aee` (test de CA-4.2) y el commit de documentación de cierre que lo sigue
 
 - **Archivos:** `README.md` (solo la sección «Decisiones y supuestos» con las tasas por defecto, D-3) y `ai-workspace/ai-review-log.md`.
 - **Depende de:** T-11.

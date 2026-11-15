@@ -300,6 +300,6 @@ No hay dudas abiertas.
 
 ## 12. Historial de cambios
 
-| Versión | Fecha | Cambio |
-| --- | --- | --- |
-| 0.1 | 2026-11-14 | Borrador creado al dividir la spec 001 (v1.2). Contenido movido desde 001 v1.1 sin cambios de comportamiento; los casos T-11 a T-19 y P-11 pasan a ser Q-11 a Q-20 |
+| Versión | Cambio |
+| --- | --- |
+| 0.1 | Borrador creado al dividir la spec 001 (v1.2). Contenido movido desde 001 v1.1 sin cambios de comportamiento; los casos T-11 a T-19 y P-11 pasan a ser Q-11 a Q-20 |

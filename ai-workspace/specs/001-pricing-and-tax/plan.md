@@ -1,6 +1,6 @@
 # Plan técnico — 001 Precios por tramos e impuestos
 
-Estado: aprobado (2026-11-14) · Spec: `spec.md` v1.2 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7 y §8 de `00-spec-first.md`
+Estado: aprobado · Spec: `spec.md` v1.2 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7 y §8 de `00-spec-first.md`
 
 ## 1. Resumen y alcance
 
