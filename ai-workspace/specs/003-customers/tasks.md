@@ -26,7 +26,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 | 3 — Persistencia | T-07 a T-10 | ✅ Completada: 531 tests (69 nuevos); migración 0002 sin tocar la 0001; los modelos coinciden con el esquema migrado; ruff y mypy en verde |
 | 4 — API | T-11 a T-17 | ✅ Completada: 720 tests (189 nuevos); las tablas 6.3 a 6.9 pasan por HTTP; ningún archivo supera las 300 líneas ni ninguna función las 40; ruff y mypy en verde. Una decisión del plan corregida en T-11 (entrada 18 del log) |
 | 5 — Datos de demostración | T-18 | ✅ Completada: 736 tests (16 nuevos); el seed es idempotente y usa el mismo esquema y servicio que la API; ruff y mypy en verde |
-| 6 — Cierre | T-19, T-20 | Pendiente |
+| 6 — Cierre | T-19, T-20 | ✅ Completada: arranque real con alta, búsqueda, ficha y seed; clon limpio con entorno virtual nuevo en verde (744 tests, ruff, mypy y `alembic check`); los 18 commits de código de las tareas en verde uno a uno y todos citan su RF o CA; 56 CA y 151 casos con un test que los cita y pasa, cada caso en su nivel; revisión conjunta con dos mejoras en los tests (entrada 20 del log); los 13 puntos de la sección 10 marcados. Pendiente: la revisión del autor |
 
 ## Fase 1 — Errores globales (nivel I con rutas de prueba)
 
@@ -148,7 +148,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 
 ## Fase 6 — Cierre
 
-- [ ] **T-19. Arranque real**
+- [x] **T-19. Arranque real** · ✅ completada · commit `cd8264d`
   - **RF:** criterio de arranque de la sección 10 de la spec. **Depende de:** T-18.
   - **Archivos:** `AGENTS.md` (el comando de migraciones y seed queda confirmado) y `README.md` (decisiones y supuestos de clientes).
   - **Pasos:**
@@ -157,7 +157,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
     3. Un alta, una búsqueda y una ficha por la línea de comandos, y abrir `/docs`.
   - **Hecho cuando:** todo responde como dice la spec y los dos archivos quedan actualizados.
 
-- [ ] **T-20. Comprobación final**
+- [x] **T-20. Comprobación final** · ✅ completada
   - **RF:** todos (sección 10 de la spec). **Depende de:** T-19.
   - **Archivos:** `spec.md` (checklist), `tasks.md` (estados) y `ai-workspace/ai-review-log.md`.
   - **Pasos:**

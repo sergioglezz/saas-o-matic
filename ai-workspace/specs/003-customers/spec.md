@@ -1,6 +1,6 @@
 # 003 — Clientes: registro, búsqueda y ficha
 
-Estado: v1.0 · redactada y ejecutada por delegación expresa del autor, **pendiente de su revisión** · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 001 (v1.2) y 002 (v1.1), ambas completadas
+Estado: v1.0 · ✅ implementada y verificada por delegación expresa del autor, con los 13 criterios de finalización cumplidos · **pendiente de la revisión del autor** · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 001 (v1.2) y 002 (v1.1), ambas completadas
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al redactar esta spec. Las decisiones nuevas están en la sección 11 para que el autor las confirme o las cambie.
 
@@ -506,22 +506,22 @@ Datos de partida, creados por la API en este orden:
 
 **Funcionalidad**
 
-- [ ] Cada caso de las tablas 6.1 a 6.11 tiene un test automático en el nivel que indica y todos pasan.
-- [ ] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador y pasa.
-- [ ] `POST /customers` con el ejemplo de la sección 5 devuelve exactamente la respuesta de la sección 5 (con el reloj fijado).
-- [ ] Los tres endpoints aparecen en la documentación interactiva con su ejemplo.
-- [ ] Con el servidor arrancado de verdad, un alta, una búsqueda y una ficha por línea de comandos funcionan, y `python -m app.db.seed` carga los 10 clientes. El comando queda confirmado en `AGENTS.md`.
-- [ ] Todos los tests de 001 y 002 siguen pasando sin haberlos modificado.
+- [x] Cada caso de las tablas 6.1 a 6.11 tiene un test automático en el nivel que indica y todos pasan.
+- [x] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador y pasa.
+- [x] `POST /customers` con el ejemplo de la sección 5 devuelve exactamente la respuesta de la sección 5 (con el reloj fijado).
+- [x] Los tres endpoints aparecen en la documentación interactiva con su ejemplo.
+- [x] Con el servidor arrancado de verdad, un alta, una búsqueda y una ficha por línea de comandos funcionan, y `python -m app.db.seed` carga los 10 clientes. El comando queda confirmado en `AGENTS.md`.
+- [x] Todos los tests de 001 y 002 siguen pasando sin haberlos modificado.
 
 **Cumplimiento de la constitución** (comprobación en revisión)
 
-- [ ] Principio 1: no se añade ninguna dependencia; el ADR 0009 documenta la convención del CIF.
-- [ ] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa.
-- [ ] Principio 3: el algoritmo del identificador no importa nada del framework ni del acceso a datos; los routers no contienen reglas de negocio ni SQL.
-- [ ] Principio 4: el esquema cambia solo con una migración nueva; la 0001 no se toca.
-- [ ] Principio 5: la suite completa pasa en cada commit; cada regla de negocio tiene test unitario y cada endpoint, test de integración.
-- [ ] Principio 5: las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`.
-- [ ] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores; toda entrada se valida.
+- [x] Principio 1: no se añade ninguna dependencia; el ADR 0009 documenta la convención del CIF.
+- [x] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa (los 19 commits con código, comprobados en T-20).
+- [x] Principio 3: el algoritmo del identificador no importa nada del framework ni del acceso a datos; los routers no contienen reglas de negocio ni SQL.
+- [x] Principio 4: el esquema cambia solo con una migración nueva; la 0001 no se toca.
+- [x] Principio 5: la suite completa pasa en cada commit, comprobado uno a uno en un clon limpio; cada regla de negocio tiene test unitario y cada endpoint, test de integración.
+- [x] Principio 5: las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md` (entradas 17 a 20). Falta la lectura del autor que exige el principio: es la revisión pendiente.
+- [x] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores; toda entrada se valida.
 
 ## 11. Decisiones tomadas al redactar
 
@@ -549,3 +549,4 @@ No hay dudas abiertas que bloqueen la implementación.
 | Versión | Cambio |
 | --- | --- |
 | 1.0 | Versión inicial, redactada por delegación del autor tras comprobar con un prototipo desechable los comportamientos de FastAPI, Starlette, Pydantic y SQLite en los que se apoya. Pendiente de la revisión del autor |
+| 1.0 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 744 tests en verde (383 de 001 y 002, sin modificar ninguno), verificación completa en un clon limpio con un entorno virtual nuevo y en cada commit de código, los 56 CA con al menos un test que los cita y pasa, y los 151 casos con test en su nivel. Dos decisiones del plan se corrigieron al implementar (entradas 17 y 18 del log) y la documentación dejó de anunciar el 422 propio del framework (entrada 19). Pendiente de la revisión del autor |
