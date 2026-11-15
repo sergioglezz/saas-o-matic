@@ -23,7 +23,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 | --- | --- | --- |
 | 1 — Errores globales | T-01 a T-03 | ✅ Completada: 394 tests (11 nuevos); ruff y mypy en verde; los 383 tests de 001 y 002 pasan sin tocarlos. Un fallo propio corregido en T-03 (entrada 17 del log) |
 | 2 — Dominio del identificador fiscal | T-04 a T-06 | ✅ Completada: 462 tests (68 nuevos); tablas 6.1 y 6.2 completas sin base de datos ni servidor; el test de arquitectura del dominio cubre `tax_id.py`; ruff y mypy en verde |
-| 3 — Persistencia | T-07 a T-10 | Pendiente |
+| 3 — Persistencia | T-07 a T-10 | ✅ Completada: 531 tests (69 nuevos); migración 0002 sin tocar la 0001; los modelos coinciden con el esquema migrado; ruff y mypy en verde |
 | 4 — API | T-11 a T-17 | Pendiente |
 | 5 — Datos de demostración | T-18 | Pendiente |
 | 6 — Cierre | T-19, T-20 | Pendiente |
@@ -70,25 +70,25 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 
 ## Fase 3 — Persistencia (nivel D)
 
-- [ ] **T-07. Tabla `customers`: modelo y migración**
+- [x] **T-07. Tabla `customers`: modelo y migración** · ✅ completada · commit `ebd2954`
   - **RF:** RF-9 (CA-9.1 a CA-9.3). Casos DB-1, DB-3 a DB-6, DB-8 y DB-9. **Depende de:** T-04.
   - **Archivos:** `app/domain/customers.py` (`PLANS`, `NewCustomer`, `Customer`, `CustomerPage`), `app/db/models.py` (`CustomerRecord`), `app/db/migrations/versions/0002_create_customers.py` y `tests/integration/test_customers_migration.py`.
   - **Rojo (D):** esos casos. Hoy la tabla no existe.
   - **Hecho cuando:** pasan; la migración 0001 no cambia; el test de 001 que deshace todas las migraciones sigue en verde.
 
-- [ ] **T-08. Repositorio: guardar y leer**
+- [x] **T-08. Repositorio: guardar y leer** · ✅ completada · commit `83d7ea5`
   - **RF:** RF-1 (CA-1.3), RF-4 (CA-4.4). Casos DB-2 y DB-7. **Depende de:** T-07.
   - **Archivos:** `app/repositories/customers.py` (`add` y `get`) y `tests/integration/test_customer_repository.py`.
   - **Rojo (D):** guardar y leer un cliente; DB-2 (el duplicado lanza `DuplicateTaxIdError` y solo queda uno); DB-7 (no se reutiliza el `id`); `get` de un `id` inexistente devuelve `None`.
   - **Hecho cuando:** pasan, y tras un duplicado la sesión sigue utilizable.
 
-- [ ] **T-09. Repositorio: búsqueda**
+- [x] **T-09. Repositorio: búsqueda** · ✅ completada · commit `4f9b9ec`
   - **RF:** RF-5 (CA-5.3 a CA-5.7). **Depende de:** T-08.
   - **Archivos:** `app/db/session.py` (función SQL `casefold`), `app/repositories/customers.py` (`search`) y `tests/integration/test_customer_repository.py`.
   - **Rojo (D):** sobre los seis clientes de la tabla 6.6: sin filtro, por fragmento de nombre con `ñ` y tildes, por fragmento de identificador, comodines literales, orden, `limit`, `offset` y `total`.
   - **Hecho cuando:** pasan, y los tests de sesión de 001 siguen en verde.
 
-- [ ] **T-10. Servicio de clientes y reloj**
+- [x] **T-10. Servicio de clientes y reloj** · ✅ completada · commit `dac845d`
   - **RF:** RF-1 (CA-1.2, CA-1.3, CA-1.5), RF-3 (CA-3.3), RF-4 (CA-4.1, CA-4.2), RF-5 (CA-5.2, CA-5.3) y RF-6 (CA-6.1, CA-6.2). **Depende de:** T-06 y T-09.
   - **Archivos:** `app/core/clock.py`, `app/services/customers.py`, `tests/unit/test_clock.py` y `tests/integration/test_customer_service.py`.
   - **Rojo (D):** alta con identificador sin normalizar (queda normalizado y con el `created_at` del reloj); país sin tasa; identificador español inválido; duplicado con otro formato; búsqueda con `q` vacío, con espacios y con un identificador con separadores; ficha existente e inexistente.
