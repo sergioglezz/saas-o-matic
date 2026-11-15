@@ -4,12 +4,13 @@ Input rules live here, at the API edge (constitution principle 3): the calculati
 only ever receives values that already passed them.
 """
 
+import dataclasses
 import re
-from typing import Annotated
+from typing import Annotated, Self
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.domain.pricing import MAX_USERS
+from app.domain.pricing import MAX_USERS, PriceQuote
 
 USERS_INVALID_MESSAGE = "Debe ser un número entero entre 0 y 100000"
 COUNTRY_INVALID_MESSAGE = "Debe ser un código de país de 2 letras"
@@ -51,3 +52,29 @@ class QuoteRequest(BaseModel):
     @classmethod
     def _normalize_country(cls, value: str) -> str:
         return normalize_country(value)
+
+
+class TierLineResponse(BaseModel):
+    tier: int
+    from_users: int
+    to_users: int | None  # null for the open-ended last tier (CA-4.3)
+    units: int
+    unit_price_cents: int
+    amount_cents: int
+
+
+class QuoteResponse(BaseModel):
+    """200 body of POST /pricing/quote: the calculation of spec 001, field for field (RF-4)."""
+
+    users: int
+    currency: str
+    tiers: list[TierLineResponse]
+    subtotal_cents: int
+    tax_rate_bp: int
+    tax_cents: int
+    total_cents: int
+
+    @classmethod
+    def from_quote(cls, quote: PriceQuote) -> Self:
+        # PriceQuote already uses the contract's field names (plan 001 DT-9).
+        return cls.model_validate(dataclasses.asdict(quote))

@@ -10,7 +10,13 @@ import pytest
 from pydantic import ValidationError
 
 from app.api.validation import field_errors
-from app.schemas.pricing import INVALID_FIELD_MESSAGES, QuoteRequest, normalize_country
+from app.domain.pricing import build_quote
+from app.schemas.pricing import (
+    INVALID_FIELD_MESSAGES,
+    QuoteRequest,
+    QuoteResponse,
+    normalize_country,
+)
 
 TAB, LF, CR = chr(9), chr(10), chr(13)
 NBSP = chr(0xA0)
@@ -147,3 +153,57 @@ def test_valid_requests_are_accepted_and_normalized(body: str, users: int, count
 
     assert (request.users, request.country) == (users, country)
     assert type(request.users) is int
+
+
+# --- T-08: QuoteResponse (RF-4: CA-4.1 to CA-4.4) ----------------------------------------
+
+SPEC_SECTION_5_EXAMPLE = {
+    "users": 15,
+    "currency": "EUR",
+    "tiers": [
+        {
+            "tier": 1,
+            "from_users": 1,
+            "to_users": 10,
+            "units": 10,
+            "unit_price_cents": 1000,
+            "amount_cents": 10000,
+        },
+        {
+            "tier": 2,
+            "from_users": 11,
+            "to_users": 50,
+            "units": 5,
+            "unit_price_cents": 800,
+            "amount_cents": 4000,
+        },
+        {
+            "tier": 3,
+            "from_users": 51,
+            "to_users": None,
+            "units": 0,
+            "unit_price_cents": 500,
+            "amount_cents": 0,
+        },
+    ],
+    "subtotal_cents": 14000,
+    "tax_rate_bp": 2100,
+    "tax_cents": 2940,
+    "total_cents": 16940,
+}
+
+
+def _no_floats(literal: str) -> float:
+    raise AssertionError(f"number with decimals or exponent in the response: {literal}")
+
+
+def test_response_serializes_to_the_example_of_spec_section_5() -> None:
+    """CA-4.1 to CA-4.4: same fields and values, to_users null, EUR, integers only."""
+    text = QuoteResponse.from_quote(build_quote(15, 2100)).model_dump_json()
+
+    assert json.loads(text, parse_float=_no_floats) == SPEC_SECTION_5_EXAMPLE
+
+
+def test_response_keeps_users_zero_from_minus_zero() -> None:
+    """CA-4.2: users is returned as the integer received (0 for -0)."""
+    assert QuoteResponse.from_quote(build_quote(-0, 0)).users == 0
