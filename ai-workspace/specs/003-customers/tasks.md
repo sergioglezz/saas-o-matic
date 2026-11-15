@@ -21,7 +21,7 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 
 | Fase | Tareas | Estado |
 | --- | --- | --- |
-| 1 — Errores globales | T-01 a T-03 | Pendiente |
+| 1 — Errores globales | T-01 a T-03 | ✅ Completada: 394 tests (11 nuevos); ruff y mypy en verde; los 383 tests de 001 y 002 pasan sin tocarlos. Un fallo propio corregido en T-03 (entrada 17 del log) |
 | 2 — Dominio del identificador fiscal | T-04 a T-06 | Pendiente |
 | 3 — Persistencia | T-07 a T-10 | Pendiente |
 | 4 — API | T-11 a T-17 | Pendiente |
@@ -30,19 +30,19 @@ Estado: v1.0, redactadas y ejecutadas por delegación del autor, pendientes de s
 
 ## Fase 1 — Errores globales (nivel I con rutas de prueba)
 
-- [ ] **T-01. `core` deja de conocer las funcionalidades**
+- [x] **T-01. `core` deja de conocer las funcionalidades** · ✅ completada · commit `1014ff4`
   - **RF:** soporte de RF-7 (plan DT-14; entrada 16 del log). **Depende de:** ninguna.
   - **Archivos:** `app/api/error_mapping.py` (nuevo, con el mapeo de los dos errores de dominio de la cotización), `app/core/errors.py` (sin imports de `schemas` ni `domain`), `app/main.py` y `tests/unit/test_core_architecture.py`.
   - **Rojo (U):** un test que lee los imports de cada módulo de `app/core/` y falla si alguno importa `app.api`, `app.schemas`, `app.services`, `app.repositories`, `app.domain` o `app.db`. Hoy falla por `core/errors.py`.
   - **Hecho cuando:** ese test pasa y los 383 tests anteriores siguen en verde sin tocarlos: es un cambio de sitio, no de comportamiento.
 
-- [ ] **T-02. Errores del framework y 409 en el formato único**
+- [x] **T-02. Errores del framework y 409 en el formato único** · ✅ completada · commit `e1a4be8`
   - **RF:** RF-7 (CA-7.1, CA-7.3, CA-7.4). Casos ER-6 y ER-7. **Depende de:** T-01.
   - **Archivos:** `app/core/errors.py` (`conflict`, `not_found`, manejador de `RequestValidationError` y de cualquier estado HTTP) y `tests/api/test_error_format_global.py`.
   - **Rojo (I):** ER-6 (ruta de prueba con parámetros enteros llamada con textos), ER-7 (ruta de prueba que lanza un 418 con un texto interno) y una ruta de prueba que lanza `conflict(...)`. Hoy las dos primeras responden `{"detail": ...}`.
   - **Hecho cuando:** ER-6 da 422 con un detalle «Valor no válido» por parámetro; ER-7 da 418 `http_error` «Error en la petición» sin el texto interno; el 409 sale con `conflict` «El recurso ya existe» y su detalle.
 
-- [ ] **T-03. Cabecera `Allow` completa**
+- [x] **T-03. Cabecera `Allow` completa** · ✅ completada · commit `b2356a0`
   - **RF:** RF-7 (CA-7.2). Caso ER-12. **Depende de:** T-02.
   - **Archivos:** `app/core/errors.py` (métodos de todas las rutas que coinciden) y `tests/api/test_error_format_global.py`.
   - **Rojo (I):** dos rutas de prueba en la misma dirección, una `GET` y otra `POST`; un `DELETE` debe responder `Allow: GET, POST`. Hoy responde solo `GET`.

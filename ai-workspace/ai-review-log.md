@@ -1,6 +1,6 @@
 # Log de revisión del trabajo generado por IA
 
-Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 y 002, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
+Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 003, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
 
 ## Cómo se revisa
 
@@ -32,6 +32,7 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 14 | T-02, mensaje del commit `f5ed03d` | «test: share database fixtures with the API tests (002 T-02)» | No cita ningún RF ni CA, y la regla de la entrada 8 lo pide también en las tareas de infraestructura. El commit da soporte a los tests por HTTP de RF-1 a RF-9 | Comprobación de los mensajes de los 15 commits de código en T-18 | No se reescribe: cambiaría todos los commits posteriores, aún sin publicar, y sus hashes en `tasks.md`, y esa decisión es del autor (como en la entrada 8). Queda como excepción anotada en el checklist de la spec 002 |
 | 15 | `AGENTS.md` y T-16: «API en `localhost:8000`» | Se daba por hecho que `localhost` y `127.0.0.1` eran equivalentes | `uvicorn` escucha solo en `127.0.0.1`. En Windows, un cliente que usa `localhost` prueba antes IPv6 y cada conexión nueva tarda unos 0,2 s más: más que el objetivo de RNF-2, aunque la API responde en 6 ms | Medición de T-17: 0,21 s con `localhost` frente a 0,006 s con `127.0.0.1` | Aviso en el README (`75ff2fd`). La URL base de la API se decidirá en la spec del frontend |
 | 16 | `app/core/errors.py` (T-05, T-12 y T-13) | El módulo importa los mensajes de `app/schemas/pricing.py`, y cualquier estado HTTP distinto de 404 y 405 conserva el formato por defecto de FastAPI (`{"detail": ...}`) | El plan 002 (§2) solo le permitía importar FastAPI, Starlette y `domain.errors`. Y RF-6 dice que el formato único vale para cualquier ruta futura: un 422 propio de FastAPI o un 400 saldrían con otro formato. Hoy ningún caso lo alcanza, por eso los tests pasan | Revisión del código al retomar el proyecto, antes de T-16 | Se corrige en la spec 003, que añade rutas con parámetros: ver su requisito de errores globales |
+| 17 | 003 T-03, `_allowed_methods` en `app/core/errors.py` | Unía el atributo `methods` de las rutas de la aplicación que coincidían con la dirección | En esta versión de FastAPI, un router incluido con `include_router` es una única ruta anidada, sin `methods`: la cabecera `Allow` de `/pricing/quote` salía vacía. El prototipo del plan no lo vio porque declaraba sus rutas directamente en la aplicación | Verificación completa de la tarea: fallaron los 9 tests de 405 de la spec 002 | Se prueba cada método HTTP contra las rutas con `matches`, la interfaz pública, que también funciona con rutas anidadas (`b2356a0`) |
 
 ## Reglas que salen de este registro
 
@@ -43,3 +44,4 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 - **Lo que depende del comportamiento de una biblioteca se comprueba con un prototipo antes de fijarlo en la spec o en el plan** (entradas 12 y 13).
 - **Un formato «global» se prueba también con lo que el código aún no usa: una ruta de prueba por cada tipo de error que el framework puede generar** (entrada 16).
 - **Las mediciones y los ejemplos usan la misma dirección que escucha el servidor** (entrada 15).
+- **Un prototipo monta las piezas igual que la aplicación real: mismas llamadas, mismo anidamiento** (entrada 17).
