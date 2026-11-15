@@ -1,13 +1,13 @@
 # Log de revisión del trabajo generado por IA
 
-Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante la funcionalidad 001, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
+Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 y 002, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
 
 ## Cómo se revisa
 
 1. **Antes del código:** cada documento (constitución, spec, plan, tareas) se revisa contra `00-spec-first.md` y `AGENTS.md` y lo aprueba el autor antes de pasar al siguiente.
 2. **Durante el código:** cada tarea sigue rojo → verde → revisar. Los tests salen de las tablas de la spec y se ejecutan antes de implementar, para confirmar que fallan por el motivo esperado.
 3. **Al cerrar cada bloque:** verificación completa con `pytest`, `ruff check`, `ruff format --check` y `mypy` estricto; validación contra los CA de la spec; y aprobación del autor antes de cada commit.
-4. **Al cerrar la funcionalidad (T-12):**
+4. **Al cerrar la funcionalidad (T-12 en 001, T-18 en 002):**
    - instalación desde cero en un clon limpio con un entorno virtual nuevo;
    - la suite, el lint y los tipos ejecutados en cada commit de código, uno a uno;
    - comprobación de que cada CA y cada caso de la spec aparecen citados en algún test.
@@ -27,6 +27,11 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 9 | T-08, `tests/integration/conftest.py` | Docstring de 101 caracteres | Supera el límite de 100 de ruff (E501) | `ruff check` en la verificación del bloque | Docstring acortado antes del commit (`332451f`) |
 | 10 | T-12, script de verificación | `export PATH="C:/...:$PATH"` en bash | En bash `:` separa rutas, así que `C:` partía la ruta. Se ejecutó un `pytest` ajeno al entorno nuevo y ruff, mypy y alembic no se encontraron | Salida incoherente («1 error», «command not found») | Cada ejecutable se llama por su ruta completa. No afecta al código del repositorio |
 | 11 | T-12, comprobación de trazabilidad | Script que buscaba cada CA en el texto completo de los archivos de test | Contaba como cubierto un CA citado solo en el docstring de un archivo. Así dio por cubierto CA-4.2, que ningún test comprobaba entero: no había test de que un país añadido pasa a estar soportado. En T-12 se afirmó que los 29 CA estaban citados, y no era exacto | Revisión requisito por requisito con una trazabilidad más estricta, que solo cuenta los docstrings de cada test y cruza con el resultado de pytest | Nuevo test `test_supported_countries_are_exactly_the_configured_ones`: país sin tasa no soportado, con tasa soportado y, al quitarla, otra vez no soportado. Se comprobó que falla si el servicio deja de rechazar países sin tasa. Se quitó la cita inexacta del docstring del archivo de la migración |
+| 12 | Spec 002 v1.0, CA-6.6 | El criterio exigía JSON en toda respuesta salvo `HEAD` y las preflight de CORS rechazadas | Una preflight aceptada responde 200 con texto plano («OK»): el criterio no se podía cumplir sin escribir una preflight propia | Prototipo desechable antes de escribir el plan (plan 002, duda D-1) | Spec v1.1: CA-6.6 excluye todas las respuestas a preflight y CA-9.2 aclara que su cuerpo no es contrato (`1449733`) |
+| 13 | T-15, `/openapi.json` | Ejemplo de la respuesta 200 declarado en la ruta | FastAPI quita los valores `null` al generar el esquema, así que el ejemplo publicado perdía `"to_users": null` en el tramo 3 y dejaba de ser el de la sección 5 de la spec | Entrada reconstruida en T-18 a partir del mensaje del commit, que describe el problema | `app.openapi` restaura el ejemplo exacto, y un test lo compara con el de la spec (`db626bd`) |
+| 14 | T-02, mensaje del commit `f5ed03d` | «test: share database fixtures with the API tests (002 T-02)» | No cita ningún RF ni CA, y la regla de la entrada 8 lo pide también en las tareas de infraestructura. El commit da soporte a los tests por HTTP de RF-1 a RF-9 | Comprobación de los mensajes de los 15 commits de código en T-18 | No se reescribe: cambiaría todos los commits posteriores, aún sin publicar, y sus hashes en `tasks.md`, y esa decisión es del autor (como en la entrada 8). Queda como excepción anotada en el checklist de la spec 002 |
+| 15 | `AGENTS.md` y T-16: «API en `localhost:8000`» | Se daba por hecho que `localhost` y `127.0.0.1` eran equivalentes | `uvicorn` escucha solo en `127.0.0.1`. En Windows, un cliente que usa `localhost` prueba antes IPv6 y cada conexión nueva tarda unos 0,2 s más: más que el objetivo de RNF-2, aunque la API responde en 6 ms | Medición de T-17: 0,21 s con `localhost` frente a 0,006 s con `127.0.0.1` | Aviso en el README (`75ff2fd`). La URL base de la API se decidirá en la spec del frontend |
+| 16 | `app/core/errors.py` (T-05, T-12 y T-13) | El módulo importa los mensajes de `app/schemas/pricing.py`, y cualquier estado HTTP distinto de 404 y 405 conserva el formato por defecto de FastAPI (`{"detail": ...}`) | El plan 002 (§2) solo le permitía importar FastAPI, Starlette y `domain.errors`. Y RF-6 dice que el formato único vale para cualquier ruta futura: un 422 propio de FastAPI o un 400 saldrían con otro formato. Hoy ningún caso lo alcanza, por eso los tests pasan | Revisión del código al retomar el proyecto, antes de T-16 | Se corrige en la spec 003, que añade rutas con parámetros: ver su requisito de errores globales |
 
 ## Reglas que salen de este registro
 
@@ -35,3 +40,6 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 - **Todo commit que toca código cita el RF o CA al que da soporte, también en las tareas de infraestructura** (entrada 8).
 - **Ningún comentario o ejemplo promete un comportamiento que el código no tiene** (entrada 6).
 - **La trazabilidad de un CA se comprueba a nivel de test y con su resultado, no buscando el identificador en el archivo** (entrada 11).
+- **Lo que depende del comportamiento de una biblioteca se comprueba con un prototipo antes de fijarlo en la spec o en el plan** (entradas 12 y 13).
+- **Un formato «global» se prueba también con lo que el código aún no usa: una ruta de prueba por cada tipo de error que el framework puede generar** (entrada 16).
+- **Las mediciones y los ejemplos usan la misma dirección que escucha el servidor** (entrada 15).

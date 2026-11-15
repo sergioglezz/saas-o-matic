@@ -23,7 +23,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 | 1 — Esqueleto y errores globales | T-04, T-05 | ✅ Completada: 198 tests; ruff y mypy en verde; el test de la barra final detecta la redirección si se reactiva |
 | 2 — Piezas de validación | T-06 a T-10 | ✅ Completada: 278 tests (80 nuevos); ruff y mypy en verde; `quote` y `set_tax_rate` sin cambios |
 | 3 — Endpoint | T-11 a T-15 | ✅ Completada: 383 tests; los 33 CA con un test que los cita y pasa; los 77 casos de las tablas por HTTP; ruff y mypy en verde |
-| 4 — Cierre | T-16 a T-18 | Pendiente |
+| 4 — Cierre | T-16 a T-18 | ✅ Completada: arranque real con `uvicorn` y cotización idéntica al ejemplo; p95 de 6,3 ms; clon limpio con entorno virtual nuevo en verde (383 tests, ruff, mypy y `alembic check`); los 15 commits de código en verde uno a uno; 33 CA y 77 casos con un test que los cita y pasa; los 12 puntos de la sección 10 marcados |
 
 ## Fase 0 — Preparación
 
@@ -147,7 +147,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 
 ## Fase 4 — Cierre
 
-- [ ] **T-16. Arranque real con `uvicorn`**
+- [x] **T-16. Arranque real con `uvicorn`** · ✅ completada · commit `bf7164b`
   - **RF:** criterio de arranque de la sección 10 de la spec. **Depende de:** T-15.
   - **Archivos:** `AGENTS.md` (el comando queda confirmado).
   - **Pasos:**
@@ -156,13 +156,13 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
     3. Abrir `/docs` y hacer una cotización real por la línea de comandos.
   - **Hecho cuando:** el servidor arranca sin errores, `/docs` responde 200, la cotización `{"users": 15, "country": "ES"}` devuelve exactamente el ejemplo de la sección 5, y `AGENTS.md` marca el comando como confirmado.
 
-- [ ] **T-17. Medir el rendimiento (informativo)**
+- [x] **T-17. Medir el rendimiento (informativo)** · ✅ completada · commit `75ff2fd`
   - **RF:** RNF-2. **Depende de:** T-16.
   - **Archivos:** `README.md` (resultado y método de medición).
   - **Pasos:** con el servidor arrancado, 100 cotizaciones seguidas; calcular el percentil 95.
   - **Hecho cuando:** el README recoge el p95 obtenido, la máquina y el método. Si supera los 200 ms se anota igualmente, porque no bloquea la entrega.
 
-- [ ] **T-18. Comprobación final**
+- [x] **T-18. Comprobación final** · ✅ completada
   - **RF:** todos (sección 10 de la spec). **Depende de:** T-17.
   - **Archivos:** `spec.md` (checklist), `tasks.md` (estados), `ai-workspace/ai-review-log.md`.
   - **Pasos:**

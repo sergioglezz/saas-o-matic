@@ -1,6 +1,6 @@
 # 002 — Endpoint de cotización (`POST /pricing/quote`)
 
-Estado: v1.1 aprobada · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: `ai-workspace/specs/001-pricing-and-tax/spec.md` (v1.2)
+Estado: v1.1 aprobada · ✅ Completada: implementada, verificada y con los 12 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: `ai-workspace/specs/001-pricing-and-tax/spec.md` (v1.2)
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al aclarar o revisar la spec 001 o esta spec. RF-1 a RF-8 vienen de la spec 001 v1.1 sin cambios de comportamiento, y cada uno indica de qué parte sale. RF-9 (CORS), CA-6.7 (404) y las ampliaciones de CA-7.1 y CA-8.1 se añadieron en la revisión de la v1.0.
 
@@ -302,21 +302,21 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 
 **Funcionalidad**
 
-- [ ] Cada caso de las tablas 6.1 a 6.3 (Q-1 a Q-20, E-1 a E-42, O-1 a O-15) tiene un test de integración y todos pasan.
-- [ ] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador.
-- [ ] `POST /pricing/quote` responde exactamente el ejemplo de la sección 5 con `{ "users": 15, "country": "ES" }`.
-- [ ] El endpoint aparece en la documentación interactiva con su ejemplo.
-- [ ] RNF-2 medido una vez y anotado en el README.
-- [ ] Con la base de datos migrada, el comando de `AGENTS.md` (`cd backend && uvicorn app.main:app --reload`) arranca la API, `/docs` responde 200 y una cotización real desde la línea de comandos devuelve el ejemplo de la sección 5. El comando queda confirmado en `AGENTS.md`.
+- [x] Cada caso de las tablas 6.1 a 6.3 (Q-1 a Q-20, E-1 a E-42, O-1 a O-15) tiene un test de integración y todos pasan.
+- [x] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador.
+- [x] `POST /pricing/quote` responde exactamente el ejemplo de la sección 5 con `{ "users": 15, "country": "ES" }`.
+- [x] El endpoint aparece en la documentación interactiva con su ejemplo.
+- [x] RNF-2 medido una vez y anotado en el README.
+- [x] Con la base de datos migrada, el comando de `AGENTS.md` (`cd backend && uvicorn app.main:app --reload`) arranca la API, `/docs` responde 200 y una cotización real desde la línea de comandos devuelve el ejemplo de la sección 5. El comando queda confirmado en `AGENTS.md`.
 
 **Cumplimiento de la constitución** (comprobación en revisión)
 
-- [ ] Principio 1: no se añade ninguna dependencia sin ADR en `ai-workspace/architecture/adr/`.
-- [ ] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa.
-- [ ] Principio 3: el endpoint solo valida, normaliza y traduce; no contiene reglas de precio ni de impuesto ni accede a la base de datos directamente.
-- [ ] Principio 5: la suite completa pasa antes de cada commit, y el endpoint tiene tests de integración (todos los casos de la sección 6).
-- [ ] Principio 5: el código generado por IA está revisado y las correcciones están anotadas en `ai-workspace/ai-review-log.md`.
-- [ ] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores en el backend; toda entrada se valida.
+- [x] Principio 1: no se añade ninguna dependencia sin ADR en `ai-workspace/architecture/adr/`.
+- [x] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa. Excepción anotada: el commit `f5ed03d` (T-02) mueve fixtures de test, no implementa ningún RF y su mensaje solo cita la tarea (entrada 14 de `ai-review-log.md`).
+- [x] Principio 3: el endpoint solo valida, normaliza y traduce; no contiene reglas de precio ni de impuesto ni accede a la base de datos directamente.
+- [x] Principio 5: la suite completa pasa antes de cada commit, y el endpoint tiene tests de integración (todos los casos de la sección 6).
+- [x] Principio 5: el código generado por IA está revisado y las correcciones están anotadas en `ai-workspace/ai-review-log.md`.
+- [x] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores en el backend; toda entrada se valida.
 
 ## 11. Decisiones cerradas
 
@@ -332,3 +332,4 @@ No hay dudas abiertas.
 | 0.1 | Borrador creado al dividir la spec 001 (v1.2). Contenido movido desde 001 v1.1 sin cambios de comportamiento; los casos T-11 a T-19 y P-11 pasan a ser Q-11 a Q-20 |
 | 1.0 | Revisión antes de planificar:<br>(1) E-23 escrito como escape JSON visible `\u00a0ES`;<br>(2) RF-9, CORS limitado al origen del frontend, con O-10 a O-12;<br>(3) CA-6.7, 404 `not_found` con el formato único para cualquier ruta inexistente, también con barra final (O-13, O-14);<br>(4) `Content-Type` sin distinguir mayúsculas (O-15), y `HEAD` y `OPTIONS` sin preflight responden 405;<br>(5) criterio de arranque con el comando `uvicorn` de `AGENTS.md`.<br>Aprobada |
 | 1.1 | Al planificar, un prototipo mostró que una preflight de CORS aceptada responde 200 con texto plano. CA-6.6 excluye ahora del formato JSON todas las respuestas a preflight, aceptadas o rechazadas, y CA-9.2 aclara que su cuerpo no forma parte del contrato. No cambia ningún caso de prueba. Aprobada |
+| 1.1 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 383 tests en verde en un clon limpio con un entorno virtual nuevo, los 15 commits de código en verde uno a uno, los 33 CA con al menos un test que los cita y pasa, los 77 casos de las tablas con test por HTTP, y los 12 criterios de la sección 10 marcados. p95 de la cotización: 6,3 ms (RNF-2). Spec completada |
