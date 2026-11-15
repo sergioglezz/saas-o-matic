@@ -10,7 +10,7 @@ from collections.abc import Mapping
 from fastapi import Request
 from pydantic import ValidationError
 
-from app.core.errors import VALIDATION_ERROR_MESSAGE, ApiError, FieldError
+from app.core.errors import VALIDATION_ERROR_MESSAGE, ApiError, FieldError, InvalidFieldError
 
 REQUIRED_MESSAGE = "Campo obligatorio"
 NOT_ALLOWED_MESSAGE = "Campo no permitido"
@@ -48,7 +48,10 @@ def _body_error() -> ApiError:
 
 
 def field_errors(error: ValidationError, invalid_messages: Mapping[str, str]) -> list[FieldError]:
-    """One FieldError per field: missing, not allowed, or the field's own invalid message."""
+    """One FieldError per field: missing, not allowed, or the field's own invalid message.
+
+    A validator that raised InvalidFieldError chose its own message (spec 003 RF-3).
+    """
     details: dict[str, FieldError] = {}
     for item in error.errors():
         field = str(item["loc"][0])
@@ -59,6 +62,8 @@ def field_errors(error: ValidationError, invalid_messages: Mapping[str, str]) ->
         elif item["type"] == "extra_forbidden":
             message = NOT_ALLOWED_MESSAGE
         else:
-            message = invalid_messages[field]
+            raised = item.get("ctx", {}).get("error")
+            own_message = raised.message if isinstance(raised, InvalidFieldError) else None
+            message = own_message or invalid_messages[field]
         details[field] = FieldError(field=field, message=message)
     return list(details.values())

@@ -42,6 +42,18 @@ class ApiError(Exception):
     headers: dict[str, str] = field(default_factory=dict)
 
 
+class InvalidFieldError(ValueError):
+    """Raised inside a schema validator when a field needs a message other than its default.
+
+    A field usually has one message whatever rule it breaks (002 CA-6.3); a few have several,
+    like the tax id (spec 003 RF-3). The message travels in the exception itself.
+    """
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+        self.message = message
+
+
 def not_found() -> ApiError:
     """404 not_found, for unknown routes and for resources that do not exist (002 CA-6.7)."""
     return ApiError(status=404, code="not_found", message=NOT_FOUND_MESSAGE)
