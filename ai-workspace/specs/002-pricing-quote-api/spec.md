@@ -1,8 +1,8 @@
 # 002 — Endpoint de cotización (`POST /pricing/quote`)
 
-Estado: borrador v0.1, pendiente de aprobación · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: `ai-workspace/specs/001-pricing-and-tax/spec.md` (v1.2)
+Estado: v1.1 aprobada · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: `ai-workspace/specs/001-pricing-and-tax/spec.md` (v1.2)
 
-Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al aclarar o revisar la spec 001. Todo el contenido viene de la spec 001 v1.1 sin cambios de comportamiento; cada requisito indica de qué parte sale.
+Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al aclarar o revisar la spec 001 o esta spec. RF-1 a RF-8 vienen de la spec 001 v1.1 sin cambios de comportamiento, y cada uno indica de qué parte sale. RF-9 (CORS), CA-6.7 (404) y las ampliaciones de CA-7.1 y CA-8.1 se añadieron en la revisión de la v1.0.
 
 ## 1. Contexto y objetivo
 
@@ -75,17 +75,20 @@ Origen: antes 001 RF-9 · §8.1 «el cliente no envía nunca precios ni totales�
 Origen: antes 001 RF-10 · §8.4 **[P]**.
 
 - **CA-6.1** Si la respuesta es un error, entonces el sistema deberá devolver el cuerpo `{"error": {"code", "message", "details"}}`, donde `details` es siempre una lista (vacía si no aplica) de objetos `{field, message}`.
-- **CA-6.2** El sistema deberá usar exactamente estos `code` y `message` de primer nivel: 422 `validation_error` «Datos no válidos»; 405 `method_not_allowed` «Método no permitido»; 500 `internal_error` «Error interno del servidor».
+- **CA-6.2** El sistema deberá usar exactamente estos `code` y `message` de primer nivel: 422 `validation_error` «Datos no válidos»; 404 `not_found` «Recurso no encontrado»; 405 `method_not_allowed` «Método no permitido»; 500 `internal_error` «Error interno del servidor».
 - **CA-6.3** El sistema deberá incluir en `details` un único elemento por cada campo inválido, aunque el campo incumpla varias reglas, y uno por cada campo no definido. Si `users` y `country` son inválidos a la vez, deberán aparecer los dos.
 - **CA-6.4** El sistema no deberá garantizar el orden de `details`; los tests comparan la lista como conjunto.
 - **CA-6.5** Si se produce un fallo inesperado, entonces el sistema deberá responder 500 con `details` vacío y sin trazas, rutas de archivo ni nombres internos en el cuerpo.
-- **CA-6.6** El sistema deberá responder con `Content-Type: application/json` en todos los casos, de éxito y de error.
+- **CA-6.6** El sistema deberá responder con `Content-Type: application/json` en todos los casos, de éxito y de error, salvo en las respuestas sin cuerpo (`HEAD`) y en las respuestas a preflight de CORS, aceptadas o rechazadas (RF-9), porque son del protocolo CORS y no de la API.
+- **CA-6.7** Si llega una petición a una ruta que no existe (también `/pricing/quote/`, con barra final), entonces el sistema deberá responder 404 con `code` = `not_found`, `message` «Recurso no encontrado» y `details` vacío, sin redirigir a otra ruta.
+
+Alcance del formato: el manejador de errores es global, así que este formato vale para cualquier ruta de la API, presente o futura, no solo para `/pricing/quote`.
 
 ### RF-7. Cuerpo de la petición
 
 Origen: antes 001 RF-11 · §8.1 «JSON en UTF-8» **[P]**.
 
-- **CA-7.1** El sistema deberá aceptar el cuerpo como JSON solo si la cabecera `Content-Type` es `application/json`, con o sin parámetro `charset`.
+- **CA-7.1** El sistema deberá aceptar el cuerpo como JSON solo si la cabecera `Content-Type` es `application/json`, sin distinguir mayúsculas (el estándar HTTP no las distingue en el tipo de contenido) y con o sin parámetro `charset`.
 - **CA-7.2** Si falta `Content-Type`, no es `application/json`, el cuerpo está vacío, no es JSON válido o no es un objeto JSON (lista, texto, número, `null`), entonces el sistema deberá responder 422 con el único detalle `{field: "body", message: "El cuerpo debe ser un objeto JSON"}`.
 - **CA-7.3** Cuando el objeto JSON repite una clave, el sistema deberá usar el último valor de esa clave.
 
@@ -93,7 +96,18 @@ Origen: antes 001 RF-11 · §8.1 «JSON en UTF-8» **[P]**.
 
 Origen: antes 001 RF-12.
 
-- **CA-8.1** Si llega a `/pricing/quote` una petición `GET`, `PUT`, `PATCH` o `DELETE`, entonces el sistema deberá responder 405 con `code` = `method_not_allowed`, `details` vacío y la cabecera `Allow: POST`.
+- **CA-8.1** Si llega a `/pricing/quote` una petición `GET`, `PUT`, `PATCH`, `DELETE`, `HEAD` u `OPTIONS` que no sea una petición preflight de CORS (RF-9), entonces el sistema deberá responder 405 con `code` = `method_not_allowed`, `details` vacío y la cabecera `Allow: POST`. En `HEAD` la respuesta no lleva cuerpo, como exige HTTP, y basta con el código y la cabecera.
+
+### RF-9. CORS limitado al origen del frontend
+
+Origen: §6 «CORS limitado al origen del frontend» **[P]**, `AGENTS.md` (seguridad), revisión de 002 **[P]**.
+
+El navegador solo deja que el dashboard llame a la API si esta lo autoriza con la cabecera `Access-Control-Allow-Origin`. Se autoriza únicamente el origen del frontend.
+
+- **CA-9.1** El sistema deberá autorizar como origen únicamente el del frontend configurado, que por defecto es `http://localhost:4200`.
+- **CA-9.2** Cuando llega una petición preflight (`OPTIONS` con `Origin` y `Access-Control-Request-Method: POST`) desde el origen autorizado, el sistema deberá responder 200 con `Access-Control-Allow-Origin` igual a ese origen, y deberá permitir el método `POST` y la cabecera `Content-Type`. El cuerpo de esa respuesta no forma parte del contrato.
+- **CA-9.3** Cuando llega un `POST` válido desde el origen autorizado, el sistema deberá responder 200 con `Access-Control-Allow-Origin` igual a ese origen.
+- **CA-9.4** Si una petición preflight o un `POST` llega desde cualquier otro origen, entonces el sistema no deberá incluir `Access-Control-Allow-Origin` en la respuesta. El código y el cuerpo de una preflight rechazada los fija el protocolo CORS y no forman parte de este contrato.
 
 ## 5. Contrato observable
 
@@ -138,10 +152,13 @@ Error (formato de §8.4):
 
 | HTTP | `code` | `message` | Cuándo |
 | --- | --- | --- | --- |
-| 200 | (sin error) | — | Petición válida |
-| 405 | `method_not_allowed` | Método no permitido | `GET`, `PUT`, `PATCH` o `DELETE` (con `Allow: POST`) |
+| 200 | (sin error) | — | Petición válida; también una preflight de CORS desde el origen autorizado (RF-9) |
+| 404 | `not_found` | Recurso no encontrado | Ruta inexistente, también `/pricing/quote/` con barra final |
+| 405 | `method_not_allowed` | Método no permitido | `GET`, `PUT`, `PATCH`, `DELETE`, `HEAD` u `OPTIONS` sin preflight (con `Allow: POST`) |
 | 422 | `validation_error` | Datos no válidos | Cualquier fallo de RF-2, RF-3, RF-5 y RF-7 |
 | 500 | `internal_error` | Error interno del servidor | Fallo inesperado |
+
+CORS: solo se autoriza el origen del frontend configurado, que por defecto es `http://localhost:4200` (RF-9).
 
 Mensajes de `details` (únicos textos posibles):
 
@@ -206,7 +223,7 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 | E-20 | `{"users": 15, "country": "12"}` | country/FMT |
 | E-21 | `{"users": 15, "country": "E S"}` | country/FMT |
 | E-22 | `{"users": 15, "country": "ＥＳ"}` (ancho completo) | country/FMT |
-| E-23 | `{"users": 15, "country": " ES"}` (espacio no separable) | country/FMT |
+| E-23 | `{"users": 15, "country": "\u00a0ES"}` (espacio no separable, escrito como escape JSON) | country/FMT |
 | E-24 | `{"users": 15, "country": "   "}` | country/FMT |
 | E-25 | `{"users": 15, "country": ""}` | country/FMT |
 | E-26 | `{"users": 15, "country": 34}` | country/FMT |
@@ -234,18 +251,24 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 | O-1 | `{"users": 15, "country": "ES"}` con `Content-Type: application/json; charset=utf-8` | 200, igual que Q-4 |
 | O-2 | `{"users": 1, "users": 15, "country": "ES"}` (clave repetida) | 200, igual que Q-4 |
 | O-3 | `GET /pricing/quote` | 405 `method_not_allowed` «Método no permitido», `details` vacío, `Allow: POST` |
-| O-4 | `PUT`, `PATCH` y `DELETE /pricing/quote` | Igual que O-3 |
+| O-4 | `PUT`, `PATCH`, `DELETE`, `HEAD` y `OPTIONS` sin cabeceras de preflight sobre `/pricing/quote` | 405 con `Allow: POST`; salvo en `HEAD`, que no lleva cuerpo, el mismo cuerpo que O-3 |
 | O-5 | Fallo interno forzado en la prueba (fuente de tasas no disponible) | 500 `internal_error` «Error interno del servidor», `details` vacío; el cuerpo no contiene «Traceback», rutas de archivo ni nombres de módulos |
 | O-6 | La petición de Q-4 enviada dos veces | Dos respuestas idénticas |
 | O-7 | Cualquier respuesta 200 | Sin cabecera `Location` y sin campo `id` |
-| O-8 | Respuestas de Q-4, E-1, O-3 y O-5 | `Content-Type: application/json` |
+| O-8 | Respuestas de Q-4, E-1, O-3, O-5 y O-13 | `Content-Type: application/json` |
 | O-9 | Cualquier respuesta 200 | Todos los números del cuerpo son enteros JSON, sin decimales ni exponente |
+| O-10 | Preflight: `OPTIONS /pricing/quote` con `Origin: http://localhost:4200` y `Access-Control-Request-Method: POST` | 200; `Access-Control-Allow-Origin: http://localhost:4200`; los métodos permitidos incluyen `POST` y las cabeceras permitidas, `Content-Type` |
+| O-11 | La misma preflight con `Origin: http://otro-origen.example` | Sin cabecera `Access-Control-Allow-Origin` |
+| O-12 | La petición de Q-4 con `Origin: http://localhost:4200` | 200, igual que Q-4, con `Access-Control-Allow-Origin: http://localhost:4200` |
+| O-13 | `GET /no-existe` | 404 `not_found` «Recurso no encontrado», `details` vacío |
+| O-14 | La petición de Q-4 enviada a `/pricing/quote/` (con barra final) | 404 `not_found`, sin redirección |
+| O-15 | La petición de Q-4 con `Content-Type: Application/JSON` | 200, igual que Q-4 |
 
 ## 7. Requisitos no funcionales
 
 - **RNF-1 Una sola fuente de verdad** (antes 001 RNF-4): el endpoint no calcula importes; los obtiene del cálculo de 001 (ADR 0004 [P]).
 - **RNF-2 Rendimiento** (antes 001 RNF-5; informativo, no bloquea la entrega): en la máquina de desarrollo, con el servidor ya arrancado, el percentil 95 de 100 cotizaciones secuenciales queda por debajo de 200 ms (§6 [P]). Se mide una vez y el resultado se anota en el README.
-- **RNF-3 Seguridad** (antes 001 RNF-6): los errores no exponen trazas, rutas ni nombres internos (§6 [P]; caso O-5).
+- **RNF-3 Seguridad** (antes 001 RNF-6): los errores no exponen trazas, rutas ni nombres internos (§6 [P]; caso O-5), y CORS solo autoriza el origen del frontend (RF-9; casos O-10 a O-12).
 - **RNF-4 Idioma** (antes 001 RNF-7): los únicos textos de error posibles son los de la sección 5, todos en español; los nombres de campo van en inglés y `snake_case` (§6 y §8.1 [P]).
 - **RNF-5 Documentación** (antes 001 RNF-8): el endpoint aparece en la documentación interactiva de la API con su ejemplo de petición y respuesta (§3 [P]).
 
@@ -261,7 +284,10 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 - **Cuerpo vacío o raro:** `{}`, cuerpo sin bytes, `null`, lista, JSON inválido y cabecera incorrecta o ausente (E-31, E-37 a E-42).
 - **Campos no definidos:** solos, varios a la vez, combinados con otros errores y con mayúsculas distintas (E-32 a E-36).
 - **Clave repetida:** gana el último valor (O-2).
-- **Métodos no permitidos y fallo interno:** O-3 a O-5.
+- **Métodos no permitidos y fallo interno:** O-3 a O-5; también `HEAD` y `OPTIONS` sin preflight (O-4).
+- **CORS:** preflight desde el origen autorizado y desde otro origen, y `POST` con `Origin` (O-10 a O-12).
+- **Rutas inexistentes y barra final:** 404 con el formato único, sin redirección (O-13, O-14).
+- **Tipo de contenido con mayúsculas:** se acepta (O-15).
 
 ## 9. Fuera de alcance
 
@@ -270,17 +296,18 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 - La pantalla del simulador y la conversión de divisas: specs de frontend.
 - Autenticación y límites de peticiones.
 - Límite de tamaño del cuerpo: es una herramienta interna sin exposición pública (§6 del documento 00); se documenta en el README.
-- Rutas distintas de `/pricing/quote` exacta (por ejemplo con barra final) y peticiones `OPTIONS` de CORS: su comportamiento lo fija la configuración general de la API, no esta spec.
+- Otros orígenes de CORS además del frontend, credenciales (cookies) en CORS y cabeceras distintas de `Content-Type`.
 
 ## 10. Criterios de finalización
 
 **Funcionalidad**
 
-- [ ] Cada caso de las tablas 6.1 a 6.3 (Q-1 a Q-20, E-1 a E-42, O-1 a O-9) tiene un test de integración y todos pasan.
+- [ ] Cada caso de las tablas 6.1 a 6.3 (Q-1 a Q-20, E-1 a E-42, O-1 a O-15) tiene un test de integración y todos pasan.
 - [ ] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador.
 - [ ] `POST /pricing/quote` responde exactamente el ejemplo de la sección 5 con `{ "users": 15, "country": "ES" }`.
 - [ ] El endpoint aparece en la documentación interactiva con su ejemplo.
 - [ ] RNF-2 medido una vez y anotado en el README.
+- [ ] Con la base de datos migrada, el comando de `AGENTS.md` (`cd backend && uvicorn app.main:app --reload`) arranca la API, `/docs` responde 200 y una cotización real desde la línea de comandos devuelve el ejemplo de la sección 5. El comando queda confirmado en `AGENTS.md`.
 
 **Cumplimiento de la constitución** (comprobación en revisión)
 
@@ -303,3 +330,5 @@ No hay dudas abiertas.
 | Versión | Cambio |
 | --- | --- |
 | 0.1 | Borrador creado al dividir la spec 001 (v1.2). Contenido movido desde 001 v1.1 sin cambios de comportamiento; los casos T-11 a T-19 y P-11 pasan a ser Q-11 a Q-20 |
+| 1.0 | Revisión antes de planificar:<br>(1) E-23 escrito como escape JSON visible `\u00a0ES`;<br>(2) RF-9, CORS limitado al origen del frontend, con O-10 a O-12;<br>(3) CA-6.7, 404 `not_found` con el formato único para cualquier ruta inexistente, también con barra final (O-13, O-14);<br>(4) `Content-Type` sin distinguir mayúsculas (O-15), y `HEAD` y `OPTIONS` sin preflight responden 405;<br>(5) criterio de arranque con el comando `uvicorn` de `AGENTS.md`.<br>Aprobada |
+| 1.1 | Al planificar, un prototipo mostró que una preflight de CORS aceptada responde 200 con texto plano. CA-6.6 excluye ahora del formato JSON todas las respuestas a preflight, aceptadas o rechazadas, y CA-9.2 aclara que su cuerpo no forma parte del contrato. No cambia ningún caso de prueba. Aprobada |
