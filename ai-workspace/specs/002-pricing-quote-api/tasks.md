@@ -22,7 +22,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 | 0 — Preparación | T-01 a T-03 | ✅ Completada: instalación desde cero sin conflictos, los mismos 188 tests tras mover las fixtures, 190 en verde con los de configuración; ruff y mypy en verde |
 | 1 — Esqueleto y errores globales | T-04, T-05 | ✅ Completada: 198 tests; ruff y mypy en verde; el test de la barra final detecta la redirección si se reactiva |
 | 2 — Piezas de validación | T-06 a T-10 | ✅ Completada: 278 tests (80 nuevos); ruff y mypy en verde; `quote` y `set_tax_rate` sin cambios |
-| 3 — Endpoint | T-11 a T-15 | Pendiente |
+| 3 — Endpoint | T-11 a T-15 | ✅ Completada: 383 tests; los 33 CA con un test que los cita y pasa; los 77 casos de las tablas por HTTP; ruff y mypy en verde |
 | 4 — Cierre | T-16 a T-18 | Pendiente |
 
 ## Fase 0 — Preparación
@@ -99,7 +99,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
 
 ## Fase 3 — Endpoint (nivel I)
 
-- [ ] **T-11. Ruta `POST /pricing/quote` y cotizaciones válidas**
+- [x] **T-11. Ruta `POST /pricing/quote` y cotizaciones válidas** · ✅ completada · commit `e149fbf`
   - **RF:** RF-1 (CA-1.1 a CA-1.3), RF-3 (CA-3.1, CA-3.6), RF-4 (CA-4.1 a CA-4.4) y RF-7 (CA-7.1 a CA-7.3). **Depende de:** T-07, T-08, T-09 y T-10.
   - **Archivos:** `app/api/pricing.py` (router, camino feliz: leer, validar, `quote` y responder), `app/main.py` (incluir el router) y `tests/api/test_quote_valid.py`.
   - **Rojo (I):** Q-1 a Q-20, O-1, O-2, O-6, O-7, O-9, O-15 y E-37 a E-42. Hoy fallan porque la ruta no existe.
@@ -109,7 +109,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
     - las respuestas 200 no llevan `Location` ni `id`;
     - y ningún número de la respuesta tiene decimales.
 
-- [ ] **T-12. Errores de validación por HTTP**
+- [x] **T-12. Errores de validación por HTTP** · ✅ completada · commit `0650756`
   - **RF:** RF-2 (CA-2.1 a CA-2.3), RF-3 (CA-3.2 a CA-3.5), RF-5 (CA-5.1, CA-5.2) y RF-6 (CA-6.1, CA-6.3, CA-6.4). **Depende de:** T-11.
   - **Archivos:**
     - `app/api/pricing.py`: camino de error, es decir, `field_errors` más la comprobación del país con `country_is_supported` (plan DT-4).
@@ -118,7 +118,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
   - **Rojo (I):** E-1 a E-36. Hoy dan 500 porque los errores de Pydantic y de dominio no se traducen.
   - **Hecho cuando:** E-1 a E-36 devuelven 422 `validation_error` «Datos no válidos» con exactamente los `details` de la tabla 6.2 (comparados como conjunto), incluidos E-17 (que pasa por el error de dominio) y E-35 (los dos errores a la vez).
 
-- [ ] **T-13. Métodos no permitidos, fallo interno y tipo de contenido**
+- [x] **T-13. Métodos no permitidos, fallo interno y tipo de contenido** · ✅ completada · commit `adfc8e4`
   - **RF:** RF-8 (CA-8.1) y RF-6 (CA-6.2, CA-6.5, CA-6.6). **Depende de:** T-12.
   - **Archivos:** `app/core/errors.py` (405 conservando `Allow`) y `tests/api/test_quote_protocol.py`.
   - **Rojo (I):**
@@ -130,7 +130,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
     - O-5 da 500 `internal_error` sin «Traceback», rutas ni nombres de módulos;
     - y Q-4, E-1, O-3, O-5 y O-13 llevan `Content-Type: application/json`.
 
-- [ ] **T-14. CORS limitado al frontend**
+- [x] **T-14. CORS limitado al frontend** · ✅ completada · commit `0ae896e`
   - **RF:** RF-9 (CA-9.1 a CA-9.4). **Depende de:** T-03 y T-11.
   - **Archivos:** `app/main.py` (`CORSMiddleware` con el origen configurado, método `POST` y cabecera `Content-Type`) y `tests/api/test_cors.py`.
   - **Rojo (I):** O-10 a O-12. Hoy no hay cabeceras de CORS.
@@ -139,7 +139,7 @@ Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado
     - O-11, desde otro origen, no lleva esa cabecera;
     - y O-12 es igual que Q-4 y la lleva.
 
-- [ ] **T-15. Documentación interactiva**
+- [x] **T-15. Documentación interactiva** · ✅ completada · commit `db626bd`
   - **RF:** RF-1 y RNF-5. **Depende de:** T-11.
   - **Archivos:** `app/api/pricing.py` (`openapi_extra` con el esquema y el ejemplo de la petición) y `tests/api/test_openapi_docs.py`.
   - **Rojo (I):** `/openapi.json` no describe hoy el cuerpo de `POST /pricing/quote`, porque se lee en crudo (plan DT-1).
