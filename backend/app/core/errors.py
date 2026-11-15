@@ -11,6 +11,9 @@ from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.domain.errors import InvalidUsersError, UnsupportedCountryError
+from app.schemas.pricing import COUNTRY_UNSUPPORTED_MESSAGE, USERS_INVALID_MESSAGE
+
 VALIDATION_ERROR_MESSAGE = "Datos no válidos"
 NOT_FOUND_MESSAGE = "Recurso no encontrado"
 INTERNAL_ERROR_MESSAGE = "Error interno del servidor"
@@ -46,8 +49,27 @@ def error_response(error: ApiError) -> JSONResponse:
 
 def register_error_handlers(app: FastAPI) -> None:
     app.add_exception_handler(ApiError, _handle_api_error)
+    app.add_exception_handler(UnsupportedCountryError, _handle_domain_error)
+    app.add_exception_handler(InvalidUsersError, _handle_domain_error)
     app.add_exception_handler(StarletteHTTPException, _handle_http_exception)
     app.add_exception_handler(Exception, _handle_unexpected_error)
+
+
+# Domain errors carry no user-facing text (plan 001 DT-8); this is the single place where they
+# become HTTP responses (00-spec-first section 6).
+_DOMAIN_ERROR_DETAILS: dict[type[Exception], FieldError] = {
+    UnsupportedCountryError: FieldError(field="country", message=COUNTRY_UNSUPPORTED_MESSAGE),
+    InvalidUsersError: FieldError(field="users", message=USERS_INVALID_MESSAGE),
+}
+
+
+async def _handle_domain_error(_request: Request, exc: Exception) -> Response:
+    detail = _DOMAIN_ERROR_DETAILS[type(exc)]
+    return error_response(
+        ApiError(
+            status=422, code="validation_error", message=VALIDATION_ERROR_MESSAGE, details=[detail]
+        )
+    )
 
 
 async def _handle_api_error(_request: Request, exc: Exception) -> Response:
