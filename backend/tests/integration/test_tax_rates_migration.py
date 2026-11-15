@@ -1,4 +1,4 @@
-"""Migration 0001_create_tax_rates: spec 001 CA-4.2, CA-4.3, the database part of CA-13.1, case C-6.
+"""Migration 0001_create_tax_rates: spec 001 CA-4.3, the database part of CA-13.1, case C-6.
 
 Also checks the CHECK constraints of plan section 3 and that the ORM model mirrors the migration.
 """

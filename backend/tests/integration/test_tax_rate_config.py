@@ -1,6 +1,7 @@
 """Tax rate configuration through the service (level D), spec 001 task T-11.
 
-Covers CA-13.1 and CA-13.2 with table 6.4 (C-1 to C-5) and table 6.3 (R-1 to R-9) at level D.
+Covers CA-4.2, CA-13.1 and CA-13.2 with table 6.4 (C-1 to C-5) and table 6.3 (R-1 to R-9) at
+level D.
 """
 
 import pytest
@@ -65,6 +66,23 @@ def test_country_whose_rate_was_removed_is_no_longer_supported(
 
     with pytest.raises(UnsupportedCountryError):
         quote(1, "PT", repository)
+
+
+def test_supported_countries_are_exactly_the_configured_ones(
+    repository: TaxRateRepository,
+) -> None:
+    """CA-4.2: a country becomes supported when it gets a rate and stops when it loses it."""
+    with pytest.raises(UnsupportedCountryError):
+        quote(15, "ZZ", repository)
+
+    set_tax_rate("ZZ", 1500, repository)
+    supported = quote(15, "ZZ", repository)
+    assert supported.tax_rate_bp == 1500
+    assert (supported.tax_cents, supported.total_cents) == (2100, 16100)
+
+    repository.delete("ZZ")
+    with pytest.raises(UnsupportedCountryError):
+        quote(15, "ZZ", repository)
 
 
 def test_rate_change_applies_to_the_next_quote(repository: TaxRateRepository) -> None:
