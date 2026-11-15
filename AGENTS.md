@@ -12,7 +12,7 @@ Se confirman al crear cada scaffold. Si un comando no existe o falla, avísame y
 
 * Ejecutar backend: `cd backend && uvicorn app.main:app --reload` (API en `localhost:8000`, documentación en `/docs`). ✅ Confirmado (002 T-16), con el entorno virtual activado y la base de datos migrada (`alembic upgrade head`).
 * Ejecutar frontend: `cd frontend && npm start` (`localhost:4200`)
-* Migraciones y datos demo: `cd backend && alembic upgrade head && python -m app.db.seed`
+* Migraciones y datos demo: `cd backend && alembic upgrade head && python -m app.db.seed`. ✅ Confirmado (003 T-19), con el entorno virtual activado; el seed se puede repetir sin duplicar datos.
 * Tests: `cd backend && pytest` y `cd frontend && npm test`
 * Lint/formato: `cd backend && ruff check . && ruff format . && mypy .` y `cd frontend && npm run lint`
 
