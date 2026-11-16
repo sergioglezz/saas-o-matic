@@ -1,6 +1,6 @@
 # Plan técnico — 004 Simulaciones
 
-Estado: v1.0 aprobado por el autor · Spec: `spec.md` v1.0 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7.3 y §8 de `00-spec-first.md` · Base: specs y código de 001, 002 y 003
+Estado: v1.0, ejecutado según `tasks.md`, revisado y aprobado por el autor · Spec: `spec.md` v1.0 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7.3 y §8 de `00-spec-first.md` · Base: specs y código de 001, 002 y 003
 
 Antes de escribir este plan se comprobaron con un prototipo desechable, fuera del repositorio, los comportamientos de Pydantic, SQLAlchemy, SQLite y FastAPI en los que se apoya. Se montaron las piezas igual que la aplicación real (entrada 17 del log). La sección 10 recoge lo que salió.
 

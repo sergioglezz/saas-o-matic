@@ -1,6 +1,6 @@
 # 004 — Simulaciones: guardado e historial
 
-Estado: v1.0 aprobada por el autor, con las decisiones D-1 a D-11 confirmadas · ✅ Implementada y verificada: 11 de los 12 criterios de finalización cumplidos; quedan las entradas del log, pendientes del autor · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 001 (v1.2), 002 (v1.1) y 003 (v1.0), todas completadas
+Estado: v1.0 aprobada por el autor, con las decisiones D-1 a D-11 confirmadas · ✅ Completada, revisada y aprobada por el autor, con los 12 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 001 (v1.2), 002 (v1.1) y 003 (v1.0), todas completadas
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al redactar esta spec. Las decisiones nuevas están en la sección 11 para que el autor las confirme o las cambie.
 
@@ -423,7 +423,7 @@ Simulaciones de demostración (clientes de 003 RF-10):
 - [x] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa (los 12 commits de T-01 a T-12).
 - [x] Principio 3: los routers no contienen reglas de negocio ni SQL; los importes salen del cálculo de 001 (tests de arquitectura, SN-1 y SE-5).
 - [x] Principio 4: el esquema cambia solo con una migración nueva; 0001 y 0002 no se tocan; cada simulación guarda su instantánea.
-- [ ] Principio 5: la suite completa pasa en cada commit; cada endpoint tiene test de integración; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`. Cumplido: la suite completa pasa en cada uno de los 12 commits de código, comprobado uno a uno en una copia aparte con un entorno virtual nuevo, y cada endpoint tiene test de integración. Pendiente: las entradas del log, que anota el autor.
+- [x] Principio 5: la suite completa pasa en cada commit; cada endpoint tiene test de integración; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`. Cumplido: la suite completa pasa en cada uno de los 12 commits de código, comprobado uno a uno en una copia aparte con un entorno virtual nuevo, y cada endpoint tiene test de integración. Las correcciones están anotadas en el log (entradas 21 a 31).
 - [x] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores; toda entrada se valida.
 
 ## 11. Decisiones tomadas al redactar
@@ -449,3 +449,4 @@ Todas son **[P]** y el autor las confirmó al aprobar la spec. Ninguna contradic
 | 1.0 | Versión inicial. Pendiente de la revisión del autor |
 | 1.0 (aprobación) | Sin cambios en los requisitos. El autor aprobó la spec y confirmó las decisiones D-1 a D-11 |
 | 1.0 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 1051 tests en verde (744 de 001 a 003 sin modificar); los 43 CA y los 86 casos con un test que los cita en su nivel y pasa; verificación completa en una copia limpia con un entorno virtual nuevo y arranque real con guardado, errores, historial, CORS y `/docs`. Commits uno por tarea, cada uno verificado por separado. Pendiente: entradas del log y revisión del autor |
+| 1.0 (revisión) | Sin cambios en los requisitos. El autor revisó la spec y el trabajo realizado y aprobó el cierre; las correcciones al código generado están anotadas en el log (entradas 21 a 31). Spec cerrada |

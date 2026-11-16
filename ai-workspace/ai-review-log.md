@@ -1,13 +1,13 @@
 # Log de revisión del trabajo generado por IA
 
-Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 003, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
+Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 004, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
 
 ## Cómo se revisa
 
 1. **Antes del código:** cada documento (constitución, spec, plan, tareas) se revisa contra `00-spec-first.md` y `AGENTS.md` y lo aprueba el autor antes de pasar al siguiente.
 2. **Durante el código:** cada tarea sigue rojo → verde → revisar. Los tests salen de las tablas de la spec y se ejecutan antes de implementar, para confirmar que fallan por el motivo esperado.
 3. **Al cerrar cada bloque:** verificación completa con `pytest`, `ruff check`, `ruff format --check` y `mypy` estricto; validación contra los CA de la spec; y aprobación del autor antes de cada commit.
-4. **Al cerrar la funcionalidad (T-12 en 001, T-18 en 002, T-20 en 003):**
+4. **Al cerrar la funcionalidad (T-12 en 001, T-18 en 002, T-20 en 003, T-14 en 004):**
    - instalación desde cero en un clon limpio con un entorno virtual nuevo;
    - la suite, el lint y los tipos ejecutados en cada commit de código, uno a uno;
    - comprobación de que cada CA y cada caso de la spec aparecen citados en algún test.
@@ -36,6 +36,17 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 18 | Plan 003, DT-3 (mensajes propios por campo) | Errores de Pydantic con tipo propio (`PydanticCustomError`), comprobados en el prototipo | `PydanticCustomError` se importa de `pydantic_core`, un paquete que `requirements.txt` no declara: habría sido una dependencia directa sin fijar, contra el principio 1 | Al escribir el esquema en T-11, antes de añadir el import | Un `ValueError` propio (`InvalidFieldError`) que lleva su mensaje; Pydantic lo entrega intacto y `field_errors` lo lee. DT-3 del plan actualizada (`8ee56cd`) |
 | 19 | 003 T-17, `/openapi.json` | FastAPI documenta por su cuenta un 422 con su propio esquema (`HTTPValidationError`) en toda ruta con parámetros | La API nunca responde con ese formato (RF-7): la documentación habría anunciado un error que no existe, también en la ficha, que no puede dar 422 | Test de documentación escrito antes del código en T-17 | Las rutas declaran sus errores con el formato único y `/openapi.json` se limpia del 422 del framework (`e6fa3cd`) |
 | 20 | 003, tests de clientes (T-09 a T-14) | La tabla de seis clientes de la spec escrita dos veces, en los tests de base de datos y en los de HTTP; y ningún test impedía que un router importase SQLAlchemy o un repositorio | Datos duplicados que podían divergir de la spec por separado, y una regla de capas (RNF-1) que solo se cumplía por disciplina | Revisión conjunta del código contra la spec y el plan en T-20 | Datos en `tests/customers_data.py` y test de arquitectura de `app/api/` (`7556365`) |
+| 21 | 004 T-01, docstring de `test_simulation_domain.py` | Un test citaba la decisión técnica DT-2 como origen del orden «almacenamiento antes que llamadas» | DT-2 trata de que el servicio vuelva a validar; ese orden lo fija la sección 4 del plan. Una cita equivocada rompe la trazabilidad | Revisión de la fase 1 contra el plan | Cita corregida a la sección 4 del plan (`5d02c4e`) |
+| 22 | 004 T-02, test DB-9 (borrar un cliente con simulaciones) | Tras el borrado rechazado, el test hacía `rollback()` y comprobaba que el cliente seguía | El `rollback()` deshacía también las filas que la fixture había insertado sin confirmar: el test fallaba aunque la base de datos rechazaba bien el borrado | El test falló con la migración ya correcta | La fixture confirma sus filas antes del borrado, y el test comprueba también que la simulación sigue (`6bbf745`) |
+| 23 | 004 T-02, `upgrade()` de la migración 0003 | Una sola función con las dos tablas, sus columnas y sus quince restricciones | 66 líneas, contra el límite de 40 de `AGENTS.md` | Comprobación de tamaños al revisar la fase 2 | Partida en funciones y tablas de restricciones de menos de 40 líneas; `compare_metadata` y `alembic check` confirman el mismo esquema (`6bbf745`) |
+| 24 | 004 T-03, test DB-10 (guardado fallido) | Esperaba que, tras un guardado fallido, la siguiente simulación tuviera `id` 2 | Falso: el `rollback` deshace también el contador de `AUTOINCREMENT` en `sqlite_sequence`, así que el `id` no avanza | Al repasar el test antes de ejecutarlo | El test comprueba que no queda ninguna fila y que el repositorio sigue guardando (`55d6654`) |
+| 25 | 004 T-07, test SI-13 («guardar no cambia el cliente») | Comparaba el cliente antes y después de guardar | No comprobaba que el guardado se hubiera hecho: pasaba en la fase roja, con la ruta todavía sin existir | Un test que pasaba en rojo | El test exige el 201 del guardado (`501bef8`). Los tests de T-08 y T-10, que pasaron sin fase roja porque su código ya existía, se comprobaron con mutaciones que sí los hacen fallar |
+| 26 | 004 T-07, `test_simulations_create.py` | Un test del historial dentro de los tests del guardado | Dependía de la ruta de T-09: la tarea no se podía cerrar en verde por sí sola | Al ejecutar la fase roja de T-07 | Quitado de T-07; lo cubre HI-9 en T-09 (`501bef8`, `27a68c5`) |
+| 27 | 004 T-11, `app/api/customers_docs.py` | Un reemplazo de texto de `_error(` por `error_example(` para usar los helpers compartidos | El fragmento también aparecía dentro de `without_framework_validation_error(`, que quedó renombrada y rompió la importación en `main.py` | Los tests de documentación fallaron al momento con `ImportError` | Nombre restaurado y diff revisado línea a línea antes de seguir (`f311b62`) |
+| 28 | 004 T-13, arranque real | Parar el servidor de prueba con `taskkill /IM uvicorn.exe` | Habría cerrado cualquier `uvicorn` de la máquina, también uno del autor | El clasificador de permisos de Claude Code denegó el comando | El servidor se arranca como tarea propia de la sesión y se para solo esa |
+| 29 | 004 T-14, informe de trazabilidad | Un plugin de pytest desechable que filtraba los tests de la 004 por el texto «spec 004» | Distinguía mayúsculas: el módulo de protocolo dice «Spec 004», y los diez casos ER y dos CA salieron como «sin test» | El informe contradecía tests que se sabía que existían y pasaban | Filtro insensible a mayúsculas: 43 de 43 CA y 86 de 86 casos |
+| 30 | 004 T-14, recuentos en la spec, las tareas y los mensajes al autor | «42 CA» y «11 de los 13 criterios» | Son 43 CA y 12 criterios (10 cumplidos entonces): cifras escritas de memoria | Al contar las casillas de la sección 10 | Cifras corregidas con un recuento sobre el propio documento (`34c0bb5`) |
+| 31 | 004, commit de T-05 | Prefijo `refactor:` | `AGENTS.md` solo admite `docs`, `feat`, `test`, `fix` y `chore` | Revisión del mensaje justo después de crear el commit | Mensaje cambiado a `chore:` con `--amend` antes del push, con el mismo árbol (`5d70bf4`) |
 
 ## Reglas que salen de este registro
 
@@ -51,3 +62,9 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 - **Antes de importar un paquete se comprueba que está declarado en `requirements.txt`** (entrada 18).
 - **La documentación generada también se revisa: lo que el framework añade solo puede contradecir el contrato** (entrada 19).
 - **Cada regla de capas tiene un test que la vigila, y cada tabla de la spec se copia una sola vez en los tests** (entrada 20).
+- **Un test que pasa antes de que exista su código se refuerza, o se comprueba con una mutación que lo haga fallar** (entrada 25).
+- **Cada tarea se cierra en verde con sus propios tests: ninguno depende de una tarea posterior** (entrada 26).
+- **Un renombrado se hace sobre el identificador completo y se revisa el diff antes de seguir** (entrada 27).
+- **Solo se para o se borra lo que la propia sesión arrancó o creó** (entrada 28).
+- **Las cifras de un informe salen de un recuento, no de memoria** (entradas 29 y 30).
+- **El mensaje de cada commit se comprueba contra las convenciones de `AGENTS.md` antes de crearlo** (entrada 31).
