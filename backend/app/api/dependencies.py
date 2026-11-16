@@ -12,9 +12,11 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.clock import utc_now
 from app.repositories.customers import CustomerRepository
+from app.repositories.simulations import SimulationRepository
 from app.repositories.tax_rates import TaxRateRepository
 from app.services.customers import CustomerStore
 from app.services.pricing import TaxRateSource
+from app.services.simulations import SimulationStore
 
 
 def get_db_session(request: Request) -> Iterator[Session]:
@@ -30,6 +32,10 @@ def get_rate_source(session: Annotated[Session, Depends(get_db_session)]) -> Tax
 
 def get_customer_store(session: Annotated[Session, Depends(get_db_session)]) -> CustomerStore:
     return CustomerRepository(session)
+
+
+def get_simulation_store(session: Annotated[Session, Depends(get_db_session)]) -> SimulationStore:
+    return SimulationRepository(session)
 
 
 def get_now() -> datetime:

@@ -11,6 +11,7 @@ from sqlalchemy import Engine
 from app.api.dependencies import get_now
 from app.main import create_app
 from tests.api.customer_requests import FIXED_NOW
+from tests.api.simulation_requests import SettableClock
 
 
 @pytest.fixture
@@ -24,6 +25,14 @@ def client(app: FastAPI) -> Iterator[TestClient]:
     # raise_server_exceptions=False: a 500 must come back as a response, as a browser sees it.
     with TestClient(app, raise_server_exceptions=False) as test_client:
         yield test_client
+
+
+@pytest.fixture
+def simulation_clock(app: FastAPI) -> SettableClock:
+    """A "now" that starts at 2026-11-16T10:00:00Z and the test can move (spec 004 table 6.5)."""
+    clock = SettableClock()
+    app.dependency_overrides[get_now] = lambda: clock.now
+    return clock
 
 
 @pytest.fixture

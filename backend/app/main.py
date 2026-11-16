@@ -13,6 +13,7 @@ from app.api.customers_docs import without_framework_validation_error
 from app.api.error_mapping import register_domain_error_handlers
 from app.api.pricing import restore_openapi_examples
 from app.api.pricing import router as pricing_router
+from app.api.simulations import router as simulations_router
 from app.core.config import get_frontend_origin
 from app.core.errors import register_error_handlers
 from app.db.session import create_db_engine, create_session_factory
@@ -43,6 +44,7 @@ def create_app(database_url: str | None = None, frontend_origin: str | None = No
     register_domain_error_handlers(app)
     app.include_router(pricing_router)
     app.include_router(customers_router)
+    app.include_router(simulations_router)
 
     generate_openapi = app.openapi
 
