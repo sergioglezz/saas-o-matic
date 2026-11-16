@@ -14,6 +14,7 @@ from app.api.error_mapping import register_domain_error_handlers
 from app.api.pricing import restore_openapi_examples
 from app.api.pricing import router as pricing_router
 from app.api.simulations import router as simulations_router
+from app.api.simulations_docs import restore_simulation_examples
 from app.core.config import get_frontend_origin
 from app.core.errors import register_error_handlers
 from app.db.session import create_db_engine, create_session_factory
@@ -49,7 +50,8 @@ def create_app(database_url: str | None = None, frontend_origin: str | None = No
     generate_openapi = app.openapi
 
     def openapi() -> dict[str, Any]:
-        return without_framework_validation_error(restore_openapi_examples(generate_openapi()))
+        schema = restore_simulation_examples(restore_openapi_examples(generate_openapi()))
+        return without_framework_validation_error(schema)
 
     app.openapi = openapi  # type: ignore[method-assign]  # FastAPI's documented customization
     return app

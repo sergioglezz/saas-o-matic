@@ -12,6 +12,7 @@ from pydantic import ValidationError
 
 from app.api.dependencies import get_customer_store, get_now, get_rate_source, get_simulation_store
 from app.api.identifiers import parse_customer_id
+from app.api.simulations_docs import HISTORY_RESPONSES, SAVE_BODY_DOC, SAVE_RESPONSES
 from app.api.validation import field_errors, read_json_object, validation_error
 from app.schemas.pagination import PAGE_INVALID_MESSAGES, PageQuery
 from app.schemas.simulations import (
@@ -27,7 +28,13 @@ from app.services.simulations import SimulationStore, list_simulations, save_sim
 router = APIRouter()
 
 
-@router.post("/simulations", status_code=201, response_model=SimulationResponse)
+@router.post(
+    "/simulations",
+    status_code=201,
+    response_model=SimulationResponse,
+    openapi_extra=SAVE_BODY_DOC,
+    responses=SAVE_RESPONSES,
+)
 def post_simulation(
     payload: Annotated[dict[str, object], Depends(read_json_object)],
     customers: Annotated[CustomerStore, Depends(get_customer_store)],
@@ -47,7 +54,11 @@ def post_simulation(
     return SimulationResponse.from_simulation(simulation)
 
 
-@router.get("/customers/{customer_id}/simulations", response_model=SimulationListResponse)
+@router.get(
+    "/customers/{customer_id}/simulations",
+    response_model=SimulationListResponse,
+    responses=HISTORY_RESPONSES,
+)
 def list_customer_simulations(
     customer_id: str,
     customers: Annotated[CustomerStore, Depends(get_customer_store)],
