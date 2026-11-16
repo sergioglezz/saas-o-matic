@@ -48,6 +48,14 @@ class CustomerRepository:
         record = self._session.get(CustomerRecord, customer_id)
         return _to_customer(record) if record is not None else None
 
+    def find_by_tax_id(self, tax_id: str) -> Customer | None:
+        """The customer whose normalized tax id is exactly ``tax_id``, or None.
+
+        Used by the demo seed to find its customers again (spec 004 CA-8.2, plan DT-13).
+        """
+        record = self._session.scalar(select(CustomerRecord).where(CustomerRecord.tax_id == tax_id))
+        return _to_customer(record) if record is not None else None
+
     def search(
         self, name_fragment: str, tax_id_fragment: str, limit: int, offset: int
     ) -> CustomerPage:
