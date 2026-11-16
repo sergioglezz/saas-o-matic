@@ -38,6 +38,18 @@ El enunciado pide sumar «el impuesto correspondiente al país del cliente», pe
 
 **Fuera de alcance:** editar o borrar clientes, validar el identificador fiscal de otros países y comprobar que el identificador o el correo existen de verdad.
 
+### Simulaciones (spec 004)
+
+- **Endpoints.** `POST /simulations` calcula y guarda una simulación; `GET /customers/{id}/simulations` devuelve el historial del cliente, de la más reciente a la más antigua, paginado con `limit` (1 a 100, por defecto 50) y `offset`, igual que el listado de clientes.
+- **Mismo cálculo que la cotización.** La simulación se calcula con el país guardado en el cliente y con el mismo código que `POST /pricing/quote`: con los mismos datos, las cifras coinciden. La petición no lleva país ni importes; si los lleva, se rechazan.
+- **Instantánea.** Cada simulación guarda la tasa aplicada, el subtotal, el impuesto, el total y los tres tramos con sus límites. Si después cambia una tasa o un país deja de estar soportado, el historial sigue mostrando lo que se guardó.
+- **Campos.** `customer_id`, `active_users` (0 a 100 000, como la cotización), `storage_gb` y `api_calls_per_month`, los cuatro obligatorios. La simulación usa `active_users`; la cotización sigue usando `users`.
+- **Almacenamiento y llamadas a la API.** Se guardan, pero no cambian el precio: la tarifa del enunciado solo define tramos por usuario (pendiente de confirmar). Como supuesto, admiten de 0 a 1 000 000 GB y de 0 a 1 000 000 000 llamadas al mes.
+- **Errores.** Un cliente inexistente responde 404, siempre después de validar los datos. Si el país del cliente ya no tiene tasa de impuesto, no se puede guardar una simulación nueva (422 sobre `customer_id`), pero su historial se sigue leyendo.
+- **Datos de demostración.** `python -m app.db.seed` añade 6 simulaciones a 5 clientes de demostración, que cubren los tres tramos y un país con impuesto 0. Solo se crean para los clientes de demostración que aún no tienen ninguna, así que se puede repetir y completa una base de datos sembrada antes.
+
+**Fuera de alcance:** editar o borrar simulaciones, consultar una simulación suelta, comparar simulaciones, generar un PDF y guardar la divisa de visualización (la conversión es solo presentación).
+
 ## Backend: puesta en marcha
 
 Pasos comprobados en un clon limpio, con Python 3.12 o superior (probado con 3.14):
@@ -48,7 +60,7 @@ python -m venv .venv
 source .venv/Scripts/activate        # Windows con Git Bash; en Linux o macOS: source .venv/bin/activate
 pip install -r requirements-dev.txt
 alembic upgrade head                 # crea la base de datos SQLite con las tasas de impuesto
-python -m app.db.seed                # opcional: 10 clientes de demostración
+python -m app.db.seed                # opcional: 10 clientes y 6 simulaciones de demostración
 uvicorn app.main:app --reload        # API en http://127.0.0.1:8000 y documentación en /docs
 ```
 

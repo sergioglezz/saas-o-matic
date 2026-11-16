@@ -35,6 +35,8 @@ Antes de escribir este plan se comprobaron con un prototipo desechable, fuera de
 | `app/api/customers.py` (cambiado) | Usa `parse_customer_id`; mismo comportamiento | Como en 003 | 5 |
 | `app/api/simulations.py` (nuevo) | Las dos rutas: leen, validan, llaman al servicio y responden | `schemas`, `services`, `api.*` y `core.errors` | 1, 2, 3, 5, 6 |
 | `app/api/simulations_docs.py` (nuevo) | Ejemplos y errores documentados de las dos rutas, y `restore_simulation_examples` para el `"to_users": null` | `schemas.simulations` y `core.errors` | RNF-5 |
+| `app/api/openapi_examples.py` (nuevo, añadido en T-11) | `json_example`, `error_example` e `invalid_example`, sacados de `customers_docs.py` para que los dos módulos de documentación no los copien. `customers_docs.py` los usa sin cambiar lo que publica | `core.errors` | RNF-5 |
+| `app/domain/customers.py` (ampliado en T-06) | `MAX_CUSTOMER_ID` (2⁶³ − 1): un único límite para el `{id}` de la ruta (003 CA-6.3) y `customer_id` del cuerpo (CA-2.1) | Biblioteca estándar | 2, 5 |
 | `app/api/error_mapping.py` (ampliado) | Las tres entradas nuevas de la tabla error de dominio → respuesta | Como en 003 y `schemas.simulations` | 2, 3 |
 | `app/api/dependencies.py` (ampliado) | `get_simulation_store` | Como en 003 | 1, 5 |
 | `app/main.py` (ampliado) | Incluye el router de simulaciones y encadena `restore_simulation_examples` en `/openapi.json` | `api`, `core` y `db` | 6, RNF-5 |
