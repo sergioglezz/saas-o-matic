@@ -7,19 +7,22 @@ service of spec 001 and the storage is behind SimulationStore.
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import ValidationError
 
 from app.api.dependencies import get_customer_store, get_now, get_rate_source, get_simulation_store
+from app.api.identifiers import parse_customer_id
 from app.api.validation import field_errors, read_json_object, validation_error
+from app.schemas.pagination import PAGE_INVALID_MESSAGES, PageQuery
 from app.schemas.simulations import (
     SIMULATION_INVALID_MESSAGES,
     SimulationCreate,
+    SimulationListResponse,
     SimulationResponse,
 )
-from app.services.customers import CustomerStore
+from app.services.customers import CustomerStore, get_customer
 from app.services.pricing import TaxRateSource
-from app.services.simulations import SimulationStore, save_simulation
+from app.services.simulations import SimulationStore, list_simulations, save_simulation
 
 router = APIRouter()
 
@@ -42,3 +45,32 @@ def post_simulation(
     # app.api.error_mapping turns both into responses.
     simulation = save_simulation(request.to_new_simulation(), customers, simulations, rates, now)
     return SimulationResponse.from_simulation(simulation)
+
+
+@router.get("/customers/{customer_id}/simulations", response_model=SimulationListResponse)
+def list_customer_simulations(
+    customer_id: str,
+    customers: Annotated[CustomerStore, Depends(get_customer_store)],
+    simulations: Annotated[SimulationStore, Depends(get_simulation_store)],
+    limit: Annotated[
+        str | None,
+        Query(description="Máximo de simulaciones devueltas: entero de 1 a 100. Por defecto, 50."),
+    ] = None,
+    offset: Annotated[
+        str | None,
+        Query(description="Posición de la primera simulación: entero de 0 a 1000000."),
+    ] = None,
+) -> SimulationListResponse:
+    """The customer's simulations, newest first (RF-5)."""
+    # The customer first, then the page: without a customer there is nothing to page, so a
+    # 404 wins over a 422 (CA-5.5, spec decision D-7, plan DT-8).
+    customer = get_customer(parse_customer_id(customer_id), customers)
+    received = {"limit": limit, "offset": offset}
+    try:
+        page = PageQuery.model_validate(
+            {name: value for name, value in received.items() if value is not None}
+        )
+    except ValidationError as error:
+        raise validation_error(field_errors(error, PAGE_INVALID_MESSAGES)) from None
+    history = list_simulations(customer.id, page.limit, page.offset, simulations)
+    return SimulationListResponse.from_page(history)
