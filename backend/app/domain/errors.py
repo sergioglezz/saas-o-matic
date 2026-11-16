@@ -1,4 +1,4 @@
-"""Domain errors for pricing, tax and customers.
+"""Domain errors for pricing, tax, customers and simulations.
 
 They carry no user-facing text on purpose: the API layer maps each one to its Spanish message
 in a single place (app.api.error_mapping).
@@ -47,3 +47,27 @@ class DuplicateTaxIdError(CustomerError):
 
 class CustomerNotFoundError(CustomerError):
     """No customer has this id (003 CA-6.2)."""
+
+
+class SimulationError(Exception):
+    """Base class for every simulation rule violation (spec 004)."""
+
+
+class InvalidStorageError(SimulationError):
+    """``storage_gb`` is not an integer between 0 and MAX_STORAGE_GB (004 CA-2.3)."""
+
+
+class InvalidApiCallsError(SimulationError):
+    """``api_calls_per_month`` is not an integer between 0 and its maximum (004 CA-2.4)."""
+
+
+class UnsupportedCustomerCountryError(SimulationError):
+    """The customer's country has no tax rate now, so nothing can be priced (004 CA-3.4).
+
+    Not UnsupportedCountryError: that one is reported on a ``country`` field, which a
+    simulation request does not have (plan 004 DT-3).
+    """
+
+    def __init__(self, customer_id: int) -> None:
+        super().__init__(customer_id)
+        self.customer_id = customer_id
