@@ -14,10 +14,13 @@ from app.core.errors import ApiError, FieldError, conflict, error_response, not_
 from app.domain.errors import (
     CustomerNotFoundError,
     DuplicateTaxIdError,
+    InvalidApiCallsError,
     InvalidSpanishTaxIdError,
+    InvalidStorageError,
     InvalidTaxIdFormatError,
     InvalidUsersError,
     UnsupportedCountryError,
+    UnsupportedCustomerCountryError,
     UnsupportedTaxIdTypeError,
 )
 from app.schemas.customers import (
@@ -27,6 +30,11 @@ from app.schemas.customers import (
     TAX_ID_UNSUPPORTED_TYPE_MESSAGE,
 )
 from app.schemas.pricing import COUNTRY_UNSUPPORTED_MESSAGE, USERS_INVALID_MESSAGE
+from app.schemas.simulations import (
+    API_CALLS_INVALID_MESSAGE,
+    CUSTOMER_COUNTRY_UNSUPPORTED_MESSAGE,
+    STORAGE_INVALID_MESSAGE,
+)
 
 
 def _invalid_field(field: str, message: str) -> Callable[[], ApiError]:
@@ -44,6 +52,13 @@ _DOMAIN_ERRORS: dict[type[Exception], Callable[[], ApiError]] = {
         [FieldError(field="tax_id", message=TAX_ID_DUPLICATED_MESSAGE)]
     ),
     CustomerNotFoundError: not_found,
+    # Spec 004: the schema stops storage and API calls first; these back the service (DT-2).
+    InvalidStorageError: _invalid_field("storage_gb", STORAGE_INVALID_MESSAGE),
+    InvalidApiCallsError: _invalid_field("api_calls_per_month", API_CALLS_INVALID_MESSAGE),
+    # On customer_id: a simulation request has no country field (CA-3.4, plan 004 DT-3).
+    UnsupportedCustomerCountryError: _invalid_field(
+        "customer_id", CUSTOMER_COUNTRY_UNSUPPORTED_MESSAGE
+    ),
 }
 
 

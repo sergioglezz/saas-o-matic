@@ -4,6 +4,9 @@ from dataclasses import dataclass
 
 # The plan never changes a price (CA-2.4); it is only recorded.
 PLANS: tuple[str, ...] = ("starter", "business", "enterprise")
+# A customer id is a positive integer up to the largest one SQLite can hold (003 CA-6.3,
+# 004 CA-2.1).
+MAX_CUSTOMER_ID = 2**63 - 1
 
 
 @dataclass(frozen=True, slots=True)
