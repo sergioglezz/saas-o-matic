@@ -4,7 +4,6 @@ No business rule and no SQL here (constitution principle 3): the tax id control 
 code and the storage is behind CustomerStore.
 """
 
-import re
 from datetime import datetime
 from typing import Annotated
 
@@ -19,8 +18,8 @@ from app.api.customers_docs import (
     REGISTER_RESPONSES,
 )
 from app.api.dependencies import get_customer_store, get_now, get_rate_source
+from app.api.identifiers import parse_customer_id
 from app.api.validation import field_errors, read_json_object, validation_error
-from app.core.errors import not_found
 from app.schemas.customers import (
     CUSTOMER_INVALID_MESSAGES,
     LIST_INVALID_MESSAGES,
@@ -38,10 +37,6 @@ from app.services.customers import (
 from app.services.pricing import TaxRateSource
 
 router = APIRouter()
-
-# A customer id as the API writes it: digits only, no sign and no leading zeros (CA-6.3).
-_CUSTOMER_ID = re.compile(r"[1-9][0-9]{0,18}")
-_LARGEST_ID = 2**63 - 1  # the largest integer SQLite can hold
 
 
 @router.post(
@@ -103,8 +98,5 @@ def get_customer_detail(
     customer_id: str, customers: Annotated[CustomerStore, Depends(get_customer_store)]
 ) -> CustomerResponse:
     """The data of one customer (RF-6)."""
-    # Declared as text: what is not an id names no customer, so it is the same 404 as an
-    # unknown id and not a validation error (CA-6.3, spec decision D-3).
-    if not _CUSTOMER_ID.fullmatch(customer_id) or int(customer_id) > _LARGEST_ID:
-        raise not_found()
-    return CustomerResponse.from_customer(get_customer(int(customer_id), customers))
+    # Declared as text: what is not an id is the same 404 as an unknown id (CA-6.3, D-3).
+    return CustomerResponse.from_customer(get_customer(parse_customer_id(customer_id), customers))

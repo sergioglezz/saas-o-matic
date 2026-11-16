@@ -11,11 +11,11 @@ from app.schemas.customers import (
     CUSTOMER_LIST_RESPONSE_EXAMPLE,
     CUSTOMER_REQUEST_EXAMPLE,
     CUSTOMER_RESPONSE_EXAMPLE,
-    LIMIT_INVALID_MESSAGE,
     TAX_ID_DUPLICATED_MESSAGE,
     TAX_ID_SPANISH_MESSAGE,
     CustomerCreate,
 )
+from app.schemas.pagination import LIMIT_INVALID_MESSAGE
 
 Responses = dict[int | str, dict[str, Any]]
 

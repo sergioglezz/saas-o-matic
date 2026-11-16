@@ -18,6 +18,7 @@ from app.domain.errors import (
     UnsupportedTaxIdTypeError,
 )
 from app.domain.tax_id import validate_tax_id
+from app.schemas.pagination import PAGE_INVALID_MESSAGES, PageQuery
 from app.schemas.pricing import COUNTRY_INVALID_MESSAGE, normalize_country
 
 COMPANY_NAME_INVALID_MESSAGE = "Debe tener entre 1 y 120 caracteres"
@@ -27,8 +28,6 @@ TAX_ID_UNSUPPORTED_TYPE_MESSAGE = "Tipo de identificador no soportado"
 TAX_ID_DUPLICATED_MESSAGE = "Ya existe un cliente con este identificador"
 EMAIL_INVALID_MESSAGE = "Debe ser un email válido"
 PLAN_INVALID_MESSAGE = "Debe ser starter, business o enterprise"
-LIMIT_INVALID_MESSAGE = "Debe ser un número entero entre 1 y 100"
-OFFSET_INVALID_MESSAGE = "Debe ser un número entero entre 0 y 1000000"
 Q_TOO_LONG_MESSAGE = "Debe tener como máximo 120 caracteres"
 
 # Message for a field that is present but invalid, unless its validator chose another one.
@@ -39,41 +38,22 @@ CUSTOMER_INVALID_MESSAGES = {
     "country": COUNTRY_INVALID_MESSAGE,
     "plan": PLAN_INVALID_MESSAGE,
 }
-LIST_INVALID_MESSAGES = {
-    "q": Q_TOO_LONG_MESSAGE,
-    "limit": LIMIT_INVALID_MESSAGE,
-    "offset": OFFSET_INVALID_MESSAGE,
-}
+LIST_INVALID_MESSAGES = {"q": Q_TOO_LONG_MESSAGE, **PAGE_INVALID_MESSAGES}
 
 COMPANY_NAME_MAX_LENGTH = 120
 EMAIL_MAX_LENGTH = 254
 Q_MAX_LENGTH = 120
-DEFAULT_LIMIT, MAX_LIMIT = 50, 100
-# SQLite cannot take an arbitrarily large OFFSET; beyond this the request is a mistake (D-9).
-MAX_OFFSET = 1_000_000
 
 _EDGE_WHITESPACE = " \t\n\r"
 # local@domain as HTML forms understand it, plus a dot in the domain (CA-2.2). Written by
 # hand to avoid a new dependency for one field (spec decision D-1).
 _LABEL = r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?"
 _EMAIL = re.compile(rf"[A-Za-z0-9.!#$%&'*+/=?^_`{{|}}~-]{{1,64}}@{_LABEL}(?:\.{_LABEL})+")
-# [0-9] and not \d or str.isdigit(): those also accept digits of other alphabets (LP-9).
-_DIGITS = re.compile(r"[0-9]+")
 
 
 def _compact_spaces(value: str) -> str:
     """No whitespace at the edges and a single space between words (CA-2.1)."""
     return " ".join(value.split())
-
-
-def _integer_in_range(value: object, minimum: int, maximum: int) -> int:
-    """A query value written with digits only and inside the range (CA-5.8)."""
-    if not isinstance(value, str) or not _DIGITS.fullmatch(value):
-        raise ValueError("not written with digits only")
-    number = int(value)
-    if not minimum <= number <= maximum:
-        raise ValueError("out of range")
-    return number
 
 
 class CustomerCreate(BaseModel):
@@ -135,15 +115,14 @@ class CustomerCreate(BaseModel):
         return NewCustomer(**self.model_dump())
 
 
-class CustomerListQuery(BaseModel):
+class CustomerListQuery(PageQuery):
     """Query string of GET /customers, validated from the texts that arrive (CA-5.8, CA-5.9).
 
-    Unknown parameters are ignored (CA-5.10).
+    ``limit`` and ``offset`` come from PageQuery (plan 004 DT-9). Unknown parameters are
+    ignored (CA-5.10).
     """
 
     q: str = ""
-    limit: int = DEFAULT_LIMIT
-    offset: int = 0
 
     @field_validator("q")
     @classmethod
@@ -152,16 +131,6 @@ class CustomerListQuery(BaseModel):
         if len(text) > Q_MAX_LENGTH:
             raise ValueError(Q_TOO_LONG_MESSAGE)
         return text
-
-    @field_validator("limit", mode="before")
-    @classmethod
-    def _parse_limit(cls, value: object) -> int:
-        return _integer_in_range(value, 1, MAX_LIMIT)
-
-    @field_validator("offset", mode="before")
-    @classmethod
-    def _parse_offset(cls, value: object) -> int:
-        return _integer_in_range(value, 0, MAX_OFFSET)
 
 
 class CustomerResponse(BaseModel):
