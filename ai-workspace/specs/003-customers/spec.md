@@ -1,6 +1,6 @@
 # 003 — Clientes: registro, búsqueda y ficha
 
-Estado: v1.0 · ✅ implementada y verificada por delegación expresa del autor, con los 13 criterios de finalización cumplidos · **pendiente de la revisión del autor** · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 001 (v1.2) y 002 (v1.1), ambas completadas
+Estado: v1.0 · ✅ implementada y verificada por delegación expresa del autor, con los 13 criterios de finalización cumplidos · ✅ Completada, revisada y aprobada por el autor, con las decisiones D-1 a D-14 confirmadas · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 001 (v1.2) y 002 (v1.1), ambas completadas
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al redactar esta spec. Las decisiones nuevas están en la sección 11 para que el autor las confirme o las cambie.
 
@@ -520,12 +520,12 @@ Datos de partida, creados por la API en este orden:
 - [x] Principio 3: el algoritmo del identificador no importa nada del framework ni del acceso a datos; los routers no contienen reglas de negocio ni SQL.
 - [x] Principio 4: el esquema cambia solo con una migración nueva; la 0001 no se toca.
 - [x] Principio 5: la suite completa pasa en cada commit, comprobado uno a uno en un clon limpio; cada regla de negocio tiene test unitario y cada endpoint, test de integración.
-- [x] Principio 5: las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md` (entradas 17 a 20). Falta la lectura del autor que exige el principio: es la revisión pendiente.
+- [x] Principio 5: las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md` (entradas 17 a 20). El autor revisó la spec y el trabajo realizado y lo aprobó.
 - [x] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores; toda entrada se valida.
 
 ## 11. Decisiones tomadas al redactar
 
-El autor delegó la redacción, así que estas decisiones **[P]** no las ha confirmado todavía. Ninguna contradice el enunciado ni el documento 00.
+El autor delegó la redacción y confirmó estas decisiones **[P]** al revisar la spec. Ninguna contradice el enunciado ni el documento 00.
 
 - **D-1. Email sin biblioteca.** Se valida con una regla propia (CA-2.2), parecida a la de los formularios HTML. `EmailStr` de Pydantic exige instalar `email-validator`, una dependencia nueva que pediría un ADR. Alternativa si se prefiere: añadirla con su ADR.
 - **D-2. Textos del 409.** Primer nivel «El recurso ya existe», genérico como los demás (002 CA-6.2); el texto del flujo 1 del 00, «Ya existe un cliente con este identificador», va en el detalle de `tax_id` para que el formulario lo pinte junto al campo.
@@ -550,3 +550,4 @@ No hay dudas abiertas que bloqueen la implementación.
 | --- | --- |
 | 1.0 | Versión inicial, redactada por delegación del autor tras comprobar con un prototipo desechable los comportamientos de FastAPI, Starlette, Pydantic y SQLite en los que se apoya. Pendiente de la revisión del autor |
 | 1.0 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 744 tests en verde (383 de 001 y 002, sin modificar ninguno), verificación completa en un clon limpio con un entorno virtual nuevo y en cada commit de código, los 56 CA con al menos un test que los cita y pasa, y los 151 casos con test en su nivel. Dos decisiones del plan se corrigieron al implementar (entradas 17 y 18 del log) y la documentación dejó de anunciar el 422 propio del framework (entrada 19). Pendiente de la revisión del autor |
+| 1.0 (revisión) | Sin cambios en los requisitos. Revisión del autor tras una verificación independiente en un clon limpio con un entorno virtual nuevo (744 tests, ruff, mypy, `alembic check` y el seed dos veces), la trazabilidad de los 56 CA y los 151 casos, y un arranque real con alta, duplicado, búsqueda, ficha y cotización. El autor confirmó las decisiones D-1 a D-14. Spec cerrada |

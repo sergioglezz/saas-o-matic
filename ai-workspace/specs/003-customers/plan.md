@@ -1,6 +1,6 @@
 # Plan técnico — 003 Clientes
 
-Estado: v1.0, redactado y ejecutado por delegación del autor, pendiente de su revisión · Spec: `spec.md` v1.0 · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7.4 y §8 de `00-spec-first.md` · Base: specs y código de 001 y 002
+Estado: v1.0, redactado y ejecutado por delegación del autor, revisado y aprobado por el autor · Spec: `spec.md` v1.0 · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7.4 y §8 de `00-spec-first.md` · Base: specs y código de 001 y 002
 
 Los comportamientos de FastAPI, Starlette, Pydantic y SQLite en los que se apoya este plan se comprobaron antes de escribirlo, con un prototipo desechable fuera del repositorio. La sección 10 recoge lo que reveló.
 

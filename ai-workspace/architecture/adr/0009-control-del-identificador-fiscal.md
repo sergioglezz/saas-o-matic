@@ -1,6 +1,6 @@
 # ADR 0009 — Control del identificador fiscal español
 
-Estado: aceptado por delegación del autor, pendiente de su revisión
+Estado: aceptado (redactado por delegación del autor y confirmado en su revisión de la spec 003)
 
 ## Contexto
 
