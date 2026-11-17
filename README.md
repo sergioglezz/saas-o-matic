@@ -4,7 +4,19 @@ Herramienta interna para que el equipo comercial simule y presupueste suscripcio
 
 ## Arranque rápido
 
-Con Python 3.12 o superior y Node 26, abre dos terminales en la raíz del repositorio (Git Bash en Windows):
+Con Python 3.12 o superior y Node 26, abre dos terminales en la raíz del repositorio y ejecuta un comando en cada una.
+
+En PowerShell (la terminal por defecto de Windows):
+
+```powershell
+cd backend; python -m venv .venv; .\.venv\Scripts\pip install -r requirements.txt; .\.venv\Scripts\alembic upgrade head; .\.venv\Scripts\python -m app.db.seed; .\.venv\Scripts\uvicorn app.main:app
+```
+
+```powershell
+cd frontend; npm install; npm start
+```
+
+En Git Bash, Linux o macOS (en Linux y macOS, con `.venv/bin/activate`):
 
 ```bash
 cd backend && python -m venv .venv && source .venv/Scripts/activate && pip install -r requirements.txt && alembic upgrade head && python -m app.db.seed && uvicorn app.main:app
@@ -14,7 +26,7 @@ cd backend && python -m venv .venv && source .venv/Scripts/activate && pip insta
 cd frontend && npm install && npm start
 ```
 
-Abre **http://localhost:4200** (no `127.0.0.1:4200`, que el backend no admite). En Linux o macOS, el entorno se activa con `source .venv/bin/activate`. Las dos secciones de puesta en marcha del final explican cada paso, los tests y el lint.
+Abre **http://localhost:4200** (no `127.0.0.1:4200`, que el backend no admite). Las dos secciones de puesta en marcha del final explican cada paso, los tests y el lint.
 
 ## Decisiones y supuestos
 
