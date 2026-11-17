@@ -1,6 +1,6 @@
 # 006 — Interfaz moderna: diseño, disposición y animaciones
 
-Estado: v1.0 · Pendiente de la revisión del autor · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: spec 005 (aprobada); ADR 0011
+Estado: v1.0 aprobada por el autor, con las decisiones D-1 a D-13 confirmadas · ✅ Completada, revisada y aprobada por el autor, con los 6 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: spec 005 (aprobada); ADR 0011
 
 Leyenda de origen: **[E]** viene del enunciado; **[P]** es una propuesta (decisiones D-x de la sección 11) o una petición del autor.
 
@@ -212,12 +212,12 @@ Niveles: **U** = función pura; **C** = pantalla en el DOM simulado, como en 005
 
 ## 10. Criterios de finalización
 
-- [ ] Cada caso U y C de las tablas 6.1 a 6.5 tiene un test que lo cita y pasa.
-- [ ] Los 319 tests de 005 pasan sin modificarlos.
-- [ ] MA-1 a MA-7 comprobados en un navegador real y anotados en `tasks.md`.
-- [ ] Lint y compilación de producción sin errores ni avisos; CSS final por debajo de 40 kB.
-- [ ] ADR 0011 redactado; dependencias con versión exacta.
-- [ ] Ninguna dependencia fuera de las del ADR 0011.
+- [x] Cada caso U y C de las tablas 6.1 a 6.5 tiene un test que lo cita y pasa.
+- [x] Los 319 tests de 005 pasan sin modificarlos.
+- [x] MA-1 a MA-7 comprobados en un navegador real y anotados en `tasks.md`.
+- [x] Lint y compilación de producción sin errores ni avisos; CSS final por debajo de 40 kB.
+- [x] ADR 0011 redactado; dependencias con versión exacta.
+- [x] Ninguna dependencia fuera de las del ADR 0011.
 
 ## 11. Decisiones
 

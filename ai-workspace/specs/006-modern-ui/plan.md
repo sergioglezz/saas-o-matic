@@ -1,6 +1,6 @@
 # Plan técnico — 006 Interfaz moderna
 
-Estado: v1.0, pendiente de la revisión del autor junto con la spec · Spec: `spec.md` v1.0 · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: plan 005 y ADR 0011 · Base: el frontend de 005, sin cambiar su comportamiento
+Estado: v1.0, ejecutado según `tasks.md`, revisado y aprobado por el autor · Spec: `spec.md` v1.0 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: plan 005 y ADR 0011 · Base: el frontend de 005, sin cambiar su comportamiento
 
 ## 1. Resumen y alcance
 
@@ -17,6 +17,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec · Spec: `sp
 | `frontend/package.json` y `package-lock.json` | Las tres dependencias de desarrollo | 1 |
 | `src/styles.css` | `@import "tailwindcss"`, el tema (`@theme`), la base y las clases comunes con `@apply` (`card`, `narrow`, `button`, `field`, `badge`, `avatar`, `notice`…) | 1, 2, 3 |
 | `src/styles/motion.css` | Nuevo: `@keyframes`, las clases de 5.2 y la regla de reducir movimiento | 4, 5 |
+| `src/styles/tables.css` | Nuevo en T-05: las tablas de tramos, sacadas de `styles.css` para que no pase de 300 líneas (RNF-3) | 2 |
 | `shared/format/initials.ts` | Nuevo, puro: `initials(name)` | 3 |
 | `shared/ui/icon.ts` | Nuevo: `app-icon` con un juego fijo de iconos SVG propios, siempre `aria-hidden` | 3 |
 | `shared/ui/skeleton-cards.ts` | Nuevo: `app-skeleton-cards`, N marcadores con forma de tarjeta, `aria-hidden` | 4 |

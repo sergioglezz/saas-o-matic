@@ -1,0 +1,42 @@
+/* Spec 005 tier tables with the theme of spec 006. Kept apart so styles.css stays under 300 lines
+   (006 RNF-3); imported from styles.css like motion.css. */
+
+table {
+  @apply w-full border-collapse text-sm;
+  overflow-wrap: normal;
+}
+
+th,
+td {
+  @apply border-b border-line px-2 py-2 text-left whitespace-nowrap;
+}
+
+thead th {
+  @apply align-bottom text-xs font-semibold tracking-wide whitespace-normal text-muted uppercase;
+}
+
+/* Spec 005 MA-1: on a phone each tier is a block with its labels, so no amount is cut. */
+@media (max-width: 480px) {
+  .tier-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .tier-table tr {
+    @apply block border-b border-line py-2;
+  }
+
+  .tier-table th,
+  .tier-table td {
+    @apply flex justify-between gap-4 border-0 px-0 py-0.5;
+  }
+
+  .tier-table th::before,
+  .tier-table td::before {
+    content: attr(data-label);
+    @apply font-normal text-muted;
+  }
+}

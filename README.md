@@ -86,6 +86,7 @@ El enunciado pide sumar «el impuesto correspondiente al país del cliente», pe
 - **Simulador.** Slider de 0 a 200 usuarios, más un campo que admite hasta 100 000. La cotización se pide 300 ms después del último cambio. «Guardar simulación» solo se activa cuando la cotización mostrada corresponde a los valores escritos: lo que se ve es lo que se guarda. El almacenamiento y las llamadas a la API se guardan, pero no cambian el precio.
 - **Alta.** El navegador solo comprueba los campos obligatorios y las longitudes máximas. El formato del email y del identificador lo valida el backend, y su mensaje aparece junto al campo.
 - **Listas largas.** El listado y el historial cargan de 50 en 50 con «Cargar más».
+- **Aspecto (spec 006).** Estilos con [Tailwind CSS](https://tailwindcss.com) 4, que solo actúa al compilar y no añade código al navegador (ADR 0011). Tema índigo con contrastes comprobados, iconos propios, esqueletos mientras cargan los datos y animaciones de entrada que se desactivan si el sistema pide reducir el movimiento.
 
 **Fuera de alcance:** refrescar las tasas con la app abierta, más divisas, conservar la búsqueda en la dirección, avisar al salir con datos sin guardar, funcionar sin conexión y pruebas automáticas en un navegador real, que se sustituyen por las comprobaciones manuales de la spec 005.
 
