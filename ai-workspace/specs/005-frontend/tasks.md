@@ -23,7 +23,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 | Fase | Tareas | RF | Estado |
 | --- | --- | --- | --- |
 | 1 — Base | T-01 | Soporte de todos | ✅ Completada: Node 26.13.1 LTS (ADR 0010 ajustado), Angular 22.2 sin SSR ni zona, angular-eslint 22.7; `npm test` (una pasada), `npm run lint` y la compilación de producción en verde; el lint falla con `any`, `HttpClient` fuera de `core/`, Angular o RxJS en un módulo puro y una función de 44 líneas (comprobado y revertido); `npm start` sirve en `http://localhost:4200`. El prototipo confirmó el plan salvo tres ajustes anotados en la sección 10: la biblioteca ES2023 en `tsconfig.json`, `watch: false` y los archivos de test fuera de la compilación. DT-12 precisa de dónde se lee T-REG |
-| 2 — Núcleo | T-02 a T-05 | RF-2 a RF-5, RF-11 (reglas) | Pendiente |
+| 2 — Núcleo | T-02 a T-05 | RF-2 a RF-5, RF-11 (reglas) | ✅ Completada: 150 tests (148 nuevos) en verde, lint y compilación de producción sin errores ni avisos. Cada tarea empezó en rojo con esbozos que fallaban con «pendiente». Cubiertos CV-1 a CV-23, VE-1 a VE-11, TC-1 a TC-12, TC-14, TC-15, DV-1, DV-6 a DV-11, y ER-1 y ER-2 en el nivel de servicio. Revisión de la fase: un fallo propio corregido en el prototipo de T-01 (un cambio hecho dentro de un temporizador no se pinta hasta el siguiente fotograma; los tests llaman a `TestBed.tick()`), dos errores en mis tests (`match` retira las peticiones y compara la URL con sus parámetros) y una diferencia del plan con la spec corregida en el plan: el navegador guarda los cinco campos de 5.4, no tres (spec 5.5). Añadidos anotados en el plan §2: `decimal.ts`, `rateOf`, `EUR_DISPLAY` y las ayudas de `src/testing/`; `api-config.ts` son constantes |
 | 3 — Clientes | T-06 a T-09 | RF-1, RF-6 a RF-9 | Pendiente |
 | 4 — Simulador e historial | T-10 a T-14 | RF-4, RF-10 a RF-13 | Pendiente |
 | 5 — Cierre | T-15 a T-17 | Todos | Pendiente |
@@ -38,25 +38,25 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 
 ## Fase 2 — Núcleo (niveles U y C)
 
-- [ ] **T-02. Formato y conversión**
+- [x] **T-02. Formato y conversión**
   - **RF:** RF-5 (CA-5.2 a CA-5.7) y RF-3 (CA-3.10), RF-4 (CA-4.7, formato de la tasa). Plan §5 «Conversión exacta», DT-3 a DT-5 y DT-16. Casos CV-1 a CV-23. **Depende de:** T-01.
   - **Archivos:** `shared/format/money.ts`, `numbers.ts`, `dates.ts`, `format-pipes.ts` y sus `*.spec.ts`.
   - **Rojo (U):** la tabla 6.1 completa.
   - **Hecho cuando:** pasa la tabla; las funciones no importan Angular ni RxJS (lint); ninguna conversión pasa por coma flotante.
 
-- [ ] **T-03. Reglas de entrada y de tasas**
+- [x] **T-03. Reglas de entrada y de tasas**
   - **RF:** RF-11 (CA-11.5, CA-11.7, CA-11.8, en reglas), RF-3 (CA-3.3, CA-3.5, CA-3.13) y RF-1 a RF-4 de soporte. Casos VE-1 a VE-11. **Depende de:** T-01.
   - **Archivos:** `features/simulator/usage-input.ts`, `core/rates/rates-snapshot.ts`, `shared/texts.ts` y sus `*.spec.ts`.
   - **Rojo (U):** la tabla 6.2 completa.
   - **Hecho cuando:** pasa la tabla y las dos funciones son puras.
 
-- [ ] **T-04. Cliente de la API y clasificación de errores**
+- [x] **T-04. Cliente de la API y clasificación de errores**
   - **RF:** RF-2 (CA-2.1 a CA-2.4) y la tabla 5.3. Plan DT-6, DT-7 y DT-17. Casos ER-1 y ER-2 en el nivel de servicio. **Depende de:** T-01.
   - **Archivos:** `core/api/api-config.ts`, `api-models.ts`, `request-failure.ts`, `customers-api.ts`, `simulations-api.ts` y sus `*.spec.ts`.
   - **Rojo (C):** cada método pide la ruta, los parámetros y el cuerpo de la tabla 5.2 en `http://127.0.0.1:8000`; `toRequestFailure` da `connection` sin respuesta y a los 10 s, `server` con 5xx y con un 200 que no es JSON, y `not_found`, `conflict`, `validation` y `client` con 404, 409, 422 y otro 4xx, conservando `details`.
   - **Hecho cuando:** esos tests pasan y ningún cuerpo lleva importes ni tasas.
 
-- [ ] **T-05. Tasas de cambio y divisa elegida**
+- [x] **T-05. Tasas de cambio y divisa elegida**
   - **RF:** RF-3 (CA-3.1 a CA-3.13) y RF-4 (CA-4.1, CA-4.2, CA-4.4 a CA-4.7). Plan §5 «Tasas» y «Divisa», DT-7. Casos TC-1 a TC-12, TC-14, TC-15, DV-1 y DV-6 a DV-11. **Depende de:** T-02, T-03 y T-04.
   - **Archivos:** `core/rates/browser-storage.ts`, `exchange-rates.ts`, `display-currency.ts`, `shared/ui/currency-bar.ts` y sus `*.spec.ts`.
   - **Rojo (C):** las tablas 6.3 y 6.4 en lo que no necesita la ficha, con el almacenamiento del navegador limpio en cada test y el reloj fijado en los instantes de 5.4.

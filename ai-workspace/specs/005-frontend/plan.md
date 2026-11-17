@@ -21,16 +21,17 @@ Todo vive en `frontend/src/app/`, con las tres carpetas de §5 del 00: `core/` (
 
 | Archivo | Responsabilidad | Puede importar | RF |
 | --- | --- | --- | --- |
-| `core/api/api-config.ts` | `API_BASE_URL` (`http://127.0.0.1:8000`), `RATES_URL`, `REQUEST_TIMEOUT_MS` (10 000) y `PAGE_SIZE` (50) | Angular (`InjectionToken`) | 2, 3, 7 |
+| `core/api/api-config.ts` | Constantes `API_BASE_URL` (`http://127.0.0.1:8000`), `RATES_URL`, `REQUEST_TIMEOUT_MS` (10 000) y `PAGE_SIZE` (50); ningún test necesita cambiarlas | Nada | 2, 3, 7 |
 | `core/api/api-models.ts` | Tipos del contrato: `Customer`, `CustomerPage`, `NewCustomer`, `TierLine`, `PriceQuote`, `Simulation`, `SimulationPage`, `NewSimulation`, `ErrorDetail` | Nada | 2 |
 | `core/api/request-failure.ts` | `RequestFailure` y `toRequestFailure(error)`: un único punto que clasifica cualquier fallo según la tabla 5.3 | Angular (`HttpErrorResponse`), RxJS (`TimeoutError`) | 2 |
 | `core/api/customers-api.ts` | `CustomersApi`: `list(q, offset)`, `get(id)` y `create(body)` | `HttpClient`, `api-config`, `api-models` | 6, 8, 9 |
 | `core/api/simulations-api.ts` | `SimulationsApi`: `quote(users, country)`, `save(body)` e `history(customerId, offset)` | Igual | 10, 12, 13 |
-| `core/rates/rates-snapshot.ts` | Puro: `RatesSnapshot`, `parseRatesSnapshot`, `isFresh`, `offeredCurrencies` y `CURRENCY_CODES` | Nada | 3, 4 |
+| `core/rates/rates-snapshot.ts` | Puro: `RatesSnapshot`, `parseRatesSnapshot`, `isFresh`, `rateOf`, `offeredCurrencies` y `CURRENCY_CODES` | Nada | 3, 4 |
 | `core/rates/browser-storage.ts` | `BrowserStorage`: lee y escribe la divisa y las tasas; cualquier fallo del almacenamiento cuenta como «no hay nada» | Angular | 3, 4 |
 | `core/rates/exchange-rates.ts` | `ExchangeRates`: estado de las tasas (`loading`, `fresh`, `stale`, `unavailable`), `load()` y `retry()` | `HttpClient`, `rates-snapshot`, `browser-storage`, `api-config` | 3 |
 | `core/rates/display-currency.ts` | `DisplayCurrency`: divisas ofrecidas, divisa elegida y recordada, `choose(code)` y la tasa activa | `exchange-rates`, `browser-storage` | 4 |
-| `shared/format/money.ts` | Puro: `toHundredths(cents, rate)` exacto y `formatMoney(cents, display)` | Nada | 5 |
+| `shared/format/decimal.ts` | Puro: `exactDecimal`, `roundHalfUp` y `decimalText`, la aritmética exacta que comparten `money.ts` y `numbers.ts` (añadido en T-02) | Nada | 4, 5 |
+| `shared/format/money.ts` | Puro: `toHundredths(cents, rate)` exacto, `formatMoney(cents, display)` y `EUR_DISPLAY` | `decimal` | 5 |
 | `shared/format/numbers.ts` | Puro: `formatCount`, `formatTaxRate`, `formatRate` y `tierRange` | Nada | 5 |
 | `shared/format/dates.ts` | Puro: `formatDateTime`, `formatDate` y `formatUnixDate` | Nada | 3, 5 |
 | `shared/format/format-pipes.ts` | Pipes puros `money`, `count`, `taxRate`, `dateTime` y `day` sobre las funciones anteriores | Angular, `shared/format` | 5 |
@@ -54,6 +55,7 @@ Todo vive en `frontend/src/app/`, con las tres carpetas de §5 del 00: `core/` (
 | `src/index.html`, `src/styles.css` | `lang="es"`, título y estilos comunes (foco visible, contraste, tarjetas) | — | RNF-3, RNF-4 |
 | `src/test-setup.ts` | Zona horaria `Europe/Madrid` para todos los tests | — | Tests |
 | `src/testing/spec-data.ts` | Datos de la spec escritos una sola vez: cliente Acme, tasas de 5.4, cotizaciones de 15 y 60 usuarios, simulación de SI-1 | `api-models` | Tests |
+| `src/testing/text.ts`, `dom.ts`, `http.ts` y `rates.ts` | Ayudas de los tests (añadidas en la fase 2): texto con los espacios normalizados, controles por su etiqueta, respuestas preparadas del backend y de la API de tasas, y montaje y recarga de la barra de divisa | Angular (pruebas) | Tests |
 
 **Reglas de capas** (comprobadas por el lint, ADR 0010):
 
@@ -71,7 +73,7 @@ No hay base de datos. Los datos son de dos tipos:
 | Clave | Contenido | Se escribe | Se lee |
 | --- | --- | --- | --- |
 | `saas-o-matic.currency` | Código de la divisa elegida | Al elegir una divisa (CA-4.4) | Al tener tasas (CA-4.5, CA-4.6) |
-| `saas-o-matic.rates` | JSON con `rates`, `time_last_update_unix` y `time_next_update_unix` | Con cada respuesta válida (CA-3.4) | Al cargar la app (CA-3.1) y si falla la petición (CA-3.6) |
+| `saas-o-matic.rates` | JSON con los cinco campos de 5.4: `result`, `base_code`, `rates`, `time_last_update_unix` y `time_next_update_unix` (spec 5.5) | Con cada respuesta válida (CA-3.4) | Al cargar la app (CA-3.1) y si falla la petición (CA-3.6) |
 
 Lo guardado se valida con la misma función que la respuesta de la API (`parseRatesSnapshot`); si no pasa, se trata como inexistente (CA-3.13).
 
@@ -95,9 +97,10 @@ SimulationsApi.history(customerId: number, offset: number) -> Observable<Simulat
       todas con timeout(REQUEST_TIMEOUT_MS) y sin capturar errores: los clasifica quien llama
 
 # core/rates
-RatesSnapshot = { rates: Record<string, number>, lastUpdate: number, nextUpdate: number }
+RatesSnapshot = los cinco campos de 5.4, con sus nombres de la API      # spec 5.5
 parseRatesSnapshot(value: unknown) -> RatesSnapshot | null          # CA-3.3
-isFresh(snapshot, nowSeconds) -> boolean                              # nextUpdate > now
+isFresh(snapshot, nowSeconds) -> boolean                              # time_next_update_unix > now
+rateOf(snapshot | null, code) -> number | null                        # 1 para EUR
 offeredCurrencies(snapshot | null) -> CurrencyCode[]                  # CA-3.5
 ExchangeRates: status(), snapshot(), load(), retry()
 DisplayCurrency: offered(), selected(), rate() -> number | null, choose(code)
@@ -302,7 +305,7 @@ Comprobado en T-01 (17/11/2026) con Node 26.13.1 (ICU 78.3), Angular CLI 22.2.7,
 | Zona fijada en el archivo de arranque de los tests (`vi.stubEnv('TZ', 'Europe/Madrid')`) | `Intl` y `Date` usan Madrid: «17/11/2026, 00:30» y «12:00» en verano | DT-2 se cumple con `src/test-setup.ts`, declarado en `setupFiles` de `angular.json` |
 | Reloj falso de Vitest con `debounceTime(300)` y `timeout(10 000)` | 299 ms sin emitir y 300 ms emite; a los 9 999 ms nada y a los 10 000 ms `TimeoutError`, que cancela la petición | DT-7 y DT-8 se prueban con `vi.useFakeTimers()` |
 | `switchMap` con el controlador de pruebas HTTP | La petición anterior queda `cancelled` y su respuesta no llega | LI-12 y CO-5 comprueban la cancelación |
-| Aplicación sin zona (opción por defecto de Angular 22) bajo el reloj falso | Los cambios de signals se pintan solos tras `await vi.advanceTimersByTimeAsync(0)` | Los tests C avanzan el reloj con la versión asíncrona |
+| Aplicación sin zona (opción por defecto de Angular 22) bajo el reloj falso | Un cambio hecho desde el test se pinta tras `await vi.advanceTimersByTimeAsync(0)`; uno hecho dentro de un temporizador (por ejemplo, el límite de 10 s) espera al siguiente fotograma. Corregido en T-05: el prototipo solo probó el primer caso | Los tests C avanzan el reloj con la versión asíncrona y después llaman a `TestBed.tick()`, que pinta sin mover el reloj (`settle()` en `src/testing/dom.ts`) |
 | Navegación con estado en las pruebas de rutas | `router.currentNavigation()?.extras.state` llega a la pantalla al crearse; `history.state` vale `null` en el DOM simulado; al salir y volver, el estado ya no está | DT-12: la ficha lee T-REG de la navegación en curso al crearse, no de `history.state` |
 | Botón desactivado | `click()` no dispara su acción | CM-6, AL-15 y GU-5 se prueban con el botón real |
 | Slider nativo en el DOM simulado | `type="range"` con `min`, `max` y `step`; un valor de 250 queda en 200 | SM-4 se comprueba en el control |
