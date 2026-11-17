@@ -1,0 +1,43 @@
+<div class="stack">
+  <a routerLink="/clientes">{{ T.VOL }}</a>
+
+  @let current = state();
+  @if (current.status === 'loading') {
+    <p role="status">{{ T.LCU }}</p>
+  } @else if (current.status === 'not_found') {
+    <section class="card narrow">
+      <h1>{{ T.NFC }}</h1>
+    </section>
+  } @else if (current.status === 'error') {
+    <app-request-error [failure]="current.failure" (retry)="retry()" />
+  } @else {
+    @if (registered) {
+      <p class="success-text" role="status">{{ T.REG }}</p>
+    }
+    <article class="card customer-card">
+      <h1>{{ current.customer.company_name }}</h1>
+      <dl>
+        <div>
+          <dt>{{ LABELS.taxId }}</dt>
+          <dd>{{ current.customer.tax_id }}</dd>
+        </div>
+        <div>
+          <dt>{{ LABELS.contactEmail }}</dt>
+          <dd>{{ current.customer.contact_email }}</dd>
+        </div>
+        <div>
+          <dt>{{ LABELS.country }}</dt>
+          <dd>{{ countryName(current.customer.country) }}</dd>
+        </div>
+        <div>
+          <dt>{{ LABELS.plan }}</dt>
+          <dd>{{ planName(current.customer.plan) }}</dd>
+        </div>
+        <div>
+          <dt>{{ LABELS.createdAt }}</dt>
+          <dd>{{ current.customer.created_at | day }}</dd>
+        </div>
+      </dl>
+    </article>
+  }
+</div>

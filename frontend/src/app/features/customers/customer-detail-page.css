@@ -1,0 +1,21 @@
+.customer-card dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .customer-card dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.customer-card dt {
+  color: var(--muted-text);
+  font-size: 0.875rem;
+}
+
+.customer-card dd {
+  margin: 0;
+}
