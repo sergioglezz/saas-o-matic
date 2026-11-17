@@ -55,7 +55,7 @@ Todo vive en `frontend/src/app/`, con las tres carpetas de §5 del 00: `core/` (
 | `src/index.html`, `src/styles.css` | `lang="es"`, título y estilos comunes (foco visible, contraste, tarjetas) | — | RNF-3, RNF-4 |
 | `src/test-setup.ts` | Zona horaria `Europe/Madrid` para todos los tests | — | Tests |
 | `src/testing/spec-data.ts` | Datos de la spec escritos una sola vez: cliente Acme, tasas de 5.4, cotizaciones de 15 y 60 usuarios, simulación de SI-1 | `api-models` | Tests |
-| `src/testing/text.ts`, `dom.ts`, `http.ts` y `rates.ts` | Ayudas de los tests (añadidas en la fase 2): texto con los espacios normalizados, controles por su etiqueta, respuestas preparadas del backend y de la API de tasas, y montaje y recarga de la barra de divisa | Angular (pruebas) | Tests |
+| `src/testing/text.ts`, `dom.ts`, `http.ts`, `rates.ts`, `app.ts`, `customers.ts` y `customer-form.ts` | Ayudas de los tests (añadidas en las fases 2 y 3): texto con los espacios normalizados, controles por su etiqueta, respuestas preparadas del backend y de la API de tasas, y montaje y recarga de la barra de divisa | Angular (pruebas) | Tests |
 
 **Reglas de capas** (comprobadas por el lint, ADR 0010):
 
@@ -111,13 +111,13 @@ toHundredths(cents, rate) -> bigint                                   # redondeo
 formatMoney(cents, display) -> string                                 # CA-5.3, CA-5.4
 formatCount(n), formatTaxRate(bp), formatRate(rate), tierRange(from, to)
 formatDateTime(iso), formatDate(iso), formatUnixDate(seconds)
-PagedList<T extends { id: number }>(fetch: (offset) -> Observable<Page<T>>)
+PagedList<T extends { id: number }>(fetch: (offset) -> Observable<Page<T>>, destroyRef?)   # cancela al destruirse
       items(), total(), status(): 'loading' | 'ready' | 'error', failure(),
       moreStatus(): 'idle' | 'loading' | 'error', reload(), loadMore(), retry(), prepend(item)
 
 # features
 parseCount(text, max) -> number | null                                # CA-11.5, 11.7, 11.8
-fieldErrorsFrom(failure) -> { fields: Partial<Record<CustomerField, string>>, general: boolean }
+fieldErrorsFrom(details) -> { fields: Partial<Record<CustomerField, string[]>>, general: boolean }   # T-08: recibe los details; varios mensajes por campo
 QuoteFlow(country): change(text), retry(), quote(), state(), pending(), quotedUsers()
 ```
 
@@ -170,11 +170,11 @@ PagedList.retry():    repite la última operación que falló (reload o loadMore
 PagedList.prepend(x): items = [x, ...items]; total + 1                          # CA-10.8
 ```
 
-**Búsqueda (RF-6):** cada cambio del buscador entra en un `Subject`; `debounceTime(300)` y después `switchMap` a `list.reload()` con el texto. `switchMap` cancela la búsqueda anterior, así que su respuesta nunca llega a la pantalla (CA-6.5, CA-6.6). Un texto vacío o de espacios se envía sin `q`.
+**Búsqueda (RF-6):** cada cambio del buscador entra en un `Subject`; `debounceTime(300)` y después `list.reload()` con el texto. `reload` cancela la petición anterior, como haría un `switchMap`, así que su respuesta nunca llega a la pantalla (CA-6.5, CA-6.6; ajustado en T-07). Un texto vacío o de espacios se envía sin `q`.
 
 **Alta (RF-8):** al enviar, si algún campo recortado está vacío → T-OBL en esos campos y foco en el primero, sin petición. Si no, `create` con los valores tal cual. Con 201, navegación a la ficha con el estado `{ registered: true }`. Con error, `fieldErrorsFrom(failure)` reparte los mensajes (422 y 409); conexión y servidor muestran `request-error`, cuyo «Reintentar» reenvía el último cuerpo.
 
-**Ficha (RF-9):** `get(id)`; con 200 se crean el simulador y la `PagedList` del historial, y solo entonces salen sus peticiones (spec D-17). Con 404, T-NFC y nada más. T-REG se muestra si la navegación trae `registered`.
+**Ficha (RF-9):** el `{id}` llega como `input` de la ruta (`withComponentInputBinding`) y se vuelve a pedir si cambia; `get(id)`; con 200 se crean el simulador y la `PagedList` del historial, y solo entonces salen sus peticiones (spec D-17). Con 404, T-NFC y nada más. T-REG se muestra si la navegación trae `registered`.
 
 **Cotización (RF-12):**
 

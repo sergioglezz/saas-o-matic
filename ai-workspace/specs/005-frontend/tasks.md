@@ -24,7 +24,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 | --- | --- | --- | --- |
 | 1 — Base | T-01 | Soporte de todos | ✅ Completada: Node 26.13.1 LTS (ADR 0010 ajustado), Angular 22.2 sin SSR ni zona, angular-eslint 22.7; `npm test` (una pasada), `npm run lint` y la compilación de producción en verde; el lint falla con `any`, `HttpClient` fuera de `core/`, Angular o RxJS en un módulo puro y una función de 44 líneas (comprobado y revertido); `npm start` sirve en `http://localhost:4200`. El prototipo confirmó el plan salvo tres ajustes anotados en la sección 10: la biblioteca ES2023 en `tsconfig.json`, `watch: false` y los archivos de test fuera de la compilación. DT-12 precisa de dónde se lee T-REG |
 | 2 — Núcleo | T-02 a T-05 | RF-2 a RF-5, RF-11 (reglas) | ✅ Completada: 150 tests (148 nuevos) en verde, lint y compilación de producción sin errores ni avisos. Cada tarea empezó en rojo con esbozos que fallaban con «pendiente». Cubiertos CV-1 a CV-23, VE-1 a VE-11, TC-1 a TC-12, TC-14, TC-15, DV-1, DV-6 a DV-11, y ER-1 y ER-2 en el nivel de servicio. Revisión de la fase: un fallo propio corregido en el prototipo de T-01 (un cambio hecho dentro de un temporizador no se pinta hasta el siguiente fotograma; los tests llaman a `TestBed.tick()`), dos errores en mis tests (`match` retira las peticiones y compara la URL con sus parámetros) y una diferencia del plan con la spec corregida en el plan: el navegador guarda los cinco campos de 5.4, no tres (spec 5.5). Añadidos anotados en el plan §2: `decimal.ts`, `rateOf`, `EUR_DISPLAY` y las ayudas de `src/testing/`; `api-config.ts` son constantes |
-| 3 — Clientes | T-06 a T-09 | RF-1, RF-6 a RF-9 | Pendiente |
+| 3 — Clientes | T-06 a T-09 | RF-1, RF-6 a RF-9 | ✅ Completada: 242 tests (92 nuevos) en verde, lint y compilación de producción sin errores ni avisos; cada tarea empezó en rojo. Cubiertos FI-1 a FI-9 (la parte de la ficha), TC-13, TC-16, LI-1 a LI-19, CM-1 a CM-11, AL-1 a AL-20 y la parte visible de AL-5 y AL-18 en la ficha. Revisión de la fase: un error propio corregido (una desestructuración con una variable sin usar, que el lint rechazó). Ajustes anotados en el plan: la búsqueda cancela con `PagedList.reload` en lugar de `switchMap`, `fieldErrorsFrom` recibe los `details` y admite varios mensajes por campo, y la ficha recibe el `{id}` como `input` de la ruta. Por el límite de 300 líneas, los casos CM y los fallos del alta van en `customer-list-more.spec.ts` y `customer-form-failures.spec.ts`. Vista rápida del alta en el navegador, sin problemas |
 | 4 — Simulador e historial | T-10 a T-14 | RF-4, RF-10 a RF-13 | Pendiente |
 | 5 — Cierre | T-15 a T-17 | Todos | Pendiente |
 
@@ -64,25 +64,25 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 
 ## Fase 3 — Clientes (nivel C)
 
-- [ ] **T-06. Cabecera, rutas y página no encontrada**
+- [x] **T-06. Cabecera, rutas y página no encontrada**
   - **RF:** RF-1 (CA-1.1 a CA-1.7) y RF-3 (CA-3.11, CA-3.12 entre pantallas). Plan DT-11. Casos FI-6, FI-7, FI-8 (nombre de la app), TC-13 y TC-16. **Depende de:** T-05.
   - **Archivos:** `app.ts`, `app.html`, `app.css`, `app.routes.ts`, `app.config.ts`, `shared/ui/not-found-page.ts`, `src/styles.css` y `app.spec.ts`.
   - **Rojo (C):** las direcciones de 5.1 con las pantallas aún vacías; `/` lleva a `/clientes`; las desconocidas muestran T-NFP sin peticiones al backend; la cabecera y la atribución en todas; una sola petición de tasas al recorrerlas.
   - **Hecho cuando:** esos casos pasan.
 
-- [ ] **T-07. Listado, búsqueda y «Cargar más»**
+- [x] **T-07. Listado, búsqueda y «Cargar más»**
   - **RF:** RF-6 (CA-6.1 a CA-6.11), RF-7 (CA-7.1 a CA-7.7) y RF-2 (CA-2.5, CA-2.6). Plan §5 «Listas paginadas» y «Búsqueda», DT-8 y DT-9. Casos LI-1 a LI-19 y CM-1 a CM-11. **Depende de:** T-06.
   - **Archivos:** `shared/paged-list.ts`, `shared/ui/request-error.ts`, `shared/ui/load-more.ts`, `features/customers/customer-list-page.*` y sus `*.spec.ts`.
   - **Rojo (C):** las tablas 6.5 y 6.6 (salvo CM-12), con reloj falso para la espera.
   - **Hecho cuando:** esos casos pasan; LI-12 confirma que la búsqueda vieja se cancela y LI-19 que el texto se muestra literal.
 
-- [ ] **T-08. Alta de cliente**
+- [x] **T-08. Alta de cliente**
   - **RF:** RF-8 (CA-8.1 a CA-8.15). Plan §5 «Alta», DT-12 y DT-14. Casos AL-1 a AL-20. **Depende de:** T-07.
   - **Archivos:** `features/customers/customer-form-page.*`, `customer-form-errors.ts` y sus `*.spec.ts`.
   - **Rojo (U y C):** la tabla 6.7; `fieldErrorsFrom` con los detalles de AL-7 a AL-12.
   - **Hecho cuando:** esos casos pasan y el navegador no valida nada más que obligatorios y longitudes (AL-7 y AL-8 envían).
 
-- [ ] **T-09. Ficha del cliente**
+- [x] **T-09. Ficha del cliente**
   - **RF:** RF-9 (CA-9.1 a CA-9.6). Plan §5 «Ficha», DT-12. Casos FI-1 (tarjeta), FI-2 a FI-5, FI-7 y FI-9. **Depende de:** T-08.
   - **Archivos:** `features/customers/customer-detail-page.*` y su `*.spec.ts`.
   - **Rojo (C):** la tabla 6.8 en lo que toca a la tarjeta, el 404 y los avisos; el historial y el simulador llegan en la fase 4.
