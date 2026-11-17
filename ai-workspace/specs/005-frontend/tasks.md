@@ -26,7 +26,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 | 2 — Núcleo | T-02 a T-05 | RF-2 a RF-5, RF-11 (reglas) | ✅ Completada: 150 tests (148 nuevos) en verde, lint y compilación de producción sin errores ni avisos. Cada tarea empezó en rojo con esbozos que fallaban con «pendiente». Cubiertos CV-1 a CV-23, VE-1 a VE-11, TC-1 a TC-12, TC-14, TC-15, DV-1, DV-6 a DV-11, y ER-1 y ER-2 en el nivel de servicio. Revisión de la fase: un fallo propio corregido en el prototipo de T-01 (un cambio hecho dentro de un temporizador no se pinta hasta el siguiente fotograma; los tests llaman a `TestBed.tick()`), dos errores en mis tests (`match` retira las peticiones y compara la URL con sus parámetros) y una diferencia del plan con la spec corregida en el plan: el navegador guarda los cinco campos de 5.4, no tres (spec 5.5). Añadidos anotados en el plan §2: `decimal.ts`, `rateOf`, `EUR_DISPLAY` y las ayudas de `src/testing/`; `api-config.ts` son constantes |
 | 3 — Clientes | T-06 a T-09 | RF-1, RF-6 a RF-9 | ✅ Completada: 242 tests (92 nuevos) en verde, lint y compilación de producción sin errores ni avisos; cada tarea empezó en rojo. Cubiertos FI-1 a FI-9 (la parte de la ficha), TC-13, TC-16, LI-1 a LI-19, CM-1 a CM-11, AL-1 a AL-20 y la parte visible de AL-5 y AL-18 en la ficha. Revisión de la fase: un error propio corregido (una desestructuración con una variable sin usar, que el lint rechazó). Ajustes anotados en el plan: la búsqueda cancela con `PagedList.reload` en lugar de `switchMap`, `fieldErrorsFrom` recibe los `details` y admite varios mensajes por campo, y la ficha recibe el `{id}` como `input` de la ruta. Por el límite de 300 líneas, los casos CM y los fallos del alta van en `customer-list-more.spec.ts` y `customer-form-failures.spec.ts`. Vista rápida del alta en el navegador, sin problemas |
 | 4 — Simulador e historial | T-10 a T-14 | RF-4, RF-10 a RF-13 | ✅ Completada: 312 tests (70 nuevos) en verde, lint y compilación de producción sin errores ni avisos. Cubiertos HI-1 a HI-9, CM-12, SM-1 a SM-13, CO-1 a CO-16, GU-1 a GU-14, DV-2 a DV-5 y la petición de historial y cotización de FI-1. Pasaron a la primera, porque el código de una tarea anterior ya los cumplía, nueve casos CO (el flujo de la T-11), los siete de GU-10 (la regla de activación de la T-11) y los de la T-14 (la conversión de la T-05 y la T-10); se comprobaron con mutaciones. Las de GU-10 no fallaron: tres casos pasaban por la condición equivocada (el valor escrito ya era distinto del de la cotización) y se reforzaron hasta que cada mutación hizo fallar el suyo. Añadido anotado en el plan: `price-totals.ts` |
-| 5 — Cierre | T-15 a T-17 | Todos | Pendiente |
+| 5 — Cierre | T-15 a T-17 | Todos | ✅ Completada, pendiente de la revisión del autor: 319 tests (7 nuevos de errores generales y CA-5.8), lint y compilación en verde, también en una copia limpia; ningún archivo pasa de 300 líneas ni ninguna función de 40 (el test más largo, 27). Arranque real con el seed: flujos 1 a 4 y MA-1 a MA-6 y MA-8 comprobados; MA-1 encontró un desbordamiento a 360 px, ya corregido. MA-7 y MA-9 quedan para el autor. README y `AGENTS.md` actualizados. Backend sin cambios y en verde |
 
 ## Fase 1 — Base
 
@@ -122,7 +122,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 
 ## Fase 5 — Cierre
 
-- [ ] **T-15. Errores generales y revisión de capas**
+- [x] **T-15. Errores generales y revisión de capas**
   - **RF:** RF-2 (CA-2.2 a CA-2.4), RF-5 (CA-5.8) y RNF-1, RNF-6 y RNF-7. Casos ER-1 a ER-6 en pantalla. **Depende de:** T-14.
   - **Archivos:** `shared/api-errors.spec.ts` y lo que haga falta para que pasen.
   - **Rojo (C):** la tabla 6.13 sobre el listado; ningún cuerpo enviado en los tests de alta, cotización y guardado lleva importes ni tasas; con USD elegido, el almacenamiento del navegador solo contiene la divisa y las tasas (CA-5.8).
@@ -149,7 +149,21 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 
     RNF-2: con el backend local, la cotización se ve entre 330 y 350 ms después del último cambio (300 ms de espera más la petición).
 
-- [ ] **T-17. Revisión conjunta y cierre**
+- [x] **T-17. Revisión conjunta y cierre**
   - **RF:** todos. **Depende de:** T-16.
   - **Comprobación:** copia limpia (solo lo que entraría en un commit) con una instalación nueva: tests, lint y compilación; la suite del backend sin cambios; cada CA y cada caso U y C con un test que lo cita y pasa; los criterios de la sección 10 de la spec marcados; las correcciones al código generado listadas para el log.
   - **Hecho cuando:** todo lo anterior está en verde y el autor revisa la spec, el plan y las tareas.
+  - **Resultado (17/11/2026):**
+    - **Copia limpia:** 102 archivos del frontend, instalada de cero con `npm ci`: 319 tests, lint y compilación de producción en verde. npm 11 avisa de que no ejecuta el script de instalación de `msgpackr-extract`, una dependencia opcional de las herramientas; los tests no lo necesitan.
+    - **Backend:** 1051 tests, `ruff check`, `ruff format --check` y `mypy` en verde; `git status` sin cambios en `backend/`. El único aviso de pytest viene de Starlette (usar `httpx` con su cliente de tests está obsoleto) y no tiene que ver con esta spec.
+    - **Trazabilidad:** los 117 CA y los 179 casos U y C están citados en algún test. Faltaban CA-3.4 y CA-3.9, que ya cubrían TC-1 y TC-4 sin nombrarlos, y se añadieron a sus títulos.
+    - **Sección 10 de la spec:** marcada. Quedan sin marcar MA-7 y MA-9, los commits (principio 2) y la anotación en el log con la revisión del autor (principio 5).
+    - **Correcciones para el log** (fallos propios, detectados y corregidos):
+      1. Spec v1.1, al planificar: un DOM simulado no reproduce el teclado, Intro ni el límite de caracteres. LI-13, LI-17, AL-6, AL-17 y SM-10 comprueban el control nativo, y MA-3 el comportamiento.
+      2. Plan, en T-03: decía que el navegador guarda tres campos de las tasas; la spec 5.5 dice los cinco de 5.4. Corregido en el plan.
+      3. Prototipo de T-01, en T-05: concluyó que los cambios se pintan solos tras avanzar el reloj, pero uno hecho dentro de un temporizador espera al siguiente fotograma. Los tests llaman a `TestBed.tick()`.
+      4. Tests de T-04 y T-05: `HttpTestingController.match` con un texto compara la URL con sus parámetros, y además retira las peticiones que encuentra. Corregidos los dos tests.
+      5. T-08: una desestructuración dejaba una variable sin usar; la rechazó el lint.
+      6. T-13: tres casos de GU-10 pasaban por la condición equivocada (el valor escrito ya era distinto del de la cotización). Lo detectaron dos mutaciones que no hicieron fallar nada; se reforzaron.
+      7. T-15: dos tests abrían la app dos veces sin reiniciar el módulo de pruebas.
+      8. T-16, MA-1: a 360 px la ficha medía 528 px, porque los grids crecían hasta el ancho mínimo de la tabla de tramos. Corregido con `minmax(0, 1fr)` y la tabla en bloques a 480 px o menos. El primer intento partía las cabeceras letra a letra por el `overflow-wrap: anywhere` global, y también se corrigió.

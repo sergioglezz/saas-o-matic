@@ -661,22 +661,22 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 
 **Funcionalidad**
 
-- [ ] Cada caso U y C de las tablas 6.1 a 6.13 tiene un test automático que lo cita por su identificador y pasa.
-- [ ] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador y pasa.
-- [ ] MA-1 a MA-9 se han comprobado a mano y su resultado está anotado (fecha, navegador y ancho).
-- [ ] Con backend y frontend arrancados de verdad y el seed cargado, los flujos 1 a 4 del 00 se completan, también sus caminos de error.
-- [ ] Los comandos del frontend de `AGENTS.md` (arranque, tests y lint) funcionan y quedan confirmados en ese archivo.
-- [ ] El README explica cómo levantar el frontend (versión de Node, instalación, arranque y dirección `http://localhost:4200`) y se ha probado en una carpeta limpia.
-- [ ] La suite del backend sigue pasando sin haber tocado el backend.
+- [x] Cada caso U y C de las tablas 6.1 a 6.13 tiene un test automático que lo cita por su identificador y pasa (179 de 179, comprobado en T-17).
+- [x] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador y pasa (117 de 117).
+- [ ] MA-1 a MA-9 se han comprobado a mano y su resultado está anotado (fecha, navegador y ancho). Parcial: MA-1 a MA-6 y MA-8 comprobados el 17/11/2026 en Chromium y anotados en `tasks.md` (T-16); MA-7 (Firefox, Edge y Safari) y MA-9 (lector de pantalla) quedan pendientes del autor.
+- [x] Con backend y frontend arrancados de verdad y el seed cargado, los flujos 1 a 4 del 00 se completan, también sus caminos de error (T-16).
+- [x] Los comandos del frontend de `AGENTS.md` (arranque, tests y lint) funcionan y quedan confirmados en ese archivo.
+- [x] El README explica cómo levantar el frontend (versión de Node, instalación, arranque y dirección `http://localhost:4200`) y se ha probado en una carpeta limpia: una copia con solo lo que entraría en un commit, instalada de cero con `npm ci`, pasa tests, lint y compilación (T-17).
+- [x] La suite del backend sigue pasando sin haber tocado el backend (1051 tests, ruff y mypy; `git status` sin cambios en `backend/`).
 
 **Cumplimiento de la constitución** (comprobación en revisión)
 
-- [ ] Principio 1: ninguna dependencia fuera del proyecto base; si hiciera falta alguna, tiene su ADR.
-- [ ] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa.
-- [ ] Principio 3: el navegador no calcula importes (CO-12 y revisión del código).
-- [ ] Principio 4: los importes se reciben en céntimos de EUR y nunca se envían ni se guardan convertidos (ER-2).
-- [ ] Principio 5: la suite pasa en cada commit; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`; el autor ha revisado la spec y el trabajo.
-- [ ] Principio 6: TypeScript estricto y lint sin errores; todos los textos visibles en español.
+- [x] Principio 1: ninguna dependencia fuera del proyecto base de Angular CLI más angular-eslint y las que instala su esquema, todas con su ADR (0010).
+- [ ] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa. Pendiente: no hay commits sin la autorización del autor.
+- [x] Principio 3: el navegador no calcula importes (CO-12 y revisión del código: ninguna operación con `*_cents` fuera de `money.ts`).
+- [x] Principio 4: los importes se reciben en céntimos de EUR y nunca se envían ni se guardan convertidos (ER-2 y CA-5.8).
+- [ ] Principio 5: la suite pasa en cada commit; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`; el autor ha revisado la spec y el trabajo. Pendiente: commits, anotación en el log y revisión del autor; las correcciones están listadas en `tasks.md` (T-17).
+- [x] Principio 6: TypeScript estricto y lint sin errores; todos los textos visibles en español.
 
 ## 11. Decisiones y dudas abiertas
 

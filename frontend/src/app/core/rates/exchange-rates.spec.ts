@@ -34,7 +34,7 @@ describe('exchange rates (spec 005 §6.3)', () => {
     vi.restoreAllMocks();
   });
 
-  it('TC-1: without stored rates, one request; 5 currencies, T-RAT and rates stored', async () => {
+  it('TC-1: without stored rates, one request; 5 currencies, T-RAT and rates stored (CA-3.2, CA-3.4, CA-3.9)', async () => {
     const { bar, http, select } = await mountBar();
     answerRates(http); // expectOne: exactly one request
     await settle();
@@ -54,7 +54,7 @@ describe('exchange rates (spec 005 §6.3)', () => {
     expect(textOf(bar)).toContain('Tasas del 16/11/2026');
   });
 
-  it('TC-3 and TC-4: stale stored rates are asked again; the new ones are used and stored', async () => {
+  it('TC-3 and TC-4: stale stored rates are asked again; the new ones are used and stored (CA-3.4)', async () => {
     storeRates();
     setNow(STALE_NOW);
     const { bar, http, select } = await mountBar();
