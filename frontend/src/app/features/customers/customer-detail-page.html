@@ -1,45 +1,69 @@
-<div class="stack">
-  <a routerLink="/clientes">{{ T.VOL }}</a>
+<div class="stack anim-page">
+  <a class="back-link" routerLink="/clientes"><app-icon name="back" [size]="16" />{{ T.VOL }}</a>
 
   @let current = state();
   @if (current.status === 'loading') {
-    <p role="status">{{ T.LCU }}</p>
+    <p role="status" class="muted">{{ T.LCU }}</p>
   } @else if (current.status === 'not_found') {
-    <section class="card narrow">
+    <section class="card narrow not-found">
+      <span class="not-found-icon"><app-icon name="alert" [size]="28" /></span>
       <h1>{{ T.NFC }}</h1>
     </section>
   } @else if (current.status === 'error') {
     <app-request-error [failure]="current.failure" (retry)="retry()" />
   } @else {
     @if (registered) {
-      <p class="success-text" role="status">{{ T.REG }}</p>
+      <p class="notice notice-success" role="status">
+        <app-icon name="check" [size]="16" />{{ T.REG }}
+      </p>
     }
-    <article class="card customer-card">
-      <h1>{{ current.customer.company_name }}</h1>
-      <dl>
-        <div>
-          <dt>{{ LABELS.taxId }}</dt>
-          <dd>{{ current.customer.tax_id }}</dd>
+    <div class="detail-grid grid grid-cols-[minmax(0,1fr)] items-start gap-5 lg:grid-cols-3">
+      <article class="card customer-card">
+        <div class="card-title">
+          <span class="avatar avatar-lg" aria-hidden="true">
+            {{ initials(current.customer.company_name) }}
+          </span>
+          <h1>{{ current.customer.company_name }}</h1>
         </div>
-        <div>
-          <dt>{{ LABELS.contactEmail }}</dt>
-          <dd>{{ current.customer.contact_email }}</dd>
-        </div>
-        <div>
-          <dt>{{ LABELS.country }}</dt>
-          <dd>{{ countryName(current.customer.country) }}</dd>
-        </div>
-        <div>
-          <dt>{{ LABELS.plan }}</dt>
-          <dd>{{ planName(current.customer.plan) }}</dd>
-        </div>
-        <div>
-          <dt>{{ LABELS.createdAt }}</dt>
-          <dd>{{ current.customer.created_at | day }}</dd>
-        </div>
-      </dl>
-    </article>
-    <app-simulator [customer]="current.customer" (saved)="onSaved($event)" />
-    <app-simulation-history [list]="history" />
+        <dl>
+          <div>
+            <dt>{{ LABELS.taxId }}</dt>
+            <dd>{{ current.customer.tax_id }}</dd>
+          </div>
+          <div>
+            <dt>{{ LABELS.contactEmail }}</dt>
+            <dd>{{ current.customer.contact_email }}</dd>
+          </div>
+          <div>
+            <dt>{{ LABELS.country }}</dt>
+            <dd>{{ countryName(current.customer.country) }}</dd>
+          </div>
+          <div>
+            <dt>{{ LABELS.plan }}</dt>
+            <dd>
+              <span [class]="'badge badge-' + current.customer.plan">
+                {{ planName(current.customer.plan) }}
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt>{{ LABELS.createdAt }}</dt>
+            <dd>{{ current.customer.created_at | day }}</dd>
+          </div>
+        </dl>
+      </article>
+      <section class="stack lg:col-span-2" aria-labelledby="simulator-title">
+        <h2 id="simulator-title" class="section-title">
+          <app-icon name="sliders" />{{ TITLES.simulator }}
+        </h2>
+        <app-simulator [customer]="current.customer" (saved)="onSaved($event)" />
+      </section>
+    </div>
+    <section class="stack" aria-labelledby="history-title">
+      <h2 id="history-title" class="section-title">
+        <app-icon name="clock" />{{ TITLES.history }}
+      </h2>
+      <app-simulation-history [list]="history" />
+    </section>
   }
 </div>

@@ -1,4 +1,4 @@
-<section class="card stack simulator">
+<div class="card stack simulator">
   <div class="values">
     <div class="field users">
       <label id="sim-users-label" for="sim-users">{{ LABELS.activeUsers }}</label>
@@ -70,21 +70,29 @@
   <div class="quote">
     <div class="quote-status" role="status">
       @if (flow.outcome() === 'unsupported') {
-        <p class="error-text">{{ T.CNS }}</p>
+        <p class="notice notice-error">
+          <app-icon name="alert" [size]="16" />{{ T.CNS }}
+        </p>
       } @else if (flow.pending()) {
         <p class="muted">{{ T.UPD }}</p>
       } @else if (flow.outcome() === 'failed') {
-        <p class="error-text">{{ T.NUP }}</p>
+        <p class="notice notice-error">
+          <app-icon name="alert" [size]="16" />{{ T.NUP }}
+        </p>
       }
     </div>
     @if (flow.outcome() === 'failed' && !flow.pending()) {
-      <button type="button" class="secondary" (click)="retryQuote()">{{ T.RET }}</button>
+      <button type="button" class="secondary compact" (click)="retryQuote()">
+        <app-icon name="refresh" [size]="16" />{{ T.RET }}
+      </button>
     }
     @if (flow.outcome() !== 'unsupported') {
       @if (flow.quote(); as quote) {
         <app-tier-table [tiers]="quote.tiers" />
         <div aria-live="polite">
-          <app-price-totals [price]="quote" />
+          <div class="totals-panel">
+            <app-price-totals [price]="quote" />
+          </div>
         </div>
       }
     }
@@ -97,21 +105,25 @@
     <div role="status">
       @switch (saveNotice()) {
         @case ('saved') {
-          <p class="success-text">{{ T.SOK }}</p>
+          <p class="notice notice-success">
+            <app-icon name="check" [size]="16" />{{ T.SOK }}
+          </p>
         }
         @case ('unsupported') {
-          <p class="error-text">{{ T.CNS }}</p>
+          <p class="notice notice-error">{{ T.CNS }}</p>
         }
         @case ('failed') {
-          <p class="error-text">{{ T.SKO }}</p>
+          <p class="notice notice-error">{{ T.SKO }}</p>
         }
         @case ('failed-retry') {
-          <p class="error-text">{{ T.SKO }}</p>
+          <p class="notice notice-error">{{ T.SKO }}</p>
         }
       }
     </div>
     @if (saveNotice() === 'failed-retry') {
-      <button type="button" class="secondary" (click)="retrySave()">{{ T.RET }}</button>
+      <button type="button" class="secondary compact" (click)="retrySave()">
+        <app-icon name="refresh" [size]="16" />{{ T.RET }}
+      </button>
     }
   </div>
-</section>
+</div>

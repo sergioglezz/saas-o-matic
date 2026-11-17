@@ -6,6 +6,7 @@ import { NewCustomer } from '../../core/api/api-models';
 import { CustomersApi } from '../../core/api/customers-api';
 import { RequestFailure, toRequestFailure } from '../../core/api/request-failure';
 import { COUNTRIES, LABELS, PLANS, T } from '../../shared/texts';
+import { Icon } from '../../shared/ui/icon';
 import { RequestError } from '../../shared/ui/request-error';
 import { CUSTOMER_FIELDS, CustomerField, fieldErrorsFrom } from './customer-form-errors';
 
@@ -23,7 +24,7 @@ function textControl(): FormControl<string> {
 /** Spec 005 RF-8: new customer. The browser checks only what is required (P-2, DT-14). */
 @Component({
   selector: 'app-customer-form-page',
-  imports: [ReactiveFormsModule, RouterLink, RequestError],
+  imports: [ReactiveFormsModule, RouterLink, Icon, RequestError],
   templateUrl: './customer-form-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

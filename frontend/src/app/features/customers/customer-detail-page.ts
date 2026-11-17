@@ -15,8 +15,10 @@ import { CustomersApi } from '../../core/api/customers-api';
 import { RequestFailure, toRequestFailure } from '../../core/api/request-failure';
 import { SimulationsApi } from '../../core/api/simulations-api';
 import { DayPipe } from '../../shared/format/format-pipes';
+import { initials } from '../../shared/format/initials';
 import { PagedList } from '../../shared/paged-list';
-import { LABELS, T, countryName, planName } from '../../shared/texts';
+import { LABELS, T, TITLES, countryName, planName } from '../../shared/texts';
+import { Icon } from '../../shared/ui/icon';
 import { RequestError } from '../../shared/ui/request-error';
 import { Simulator } from '../simulator/simulator';
 import { SimulationHistory } from './simulation-history';
@@ -30,7 +32,7 @@ type CardState =
 /** Spec 005 RF-9: the customer card, and below it the simulator and the history. */
 @Component({
   selector: 'app-customer-detail-page',
-  imports: [RouterLink, DayPipe, RequestError, Simulator, SimulationHistory],
+  imports: [RouterLink, DayPipe, Icon, RequestError, Simulator, SimulationHistory],
   templateUrl: './customer-detail-page.html',
   styleUrl: './customer-detail-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +48,8 @@ export class CustomerDetailPage {
 
   protected readonly T = T;
   protected readonly LABELS = LABELS;
+  protected readonly TITLES = TITLES;
+  protected readonly initials = initials;
   protected readonly countryName = countryName;
   protected readonly planName = planName;
   protected readonly state = signal<CardState>({ status: 'loading' });

@@ -12,21 +12,23 @@
   <div class="rates" role="status">
     @switch (rates.status()) {
       @case ('loading') {
-        <span>{{ T.LRT }}</span>
+        <span class="muted">{{ T.LRT }}</span>
       }
       @case ('fresh') {
-        <span>{{ T.RAT(updated()) }}</span>
+        <span class="muted">{{ T.RAT(updated()) }}</span>
       }
       @case ('stale') {
-        <span class="notice">{{ T.RFL(updated()) }}</span>
+        <span class="notice notice-warn">{{ T.RFL(updated()) }}</span>
       }
       @case ('unavailable') {
-        <span class="notice">{{ T.RNO }}</span>
+        <span class="notice notice-warn">{{ T.RNO }}</span>
       }
     }
   </div>
   @if (rates.status() === 'stale' || rates.status() === 'unavailable') {
-    <button type="button" class="secondary" (click)="rates.retry()">{{ T.RET }}</button>
+    <button type="button" class="secondary compact" (click)="rates.retry()">
+      <app-icon name="refresh" [size]="16" />{{ T.RET }}
+    </button>
   }
   @if (equivalence(); as equivalence) {
     <p class="equivalence">{{ equivalence }}</p>

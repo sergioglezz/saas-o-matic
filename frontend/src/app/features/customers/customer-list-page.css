@@ -2,30 +2,61 @@
   flex: 1 1 16rem;
 }
 
-.search input {
-  width: 100%;
+.search-box {
+  position: relative;
 }
 
+.search-box input {
+  width: 100%;
+  padding-left: 2.5rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-muted);
+  pointer-events: none;
+}
+
+/* Spec 006 CA-5.6: the card rises when the pointer is over it. */
 .customer {
-  display: grid;
-  gap: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
   height: 100%;
-  color: var(--text);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition:
+    transform 180ms var(--ease-out-soft),
+    box-shadow 180ms var(--ease-out-soft),
+    border-color 180ms ease-out;
+}
+
+.customer:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-brand-200);
+  box-shadow: 0 12px 24px -12px rgb(15 23 42 / 0.25);
   text-decoration: none;
 }
 
-.customer:hover .name {
-  text-decoration: underline;
+.body {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
 .name {
   font-weight: 700;
-  color: var(--primary);
+  color: var(--color-brand-700);
 }
 
 .details {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 0.75rem;
-  color: var(--muted-text);
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-muted);
 }

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RequestFailure } from '../../core/api/request-failure';
 import { T } from '../texts';
+import { Icon } from './icon';
 
 /**
  * Spec 005 RF-2 outside the simulator: T-CON without an answer, T-SRV for any other failure the
@@ -9,18 +10,20 @@ import { T } from '../texts';
  */
 @Component({
   selector: 'app-request-error',
+  imports: [Icon],
   template: `
-    <div class="request-error" role="status">
-      <p class="error-text">{{ message() }}</p>
-      <button type="button" class="secondary" (click)="retry.emit()">{{ T.RET }}</button>
+    <div class="notice notice-error request-error" role="status">
+      <app-icon name="alert" [size]="16" />
+      <p>{{ message() }}</p>
+      <button type="button" class="secondary compact" (click)="retry.emit()">
+        <app-icon name="refresh" [size]="16" />{{ T.RET }}
+      </button>
     </div>
   `,
   styles: `
     .request-error {
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.5rem 1rem;
+      gap: 0.5rem 0.75rem;
     }
     p {
       margin: 0;

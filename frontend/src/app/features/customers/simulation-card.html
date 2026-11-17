@@ -1,5 +1,5 @@
 <article class="card simulation">
-  <p class="when">{{ simulation().created_at | dateTime }}</p>
+  <p class="when"><app-icon name="clock" [size]="16" />{{ simulation().created_at | dateTime }}</p>
   <dl class="inputs">
     <div>
       <dt>{{ LABELS.activeUsers }}</dt>
@@ -17,13 +17,15 @@
   <app-price-totals [price]="simulation()" />
   <button
     type="button"
-    class="secondary"
+    class="secondary compact"
     [attr.aria-expanded]="open() ? 'true' : 'false'"
     (click)="toggle()"
   >
     {{ open() ? LABELS.hideBreakdown : LABELS.showBreakdown }}
   </button>
   @if (open()) {
-    <app-tier-table [tiers]="simulation().tiers" />
+    <div class="breakdown">
+      <app-tier-table [tiers]="simulation().tiers" />
+    </div>
   }
 </article>

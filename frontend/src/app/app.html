@@ -1,6 +1,9 @@
 <header class="app-header">
   <div class="header-inner">
-    <a class="brand" routerLink="/clientes">{{ LABELS.app }}</a>
+    <a class="brand" routerLink="/clientes">
+      <span class="brand-mark"><app-icon name="logo" [size]="20" /></span>
+      {{ LABELS.app }}
+    </a>
     <app-currency-bar />
   </div>
 </header>

@@ -70,6 +70,13 @@ export const LABELS = {
   hideBreakdown: 'Ocultar desglose',
 } as const;
 
+/** Spec 006 §5.1: the titles added by the modern interface. */
+export const TITLES = {
+  customers: 'Clientes',
+  simulator: 'Simulador',
+  history: 'Historial de simulaciones',
+} as const;
+
 export interface Option {
   readonly value: string;
   readonly name: string;

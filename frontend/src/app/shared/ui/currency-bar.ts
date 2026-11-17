@@ -5,10 +5,12 @@ import { CurrencyCode } from '../../core/rates/rates-snapshot';
 import { formatUnixDate } from '../format/dates';
 import { formatRate } from '../format/numbers';
 import { CURRENCY_LABELS, LABELS, T } from '../texts';
+import { Icon } from './icon';
 
 /** Spec 005 RF-3 and RF-4: selector, rates line, notices, T-EQ, T-ORI and attribution. */
 @Component({
   selector: 'app-currency-bar',
+  imports: [Icon],
   templateUrl: './currency-bar.html',
   styleUrl: './currency-bar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

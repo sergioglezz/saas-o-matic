@@ -13,6 +13,7 @@ import { Customer, NewSimulation, Simulation } from '../../core/api/api-models';
 import { RequestFailure, toRequestFailure } from '../../core/api/request-failure';
 import { SimulationsApi } from '../../core/api/simulations-api';
 import { LABELS, T } from '../../shared/texts';
+import { Icon } from '../../shared/ui/icon';
 import { PriceTotals } from '../../shared/ui/price-totals';
 import { TierTable } from '../../shared/ui/tier-table';
 import { QuoteFlow } from './quote-flow';
@@ -40,7 +41,7 @@ function noticeFor(failure: RequestFailure): SaveNotice {
 /** Spec 005 RF-11 to RF-13: the simulator of the customer card. */
 @Component({
   selector: 'app-simulator',
-  imports: [PriceTotals, TierTable],
+  imports: [Icon, PriceTotals, TierTable],
   templateUrl: './simulator.html',
   styleUrl: './simulator.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -11,7 +11,9 @@ import { RequestError } from './request-error';
   template: `
     @if (list().hasMore()) {
       <div class="load-more">
-        <p role="status">{{ T.MOS(list().items().length | count, list().total() | count) }}</p>
+        <p role="status" class="muted text-sm">
+          {{ T.MOS(list().items().length | count, list().total() | count) }}
+        </p>
         @if (list().moreFailure(); as failure) {
           <app-request-error [failure]="failure" (retry)="list().retry()" />
         } @else {

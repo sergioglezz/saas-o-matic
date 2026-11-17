@@ -1,21 +1,26 @@
-<section class="stack">
+<section class="stack anim-page">
+  <h1>{{ TITLES.customers }}</h1>
+
   <div class="toolbar">
     <div class="field search">
       <label for="customer-search">{{ LABELS.search }}</label>
-      <input
-        id="customer-search"
-        type="search"
-        maxlength="120"
-        autocomplete="off"
-        (input)="search($event)"
-      />
+      <div class="search-box">
+        <app-icon name="search" class="search-icon" />
+        <input
+          id="customer-search"
+          type="search"
+          maxlength="120"
+          autocomplete="off"
+          (input)="search($event)"
+        />
+      </div>
     </div>
-    <a class="button" routerLink="/clientes/nuevo">{{ T.NEW }}</a>
+    <a class="button" routerLink="/clientes/nuevo"><app-icon name="plus" />{{ T.NEW }}</a>
   </div>
 
   @switch (list.status()) {
     @case ('loading') {
-      <p role="status">{{ T.LCL }}</p>
+      <p role="status" class="muted">{{ T.LCL }}</p>
     }
     @case ('error') {
       @if (list.failure(); as failure) {
@@ -24,17 +29,22 @@
     }
     @case ('ready') {
       @if (list.total() === 0) {
-        <p role="status">{{ emptyText() }}</p>
+        <p role="status" class="empty-state">{{ emptyText() }}</p>
       } @else {
         <ul class="cards two-columns">
           @for (customer of list.items(); track customer.id) {
             <li>
               <a class="card customer" [routerLink]="['/clientes', customer.id]">
-                <span class="name">{{ customer.company_name }}</span>
-                <span class="details">
-                  <span>{{ customer.tax_id }}</span>
-                  <span>{{ countryName(customer.country) }}</span>
-                  <span>{{ planName(customer.plan) }}</span>
+                <span class="avatar" aria-hidden="true">{{ initials(customer.company_name) }}</span>
+                <span class="body">
+                  <span class="name">{{ customer.company_name }}</span>
+                  <span class="details">
+                    <span>{{ customer.tax_id }}</span>
+                    <span>{{ countryName(customer.country) }}</span>
+                    <span [class]="'badge badge-' + customer.plan">{{
+                      planName(customer.plan)
+                    }}</span>
+                  </span>
                 </span>
               </a>
             </li>

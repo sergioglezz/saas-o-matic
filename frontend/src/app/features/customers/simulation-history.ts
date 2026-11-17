@@ -14,10 +14,10 @@ import { SimulationCard } from './simulation-card';
   selector: 'app-simulation-history',
   imports: [LoadMore, RequestError, SimulationCard],
   template: `
-    <section class="stack">
+    <div class="stack">
       @switch (list().status()) {
         @case ('loading') {
-          <p role="status">{{ T.LHI }}</p>
+          <p role="status" class="muted">{{ T.LHI }}</p>
         }
         @case ('error') {
           @if (list().failure(); as failure) {
@@ -26,18 +26,20 @@ import { SimulationCard } from './simulation-card';
         }
         @case ('ready') {
           @if (list().total() === 0) {
-            <p role="status">{{ T.HVA }}</p>
+            <p role="status" class="empty-state">{{ T.HVA }}</p>
           } @else {
             <ul class="cards two-columns">
               @for (simulation of list().items(); track simulation.id) {
-                <li><app-simulation-card [simulation]="simulation" /></li>
+                <li>
+                  <app-simulation-card [simulation]="simulation" />
+                </li>
               }
             </ul>
             <app-load-more [list]="list()" />
           }
         }
       }
-    </section>
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

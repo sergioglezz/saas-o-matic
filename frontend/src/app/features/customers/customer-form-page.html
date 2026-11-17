@@ -1,11 +1,14 @@
-<section class="card narrow stack">
+<section class="card narrow stack anim-page">
+  <a class="back-link" routerLink="/clientes"><app-icon name="back" [size]="16" />{{ T.VOL }}</a>
   <h1>{{ T.NEW }}</h1>
 
   @if (failure(); as failure) {
     <app-request-error [failure]="failure" (retry)="retry()" />
   }
   @if (invalidData()) {
-    <p class="error-text" role="status">{{ T.DNV }}</p>
+    <p class="notice notice-error" role="status">
+      <app-icon name="alert" [size]="16" />{{ T.DNV }}
+    </p>
   }
 
   <form class="stack" novalidate [formGroup]="form" (ngSubmit)="submit()">
@@ -32,46 +35,48 @@
       </div>
     }
 
-    <div class="field">
-      <label for="customer-country">{{ LABELS.country }}</label>
-      <select
-        id="customer-country"
-        formControlName="country"
-        [attr.aria-invalid]="errors().country ? 'true' : null"
-        [attr.aria-describedby]="errorId('country')"
-      >
-        @for (country of COUNTRIES; track country.code) {
-          <option [value]="country.code">{{ country.name }}</option>
-        }
-      </select>
-      @if (errors().country; as messages) {
-        <p class="field-error" [id]="errorId('country')">
-          @for (message of messages; track $index) {
-            <span>{{ message }} </span>
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div class="field">
+        <label for="customer-country">{{ LABELS.country }}</label>
+        <select
+          id="customer-country"
+          formControlName="country"
+          [attr.aria-invalid]="errors().country ? 'true' : null"
+          [attr.aria-describedby]="errorId('country')"
+        >
+          @for (country of COUNTRIES; track country.code) {
+            <option [value]="country.code">{{ country.name }}</option>
           }
-        </p>
-      }
-    </div>
+        </select>
+        @if (errors().country; as messages) {
+          <p class="field-error" [id]="errorId('country')">
+            @for (message of messages; track $index) {
+              <span>{{ message }} </span>
+            }
+          </p>
+        }
+      </div>
 
-    <div class="field">
-      <label for="customer-plan">{{ LABELS.plan }}</label>
-      <select
-        id="customer-plan"
-        formControlName="plan"
-        [attr.aria-invalid]="errors().plan ? 'true' : null"
-        [attr.aria-describedby]="errorId('plan')"
-      >
-        @for (plan of PLANS; track plan.value) {
-          <option [value]="plan.value">{{ plan.name }}</option>
-        }
-      </select>
-      @if (errors().plan; as messages) {
-        <p class="field-error" [id]="errorId('plan')">
-          @for (message of messages; track $index) {
-            <span>{{ message }} </span>
+      <div class="field">
+        <label for="customer-plan">{{ LABELS.plan }}</label>
+        <select
+          id="customer-plan"
+          formControlName="plan"
+          [attr.aria-invalid]="errors().plan ? 'true' : null"
+          [attr.aria-describedby]="errorId('plan')"
+        >
+          @for (plan of PLANS; track plan.value) {
+            <option [value]="plan.value">{{ plan.name }}</option>
           }
-        </p>
-      }
+        </select>
+        @if (errors().plan; as messages) {
+          <p class="field-error" [id]="errorId('plan')">
+            @for (message of messages; track $index) {
+              <span>{{ message }} </span>
+            }
+          </p>
+        }
+      </div>
     </div>
 
     <div class="toolbar">
@@ -79,6 +84,4 @@
       <button type="button" class="secondary" (click)="cancel()">{{ LABELS.cancel }}</button>
     </div>
   </form>
-
-  <a routerLink="/clientes">{{ T.VOL }}</a>
 </section>
