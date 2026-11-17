@@ -14,7 +14,7 @@ import { LABELS } from '../texts';
   imports: [CountPipe, MoneyPipe],
   template: `
     <div class="table-scroll">
-      <table>
+      <table class="tier-table">
         <thead>
           <tr>
             <th scope="col">{{ LABELS.tier }}</th>
@@ -27,11 +27,15 @@ import { LABELS } from '../texts';
         <tbody>
           @for (line of tiers(); track line.tier) {
             <tr>
-              <th scope="row">{{ line.tier }}</th>
-              <td>{{ range(line) }}</td>
-              <td class="number">{{ line.units | count }}</td>
-              <td class="number">{{ line.unit_price_cents | money: currency.display() }}</td>
-              <td class="number">{{ line.amount_cents | money: currency.display() }}</td>
+              <th scope="row" [attr.data-label]="LABELS.tier">{{ line.tier }}</th>
+              <td [attr.data-label]="LABELS.tierUsers">{{ range(line) }}</td>
+              <td class="number" [attr.data-label]="LABELS.units">{{ line.units | count }}</td>
+              <td class="number" [attr.data-label]="LABELS.unitPrice">
+                {{ line.unit_price_cents | money: currency.display() }}
+              </td>
+              <td class="number" [attr.data-label]="LABELS.amount">
+                {{ line.amount_cents | money: currency.display() }}
+              </td>
             </tr>
           }
         </tbody>

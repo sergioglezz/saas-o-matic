@@ -1,6 +1,6 @@
 # SaaS-O-Matic
 
-Herramienta interna para que el equipo comercial simule y presupueste suscripciones SaaS multi-divisa. Este README se completará con las instrucciones de arranque al cerrar el proyecto; por ahora recoge las decisiones y supuestos ya tomados.
+Herramienta interna para que el equipo comercial simule y presupueste suscripciones SaaS multi-divisa. Este README recoge las decisiones y supuestos tomados, y cómo poner en marcha el backend y el frontend.
 
 ## Decisiones y supuestos
 
@@ -50,6 +50,19 @@ El enunciado pide sumar «el impuesto correspondiente al país del cliente», pe
 
 **Fuera de alcance:** editar o borrar simulaciones, consultar una simulación suelta, comparar simulaciones, generar un PDF y guardar la divisa de visualización (la conversión es solo presentación).
 
+### Frontend (spec 005)
+
+- **Pantallas.** Listado y buscador en `/clientes`, alta en `/clientes/nuevo` y ficha con simulador e historial en `/clientes/{id}`. Cualquier otra dirección muestra «Página no encontrada».
+- **Importes.** Todos los calcula el backend en euros. El navegador solo los convierte para mostrarlos y nunca envía ni guarda un importe convertido.
+- **Divisas.** EUR, USD, GBP, CHF y JPY, con las tasas de [ExchangeRate API](https://www.exchangerate-api.com) (`open.er-api.com`, base EUR). Se piden al abrir la app y se guardan en el navegador hasta su próxima actualización. Si la API falla, se usan las últimas guardadas con un aviso; sin ninguna, todo se muestra en EUR. La atribución «Rates By Exchange Rate API» está siempre visible. La divisa elegida se recuerda en el navegador.
+- **Conversión.** Cada importe se convierte por separado, con redondeo «mitad hacia arriba» sobre el valor exacto, así que en otra divisa la suma de subtotal e impuesto puede diferir del total en un céntimo. Es una conversión orientativa y la app lo avisa. Se muestran siempre 2 decimales, también en JPY.
+- **Formato.** Español: coma decimal y punto de miles también con 4 cifras («1.234,56 €»). Las fechas, en la zona horaria del navegador.
+- **Simulador.** Slider de 0 a 200 usuarios, más un campo que admite hasta 100 000. La cotización se pide 300 ms después del último cambio. «Guardar simulación» solo se activa cuando la cotización mostrada corresponde a los valores escritos: lo que se ve es lo que se guarda. El almacenamiento y las llamadas a la API se guardan, pero no cambian el precio (pendiente de confirmar).
+- **Alta.** El navegador solo comprueba los campos obligatorios y las longitudes máximas. El formato del email y del identificador lo valida el backend, y su mensaje aparece junto al campo.
+- **Listas largas.** El listado y el historial cargan de 50 en 50 con «Cargar más».
+
+**Fuera de alcance:** refrescar las tasas con la app abierta, más divisas, conservar la búsqueda en la dirección, avisar al salir con datos sin guardar, funcionar sin conexión y pruebas automáticas en un navegador real, que se sustituyen por las comprobaciones manuales de la spec 005.
+
 ## Backend: puesta en marcha
 
 Pasos comprobados en un clon limpio, con Python 3.12 o superior (probado con 3.14):
@@ -64,7 +77,21 @@ python -m app.db.seed                # opcional: 10 clientes y 6 simulaciones de
 uvicorn app.main:app --reload        # API en http://127.0.0.1:8000 y documentación en /docs
 ```
 
-En PowerShell, el entorno se activa con `.venv\Scripts\Activate.ps1`. Los tests y el lint se ejecutan con `pytest`, `ruff check .`, `ruff format --check .` y `mypy .`. Las instrucciones del frontend se añadirán con su spec.
+En PowerShell, el entorno se activa con `.venv\Scripts\Activate.ps1`. Los tests y el lint se ejecutan con `pytest`, `ruff check .`, `ruff format --check .` y `mypy .`.
+
+## Frontend: puesta en marcha
+
+Necesita Node 26 LTS (probado con 26.13.1; ADR 0010) y el backend arrancado como se indica arriba. En otra terminal:
+
+```bash
+cd frontend
+npm install                          # solo la primera vez
+npm start                            # app en http://localhost:4200
+```
+
+Ábrela en `http://localhost:4200`, no en `http://127.0.0.1:4200`: el backend solo acepta peticiones del primer origen (CORS) y desde el segundo se vería «No se pudo conectar con el servidor».
+
+Los tests se ejecutan con `npm test` (una sola pasada), el lint con `npm run lint` y la compilación de producción con `npm run build`.
 
 ## Rendimiento de la cotización (spec 002, RNF-2)
 

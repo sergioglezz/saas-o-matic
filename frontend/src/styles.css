@@ -128,8 +128,10 @@ label {
   max-width: 40rem;
 }
 
+/* minmax(0, 1fr): a wide table must scroll inside its box, never widen the page (RNF-3). */
 .stack {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
 }
 
@@ -186,6 +188,7 @@ label {
 table {
   width: 100%;
   border-collapse: collapse;
+  overflow-wrap: normal;
 }
 
 th,
@@ -194,6 +197,44 @@ td {
   border-bottom: 1px solid var(--border);
   text-align: left;
   white-space: nowrap;
+}
+
+thead th {
+  white-space: normal;
+  vertical-align: bottom;
+}
+
+/* On a phone each tier is a block with its labels, so no amount is cut (RNF-3, MA-1). */
+@media (max-width: 480px) {
+  .tier-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .tier-table tr {
+    display: block;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tier-table th,
+  .tier-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.125rem 0;
+    border: 0;
+  }
+
+  .tier-table th::before,
+  .tier-table td::before {
+    content: attr(data-label);
+    color: var(--muted-text);
+    font-weight: 400;
+  }
 }
 
 .number {

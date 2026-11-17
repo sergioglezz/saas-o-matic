@@ -128,11 +128,26 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
   - **Rojo (C):** la tabla 6.13 sobre el listado; ningún cuerpo enviado en los tests de alta, cotización y guardado lleva importes ni tasas; con USD elegido, el almacenamiento del navegador solo contiene la divisa y las tasas (CA-5.8).
   - **Hecho cuando:** esos casos pasan, el lint no tiene excepciones a las reglas de capas y ningún archivo pasa de 300 líneas ni ninguna función de 40.
 
-- [ ] **T-16. Arranque real, comprobaciones manuales y documentación**
+- [x] **T-16. Arranque real, comprobaciones manuales y documentación**
   - **RF:** criterios de finalización de la spec y RNF-2 a RNF-4, RNF-10 y RNF-11. Casos MA-1 a MA-9. **Depende de:** T-15.
   - **Archivos:** `README.md` (frontend: Node 26, instalación, arranque, dirección `http://localhost:4200`, decisiones visibles) y `AGENTS.md` (comandos del frontend confirmados).
   - **Comprobación:** backend con una base de datos nueva y el seed, frontend con `npm start`; los flujos 1 a 4 del 00 con sus errores; MA-1 a MA-9 con su resultado anotado aquí. Lo que no se pueda comprobar desde este equipo (otros navegadores, lector de pantalla) queda anotado como pendiente del autor.
   - **Hecho cuando:** los flujos funcionan de verdad y el README y `AGENTS.md` describen el frontend.
+  - **Resultado (17/11/2026):** backend con una base de datos nueva fuera del repositorio (`DATABASE_URL` en la carpeta temporal de la sesión; la de `backend/` no se tocó), migrada y con el seed; frontend con `npm start`; navegador integrado de la app de escritorio (Chromium). Flujos 1 a 4 del 00 completos con sus errores: un 422 real del identificador junto a su campo y después el alta con T-REG; buscar y abrir la ficha; simular, guardar y ver la tarjeta la primera; cambiar de divisa; backend parado y vuelto a arrancar.
+
+    | # | Ancho | Resultado |
+    | --- | --- | --- |
+    | MA-1 | 360 px | ✅ tras una corrección. Primero falló: la ficha medía 528 px porque las columnas implícitas de los grids crecían hasta el ancho mínimo de la tabla de tramos. Se fijaron con `minmax(0, 1fr)` y, a 480 px o menos, cada tramo se muestra como un bloque con sus etiquetas. Después, ninguna de las cuatro pantallas se desborda, tampoco en JPY ni con los desgloses abiertos |
+    | MA-2 | 1280 px | ✅ ficha, simulador e historial en tarjetas; historial en dos columnas |
+    | MA-3 | 1280 px | ✅ flujo 1 solo con teclado: Tab entre campos, letra inicial en los desplegables, Intro envía el alta (AL-6) y, con todo vacío, marca los cinco y lleva el foco a «Empresa». Flujo 3: Intro abre el cliente del listado (LI-17), el slider da 16, 14, 0 y 200 con flecha derecha, dos veces izquierda, Inicio y Fin (SM-10), y se guarda. «Empresa» se queda en 120 caracteres al escribir 134 (AL-17); los límites de 30 y 254 usan el mismo atributo nativo. El foco siempre se ve |
+    | MA-4 | 655 px | ✅ «acme», ficha, 60 usuarios (568,70 €), guardar: la tarjeta aparece la primera; con USD, 625,92 US$ en el simulador y en la tarjeta; T-ATR visible |
+    | MA-5 | — | ✅ API real: «Tasas del 17/11/2026», las 5 divisas, «1 EUR = 1,1006 USD» |
+    | MA-6 | 1280 px | ✅ T-CON con «Reintentar»; tras arrancar el backend, «Reintentar» carga los 11 clientes |
+    | MA-7 | — | Solo comprobado en Chromium. **Pendiente del autor:** Firefox, Edge y Safari |
+    | MA-8 | — | ✅ por cálculo sobre los colores de `styles.css` (fórmula de WCAG): textos de 4,77:1 a 15,8:1; borde de los controles, 4,55:1 |
+    | MA-9 | — | **Pendiente del autor** con un lector de pantalla. Los tests C comprueban que cada error está enlazado con su campo (`aria-describedby`) y que los avisos y el total están en regiones vivas |
+
+    RNF-2: con el backend local, la cotización se ve entre 330 y 350 ms después del último cambio (300 ms de espera más la petición).
 
 - [ ] **T-17. Revisión conjunta y cierre**
   - **RF:** todos. **Depende de:** T-16.

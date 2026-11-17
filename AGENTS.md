@@ -11,10 +11,10 @@ El backend va por capas: `api` → `services` → (`repositories`, `domain`). `d
 Se confirman al crear cada scaffold. Si un comando no existe o falla, avísame y propón el cambio; no lo inventes.
 
 * Ejecutar backend: `cd backend && uvicorn app.main:app --reload` (API en `localhost:8000`, documentación en `/docs`). ✅ Confirmado (002 T-16), con el entorno virtual activado y la base de datos migrada (`alembic upgrade head`).
-* Ejecutar frontend: `cd frontend && npm start` (`localhost:4200`)
+* Ejecutar frontend: `cd frontend && npm start` (`localhost:4200`). ✅ Confirmado (005 T-16), con Node 26 LTS (ADR 0010) y `npm install` hecho.
 * Migraciones y datos demo: `cd backend && alembic upgrade head && python -m app.db.seed`. ✅ Confirmado (003 T-19), con el entorno virtual activado; el seed se puede repetir sin duplicar datos.
-* Tests: `cd backend && pytest` y `cd frontend && npm test`
-* Lint/formato: `cd backend && ruff check . && ruff format . && mypy .` y `cd frontend && npm run lint`
+* Tests: `cd backend && pytest` y `cd frontend && npm test`. El de frontend ✅ confirmado (005 T-16): hace una sola pasada.
+* Lint/formato: `cd backend && ruff check . && ruff format . && mypy .` y `cd frontend && npm run lint`. El de frontend ✅ confirmado (005 T-16); `npm run build` compila para producción.
 
 ## Estilo y convenciones
 
