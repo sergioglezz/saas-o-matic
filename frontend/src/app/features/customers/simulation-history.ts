@@ -32,7 +32,7 @@ import { SimulationCard } from './simulation-card';
           } @else {
             <ul class="cards two-columns">
               @for (simulation of list().items(); track simulation.id) {
-                <li>
+                <li class="anim-rise" [style.--i]="$index">
                   <app-simulation-card [simulation]="simulation" />
                 </li>
               }

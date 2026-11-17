@@ -1,5 +1,25 @@
-/* Spec 006 RF-4: the shimmer of the loading skeletons and the turn of the T-UPD icon.
-   Classes are in spec 006 table 5.2. */
+/* Spec 006 RF-5 (plan DT-2 to DT-5): entry animations run by the browser when an element is
+   inserted. Nothing in the app waits for them (CA-5.8). Classes are in spec 006 table 5.2. */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes flash {
+  from {
+    background-color: var(--color-brand-200);
+    box-shadow: 0 0 0 4px var(--color-brand-100);
+  }
+}
 
 @keyframes shimmer {
   from {
@@ -16,6 +36,32 @@
   }
 }
 
+/* CA-5.1 */
+.anim-page {
+  animation: rise-in 280ms var(--ease-out-soft) both;
+}
+
+/* CA-5.2: 45 ms after the previous card, never more than 450 ms (plan DT-3). */
+.anim-rise {
+  animation: rise-in 320ms var(--ease-out-soft) both;
+  animation-delay: calc(min(var(--i, 0), 10) * 45ms);
+}
+
+/* CA-5.3 */
+.anim-fade {
+  animation: fade-in 220ms ease-out both;
+}
+
+/* CA-5.4 */
+.anim-expand {
+  animation: rise-in 240ms var(--ease-out-soft) both;
+}
+
+/* CA-5.5: the block is created again with each new quote, so the flash replays (plan DT-4). */
+.anim-flash {
+  animation: flash 900ms ease-out;
+}
+
 /* CA-4.1 */
 .skeleton {
   display: block;
@@ -28,4 +74,18 @@
 /* CA-4.2 */
 .spin {
   animation: spin 900ms linear infinite;
+}
+
+/* CA-5.7 (plan DT-5): one rule for everything, also what is added later. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
 }

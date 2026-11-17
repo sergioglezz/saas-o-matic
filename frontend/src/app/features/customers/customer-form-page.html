@@ -6,7 +6,7 @@
     <app-request-error [failure]="failure" (retry)="retry()" />
   }
   @if (invalidData()) {
-    <p class="notice notice-error" role="status">
+    <p class="notice notice-error anim-fade" role="status">
       <app-icon name="alert" [size]="16" />{{ T.DNV }}
     </p>
   }

@@ -70,13 +70,13 @@
   <div class="quote">
     <div class="quote-status" role="status">
       @if (flow.outcome() === 'unsupported') {
-        <p class="notice notice-error">
+        <p class="notice notice-error anim-fade">
           <app-icon name="alert" [size]="16" />{{ T.CNS }}
         </p>
       } @else if (flow.pending()) {
         <p class="updating"><app-icon name="refresh" class="spin" [size]="16" />{{ T.UPD }}</p>
       } @else if (flow.outcome() === 'failed') {
-        <p class="notice notice-error">
+        <p class="notice notice-error anim-fade">
           <app-icon name="alert" [size]="16" />{{ T.NUP }}
         </p>
       }
@@ -90,9 +90,12 @@
       @if (flow.quote(); as quote) {
         <app-tier-table [tiers]="quote.tiers" />
         <div aria-live="polite">
-          <div class="totals-panel">
-            <app-price-totals [price]="quote" />
-          </div>
+          <!-- Spec 006 CA-5.5 (plan DT-4): a new quote is a new block, so the flash replays. -->
+          @for (shown of [quote]; track shown) {
+            <div class="totals-panel anim-flash">
+              <app-price-totals [price]="shown" />
+            </div>
+          }
         </div>
       }
     }
@@ -105,18 +108,18 @@
     <div role="status">
       @switch (saveNotice()) {
         @case ('saved') {
-          <p class="notice notice-success">
+          <p class="notice notice-success anim-fade">
             <app-icon name="check" [size]="16" />{{ T.SOK }}
           </p>
         }
         @case ('unsupported') {
-          <p class="notice notice-error">{{ T.CNS }}</p>
+          <p class="notice notice-error anim-fade">{{ T.CNS }}</p>
         }
         @case ('failed') {
-          <p class="notice notice-error">{{ T.SKO }}</p>
+          <p class="notice notice-error anim-fade">{{ T.SKO }}</p>
         }
         @case ('failed-retry') {
-          <p class="notice notice-error">{{ T.SKO }}</p>
+          <p class="notice notice-error anim-fade">{{ T.SKO }}</p>
         }
       }
     </div>

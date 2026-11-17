@@ -24,7 +24,7 @@
     {{ open() ? LABELS.hideBreakdown : LABELS.showBreakdown }}
   </button>
   @if (open()) {
-    <div class="breakdown">
+    <div class="breakdown anim-expand">
       <app-tier-table [tiers]="simulation().tiers" />
     </div>
   }

@@ -34,7 +34,7 @@
       } @else {
         <ul class="cards two-columns">
           @for (customer of list.items(); track customer.id) {
-            <li>
+            <li class="anim-rise" [style.--i]="$index">
               <a class="card customer" [routerLink]="['/clientes', customer.id]">
                 <span class="avatar" aria-hidden="true">{{ initials(customer.company_name) }}</span>
                 <span class="body">

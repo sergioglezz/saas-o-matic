@@ -18,10 +18,10 @@
         <span class="muted">{{ T.RAT(updated()) }}</span>
       }
       @case ('stale') {
-        <span class="notice notice-warn">{{ T.RFL(updated()) }}</span>
+        <span class="notice notice-warn anim-fade">{{ T.RFL(updated()) }}</span>
       }
       @case ('unavailable') {
-        <span class="notice notice-warn">{{ T.RNO }}</span>
+        <span class="notice notice-warn anim-fade">{{ T.RNO }}</span>
       }
     }
   </div>

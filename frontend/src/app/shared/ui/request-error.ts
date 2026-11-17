@@ -12,7 +12,7 @@ import { Icon } from './icon';
   selector: 'app-request-error',
   imports: [Icon],
   template: `
-    <div class="notice notice-error request-error" role="status">
+    <div class="notice notice-error request-error anim-fade" role="status">
       <app-icon name="alert" [size]="16" />
       <p>{{ message() }}</p>
       <button type="button" class="secondary compact" (click)="retry.emit()">

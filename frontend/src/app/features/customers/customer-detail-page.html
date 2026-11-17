@@ -6,7 +6,7 @@
     <p role="status" class="muted">{{ T.LCU }}</p>
     <app-skeleton-cards [count]="1" [columns]="1" />
   } @else if (current.status === 'not_found') {
-    <section class="card narrow not-found">
+    <section class="card narrow not-found anim-fade">
       <span class="not-found-icon"><app-icon name="alert" [size]="28" /></span>
       <h1>{{ T.NFC }}</h1>
     </section>
@@ -14,7 +14,7 @@
     <app-request-error [failure]="current.failure" (retry)="retry()" />
   } @else {
     @if (registered) {
-      <p class="notice notice-success" role="status">
+      <p class="notice notice-success anim-fade" role="status">
         <app-icon name="check" [size]="16" />{{ T.REG }}
       </p>
     }
