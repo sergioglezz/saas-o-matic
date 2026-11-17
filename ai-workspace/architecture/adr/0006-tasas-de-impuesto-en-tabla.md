@@ -4,7 +4,7 @@ Estado: aceptado
 
 ## Contexto
 
-El enunciado exige sumar el impuesto del país del cliente (RN-3), pero no da ninguna tasa (§10 del documento 00, supuesto 4). Los valores adoptados (ES 21 %, PT 23 %, FR 20 %, DE 19 %, IT 22 %, GB 20 % y US 0 %) son supuestos de ejemplo que pueden cambiar, y la lista de países puede crecer (RN-4).
+El enunciado exige sumar el impuesto del país del cliente (RN-3), pero no da ninguna tasa (§10 del documento 00, supuesto 3). Los valores adoptados (ES 21 %, PT 23 %, FR 20 %, DE 19 %, IT 22 %, GB 20 % y US 0 %) son supuestos de ejemplo que pueden cambiar, y la lista de países puede crecer (RN-4).
 
 ## Decisión
 

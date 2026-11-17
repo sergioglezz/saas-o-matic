@@ -50,7 +50,7 @@ Nota sobre el tramo 1 **[P]**: el enunciado **[E]** lo describe como «0 a 10».
 
 ### RF-3. Rango del número de usuarios
 
-Origen: RN-2 **[P]**, §10 supuestos 8 y 9 **[P]**. La validación del formato de entrada (entero JSON, campo ausente, mensajes) está en 002 RF-2.
+Origen: RN-2 **[P]**, §10 supuestos 7 y 8 **[P]**. La validación del formato de entrada (entero JSON, campo ausente, mensajes) está en 002 RF-2.
 
 - **CA-3.1** El sistema deberá aceptar como `users` cualquier número entero entre 0 y 100 000, ambos incluidos.
 - **CA-3.2** Cuando `users` es 0, el sistema deberá devolver `subtotal_cents`, `tax_cents` y `total_cents` iguales a 0 y los 3 tramos con `units` = 0.
@@ -60,7 +60,7 @@ Origen: RN-2 **[P]**, §10 supuestos 8 y 9 **[P]**. La validación del formato d
 
 ### RF-4. Impuesto según el país
 
-Origen: RN-3 **[E]**, RN-4 **[P]**, §10 supuestos 4 y 5 **[P]**.
+Origen: RN-3 **[E]**, RN-4 **[P]**, §10 supuestos 3 y 4 **[P]**.
 
 - **CA-4.1** El sistema deberá aplicar la tasa de impuesto configurada para el país indicado y devolverla en `tax_rate_bp` (puntos básicos: 2100 = 21 %).
 - **CA-4.2** El sistema deberá considerar **soportados** exactamente los países que tienen una tasa configurada.
@@ -240,7 +240,7 @@ En el nivel D se configura para ES la tasa de la columna `tax_rate_bp` antes de 
 - Calcular a partir de un cliente registrado: el país llega como dato.
 - Conversión a otras divisas (RN-7, solo en frontend) y la pantalla del simulador.
 - Impuestos especiales: IGIC de Canarias, Ceuta y Melilla, inversión del sujeto pasivo en la UE e impuesto sobre ventas de cada estado de EE. UU. (§7.2).
-- Efecto del plan elegido en el precio (§10 supuesto 3).
+- Efecto del plan elegido en el precio (§10 supuesto 2).
 - Descuentos, promociones, periodos distintos del mensual y prorrateos.
 - Pantalla o endpoint para editar las tasas: solo se cambian como datos (C-1 a C-5).
 
@@ -267,7 +267,7 @@ En el nivel D se configura para ES la tasa de la columna `tax_rate_bp` antes de 
 
 - **D-1. Nombre del campo de usuarios:** el cálculo y la cotización usan `users`. Si se unifica con `active_users` se decidirá en la spec de simulaciones.
 - **D-2. País en la respuesta de la cotización:** movida a 002.
-- **D-3. Valores de las tasas:** los de RN-4 son la configuración por defecto de la entrega (CA-4.3) y se documentan como supuesto en el README (§10 supuesto 4). Como son datos configurables (RF-13), cambiarlos no exige modificar esta spec salvo la tabla 6.2.
+- **D-3. Valores de las tasas:** los de RN-4 son la configuración por defecto de la entrega (CA-4.3) y se documentan como supuesto en el README (§10 supuesto 3). Como son datos configurables (RF-13), cambiarlos no exige modificar esta spec salvo la tabla 6.2.
 - **D-4. División de la spec (v1.2):** esta spec queda en el núcleo del cálculo y la tabla de tasas; el endpoint pasa a la 002. Así cada spec tiene un plan, y el núcleo se construye antes que la API (§11).
 - **D-5. Tasas por defecto:** forman parte de la preparación de la base de datos, no de los datos de demostración (CA-4.3, §8.5 del documento 00).
 

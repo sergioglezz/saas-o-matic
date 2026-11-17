@@ -4,7 +4,7 @@ Estado: aceptado (redactado por delegación del autor y confirmado en su revisi�
 
 ## Contexto
 
-El enunciado exige validar de forma estricta el identificador fiscal con «el algoritmo oficial de control» cuando el país es España (RN-10). Para el DNI y el NIE el cálculo es público y único. Para el CIF, la AEAT no publica el método ni qué entidades llevan dígito o letra de control, y los NIF especiales `K`, `L` y `M` tampoco tienen método publicado (§7.4 y supuesto 7 de §10 del documento 00).
+El enunciado exige validar de forma estricta el identificador fiscal con «el algoritmo oficial de control» cuando el país es España (RN-10). Para el DNI y el NIE el cálculo es público y único. Para el CIF, la AEAT no publica el método ni qué entidades llevan dígito o letra de control, y los NIF especiales `K`, `L` y `M` tampoco tienen método publicado (§7.4 y supuesto 6 de §10 del documento 00).
 
 ## Decisión
 

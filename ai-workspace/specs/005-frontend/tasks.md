@@ -131,9 +131,9 @@ Estado: v1.0 ejecutadas, revisadas y aprobadas por el autor · Spec: `spec.md` v
 - [x] **T-16. Arranque real, comprobaciones manuales y documentación**
   - **RF:** criterios de finalización de la spec y RNF-2 a RNF-4, RNF-10 y RNF-11. Casos MA-1 a MA-9. **Depende de:** T-15.
   - **Archivos:** `README.md` (frontend: Node 26, instalación, arranque, dirección `http://localhost:4200`, decisiones visibles) y `AGENTS.md` (comandos del frontend confirmados).
-  - **Comprobación:** backend con una base de datos nueva y el seed, frontend con `npm start`; los flujos 1 a 4 del 00 con sus errores; MA-1 a MA-9 con su resultado anotado aquí. Lo que no se pueda comprobar desde este equipo (otros navegadores, lector de pantalla) queda anotado como pendiente del autor.
+  - **Comprobación:** backend con una base de datos nueva y el seed, frontend con `npm start`; los flujos 1 a 4 del 00 con sus errores; MA-1 a MA-9 con su resultado anotado aquí. Lo que no se pueda comprobar desde este equipo (otros navegadores, lector de pantalla) queda para la revisión del autor.
   - **Hecho cuando:** los flujos funcionan de verdad y el README y `AGENTS.md` describen el frontend.
-  - **Resultado (17/11/2026):** backend con una base de datos nueva fuera del repositorio (`DATABASE_URL` en la carpeta temporal de la sesión; la de `backend/` no se tocó), migrada y con el seed; frontend con `npm start`; navegador integrado de la app de escritorio (Chromium). Flujos 1 a 4 del 00 completos con sus errores: un 422 real del identificador junto a su campo y después el alta con T-REG; buscar y abrir la ficha; simular, guardar y ver la tarjeta la primera; cambiar de divisa; backend parado y vuelto a arrancar.
+  - **Resultado:** backend con una base de datos nueva fuera del repositorio (`DATABASE_URL` en la carpeta temporal de la sesión; la de `backend/` no se tocó), migrada y con el seed; frontend con `npm start`; navegador integrado de la app de escritorio (Chromium). Flujos 1 a 4 del 00 completos con sus errores: un 422 real del identificador junto a su campo y después el alta con T-REG; buscar y abrir la ficha; simular, guardar y ver la tarjeta la primera; cambiar de divisa; backend parado y vuelto a arrancar.
 
     | # | Ancho | Resultado |
     | --- | --- | --- |
@@ -141,7 +141,7 @@ Estado: v1.0 ejecutadas, revisadas y aprobadas por el autor · Spec: `spec.md` v
     | MA-2 | 1280 px | ✅ ficha, simulador e historial en tarjetas; historial en dos columnas |
     | MA-3 | 1280 px | ✅ flujo 1 solo con teclado: Tab entre campos, letra inicial en los desplegables, Intro envía el alta (AL-6) y, con todo vacío, marca los cinco y lleva el foco a «Empresa». Flujo 3: Intro abre el cliente del listado (LI-17), el slider da 16, 14, 0 y 200 con flecha derecha, dos veces izquierda, Inicio y Fin (SM-10), y se guarda. «Empresa» se queda en 120 caracteres al escribir 134 (AL-17); los límites de 30 y 254 usan el mismo atributo nativo. El foco siempre se ve |
     | MA-4 | 655 px | ✅ «acme», ficha, 60 usuarios (568,70 €), guardar: la tarjeta aparece la primera; con USD, 625,92 US$ en el simulador y en la tarjeta; T-ATR visible |
-    | MA-5 | — | ✅ API real: «Tasas del 17/11/2026», las 5 divisas, «1 EUR = 1,1006 USD» |
+    | MA-5 | — | ✅ API real: «Tasas del {fecha}» con la fecha de la última actualización, las 5 divisas, «1 EUR = 1,1006 USD» |
     | MA-6 | 1280 px | ✅ T-CON con «Reintentar»; tras arrancar el backend, «Reintentar» carga los 11 clientes |
     | MA-7 | — | Aquí solo en Chromium; Firefox, Edge y Safari, en la revisión del autor |
     | MA-8 | — | ✅ por cálculo sobre los colores de `styles.css` (fórmula de WCAG): textos de 4,77:1 a 15,8:1; borde de los controles, 4,55:1 |
@@ -153,8 +153,8 @@ Estado: v1.0 ejecutadas, revisadas y aprobadas por el autor · Spec: `spec.md` v
   - **RF:** todos. **Depende de:** T-16.
   - **Comprobación:** copia limpia (solo lo que entraría en un commit) con una instalación nueva: tests, lint y compilación; la suite del backend sin cambios; cada CA y cada caso U y C con un test que lo cita y pasa; los criterios de la sección 10 de la spec marcados; las correcciones al código generado listadas para el log.
   - **Hecho cuando:** todo lo anterior está en verde y el autor revisa la spec, el plan y las tareas.
-  - **Revisión del autor (17/11/2026):** revisó la spec, el plan, las tareas y el trabajo, y aprobó el cierre. El supuesto 1 del 00 se cierra como decisión D-22 de la spec. Commits uno por tarea, cada uno verificado por separado en una copia aparte con su recuento de tests, lint y compilación. Las correcciones de abajo son las entradas 32 a 40 del log.
-  - **Resultado (17/11/2026):**
+  - **Revisión del autor:** revisó la spec, el plan, las tareas y el trabajo, y aprobó el cierre. El supuesto 1 del 00 se cierra como decisión D-22 de la spec. Commits uno por tarea, cada uno verificado por separado en una copia aparte con su recuento de tests, lint y compilación. Las correcciones de abajo son las entradas 32 a 40 del log.
+  - **Resultado:**
     - **Copia limpia:** 102 archivos del frontend, instalada de cero con `npm ci`: 319 tests, lint y compilación de producción en verde. npm 11 avisa de que no ejecuta el script de instalación de `msgpackr-extract`, una dependencia opcional de las herramientas; los tests no lo necesitan.
     - **Backend:** 1051 tests, `ruff check`, `ruff format --check` y `mypy` en verde; `git status` sin cambios en `backend/`. El único aviso de pytest viene de Starlette (usar `httpx` con su cliente de tests está obsoleto) y no tiene que ver con esta spec.
     - **Trazabilidad:** los 117 CA y los 179 casos U y C están citados en algún test. Faltaban CA-3.4 y CA-3.9, que ya cubrían TC-1 y TC-4 sin nombrarlos, y se añadieron a sus títulos.

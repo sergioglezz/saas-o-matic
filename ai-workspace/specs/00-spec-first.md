@@ -292,7 +292,7 @@ Estas reglas son la fuente de los tests: cada fila de las tablas se convierte en
 - **RN-6 [P]:** los importes son céntimos enteros en dominio, API y base de datos, con campos terminados en `_cents`. La API devuelve también `currency: "EUR"`.
 - **RN-7 [E]:** convertir a otra divisa es solo presentación en el frontend: importe mostrado = importe en EUR × tasa EUR→divisa, redondeado a 2 decimales al mostrarlo. Nunca se guarda.
 - **RN-8 [P]:** cada simulación guarda una instantánea: tasa de impuesto aplicada, desglose por tramo, subtotal, impuesto y total. Así el histórico no cambia si cambian las tarifas.
-- **RN-9 [P]:** almacenamiento (en GB) y llamadas a la API (por mes) son enteros mayores o iguales que 0; se guardan pero no afectan al precio. Las unidades son un supuesto (§10, supuesto 9).
+- **RN-9 [P]:** almacenamiento (en GB) y llamadas a la API (por mes) son enteros mayores o iguales que 0; se guardan pero no afectan al precio. Las unidades son un supuesto (§10, supuesto 8).
 
 **7.4 Identificador fiscal español [E]**
 
@@ -499,45 +499,33 @@ Se entregan tres cosas en un solo repositorio: la aplicación funcionando, la ca
 
 **Cómo entregar [P]**
 
-- Entregar el enlace al repositorio antes del jueves 19 de noviembre a las 23:00. Lo ideal es entregar el miércoles por la noche o el jueves a mediodía.
 - Mantener el repositorio privado mientras se trabaja; hacerlo público al entregar o invitar a quien indique la empresa.
 - No subir el `.docx` de la prueba, `.env`, `node_modules`, `.venv` ni la base de datos.
 - Probar el README clonando el repositorio en una carpeta limpia antes de enviar.
 
 ## 10. Supuestos y decisiones
 
-El enunciado deja 14 huecos. Cada uno se documenta como decisión propia en el README (sección «Decisiones y supuestos») y en un ADR cuando afecten a la arquitectura. Documentarlos con una razón clara demuestra criterio.
+El enunciado deja 13 huecos. Cada uno se documenta como decisión propia en el README (sección «Decisiones y supuestos») y en un ADR cuando afecten a la arquitectura. Documentarlos con una razón clara demuestra criterio.
 
 | # | Tema | Qué dice el enunciado | Supuesto adoptado | Acción |
 | --- | --- | --- | --- | --- |
 | 1 | Almacenamiento y llamadas API | Se registran en la simulación, pero la tarifa solo define tramos por usuario | Se guardan y no cambian el precio | Documentar |
-| 2 | Fecha límite | El plazo dice «lunes 19 de noviembre»; el 19 es jueves | Jueves 19 de noviembre de 2026, 23:00 | Documentar |
-| 3 | Planes | «Plan elegido», sin lista | `starter`, `business`, `enterprise`, sin efecto en precio | Documentar |
-| 4 | Tasas de impuesto | «Impuesto correspondiente al país», sin valores | Tabla de 7 países (7.2) | Documentar |
-| 5 | País fuera de la lista | No dice | Error 422 «País no soportado» | Documentar |
-| 6 | Identificador fuera de España | Solo exige validar el de España | Formato básico de 5 a 20 caracteres alfanuméricos | Documentar |
-| 7 | CIF y NIF especiales | «Algoritmo oficial de control» | Tipo de control por entidad según la convención más extendida; K, L y M no soportados | ADR |
-| 8 | Cero usuarios | Tramo 1 es «0 a 10» | Se permite y cuesta 0 € | Documentar |
-| 9 | Límites y unidades | No dice | Máximo 100 000 usuarios; almacenamiento en GB; llamadas por mes | Documentar |
-| 10 | Endpoints de lectura y cotización | Solo lista dos `POST` | Añadir `GET` de clientes, historial y `POST /pricing/quote` | ADR |
-| 11 | Alta de clientes en la interfaz | Las vistas obligatorias no la incluyen | Formulario «Nuevo cliente» | Documentar |
-| 12 | Autenticación | No la menciona | Sin login ni roles | ADR |
-| 13 | Divisas ofrecidas | «EUR, USD, GBP, etc.» | EUR, USD, GBP, CHF y JPY, solo si la API las devuelve; formato con `Intl.NumberFormat` | Documentar |
-| 14 | Caché de tasas | «Tiempo real» | La API actualiza una vez al día y limita peticiones; se reutilizan las tasas hasta `time_next_update_utc` | ADR |
+| 2 | Planes | «Plan elegido», sin lista | `starter`, `business`, `enterprise`, sin efecto en precio | Documentar |
+| 3 | Tasas de impuesto | «Impuesto correspondiente al país», sin valores | Tabla de 7 países (7.2) | Documentar |
+| 4 | País fuera de la lista | No dice | Error 422 «País no soportado» | Documentar |
+| 5 | Identificador fuera de España | Solo exige validar el de España | Formato básico de 5 a 20 caracteres alfanuméricos | Documentar |
+| 6 | CIF y NIF especiales | «Algoritmo oficial de control» | Tipo de control por entidad según la convención más extendida; K, L y M no soportados | ADR |
+| 7 | Cero usuarios | Tramo 1 es «0 a 10» | Se permite y cuesta 0 € | Documentar |
+| 8 | Límites y unidades | No dice | Máximo 100 000 usuarios; almacenamiento en GB; llamadas por mes | Documentar |
+| 9 | Endpoints de lectura y cotización | Solo lista dos `POST` | Añadir `GET` de clientes, historial y `POST /pricing/quote` | ADR |
+| 10 | Alta de clientes en la interfaz | Las vistas obligatorias no la incluyen | Formulario «Nuevo cliente» | Documentar |
+| 11 | Autenticación | No la menciona | Sin login ni roles | ADR |
+| 12 | Divisas ofrecidas | «EUR, USD, GBP, etc.» | EUR, USD, GBP, CHF y JPY, solo si la API las devuelve; formato con `Intl.NumberFormat` | Documentar |
+| 13 | Caché de tasas | «Tiempo real» | La API actualiza una vez al día y limita peticiones; se reutilizan las tasas hasta `time_next_update_utc` | ADR |
 
 ## 11. Orden de implementación y prompt de arranque
 
-Se trabaja en seis jornadas, de hoy viernes 13 al jueves 19 de noviembre, siempre en orden: dominio, base de datos, API, frontend y revisión. Cada pieza sigue el mismo ciclo: spec, pedir tests, pedir código, revisar, anotar lo corregido. **[P]**
-
-| Fecha | Objetivo | Entregable de la jornada |
-| --- | --- | --- |
-| Vie 13 nov | Entender y preparar | Repositorio con el kit y este documento revisado |
-| Sáb 14 nov | Specs y arquitectura | Specs del backend, modelo de datos y ADRs; commit `docs:` antes de programar |
-| Dom 15 nov | Backend | Dominio con tests, base de datos y endpoints |
-| Lun 16 nov | Frontend (1) | Cliente de API, servicio de divisas, dashboard y buscador |
-| Mar 17 nov | Frontend (2) | Ficha del cliente, simulador, estados de carga y error, responsive |
-| Mié 18 nov | Revisión y README | Pasada de revisor independiente, correcciones, README, resumen de `ai-workspace`, prueba en carpeta limpia |
-| Jue 19 nov | Colchón y entrega | Enviar antes de mediodía; el límite es a las 23:00 |
+Se trabaja siempre en orden: dominio, base de datos, API, frontend y revisión. Cada pieza sigue el mismo ciclo: spec, pedir tests, pedir código, revisar, anotar lo corregido. **[P]**
 
 **Orden de construcción**
 

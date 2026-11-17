@@ -2,6 +2,20 @@
 
 Herramienta interna para que el equipo comercial simule y presupueste suscripciones SaaS multi-divisa. Este README recoge las decisiones y supuestos tomados, y cómo poner en marcha el backend y el frontend.
 
+## Arranque rápido
+
+Con Python 3.12 o superior y Node 26, abre dos terminales en la raíz del repositorio (Git Bash en Windows):
+
+```bash
+cd backend && python -m venv .venv && source .venv/Scripts/activate && pip install -r requirements.txt && alembic upgrade head && python -m app.db.seed && uvicorn app.main:app
+```
+
+```bash
+cd frontend && npm install && npm start
+```
+
+Abre **http://localhost:4200** (no `127.0.0.1:4200`, que el backend no admite). En Linux o macOS, el entorno se activa con `source .venv/bin/activate`. Las dos secciones de puesta en marcha del final explican cada paso, los tests y el lint.
+
 ## Decisiones y supuestos
 
 ### Tasas de impuesto por defecto (spec 001, decisión D-3)

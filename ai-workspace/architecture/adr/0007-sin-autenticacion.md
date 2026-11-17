@@ -4,7 +4,7 @@ Estado: aceptado
 
 ## Contexto
 
-El enunciado habla solo de «nuestro equipo comercial»: no menciona login, roles ni permisos (§2 del documento 00, supuesto 12 de §10). Es una herramienta interna para decenas de usuarios a la vez, con un único tipo de usuario, el comercial (§2 y §6 del 00).
+El enunciado habla solo de «nuestro equipo comercial»: no menciona login, roles ni permisos (§2 del documento 00, supuesto 11 de §10). Es una herramienta interna para decenas de usuarios a la vez, con un único tipo de usuario, el comercial (§2 y §6 del 00).
 
 ## Decisión
 

@@ -64,7 +64,7 @@ Origen: §8.1 y §8.4 **[P]**, §6 seguridad **[P]**, flujos 1 a 3 **[P]**, entr
 
 ### RF-3. Tasas de cambio
 
-Origen: §3 módulo de divisas **[E]** (`open.er-api.com` con base EUR) y **[P]** (caché y atribución), flujo 4 **[P]**, §10 supuestos 13 y 14, ADR 0005; D-10, D-11 y D-17.
+Origen: §3 módulo de divisas **[E]** (`open.er-api.com` con base EUR) y **[P]** (caché y atribución), flujo 4 **[P]**, §10 supuestos 12 y 13, ADR 0005; D-10, D-11 y D-17.
 
 - **CA-3.1** Cuando se carga la app, si el navegador tiene tasas guardadas cuya `time_next_update_unix` es posterior al instante actual, el sistema deberá usarlas sin hacer ninguna petición a la API de tasas.
 - **CA-3.2** Cuando se carga la app sin tasas guardadas o con tasas caducadas (`time_next_update_unix` anterior o igual al instante actual), el sistema deberá hacer una única petición `GET https://open.er-api.com/v6/latest/EUR`.
@@ -82,7 +82,7 @@ Origen: §3 módulo de divisas **[E]** (`open.er-api.com` con base EUR) y **[P]*
 
 ### RF-4. Selector de divisa
 
-Origen: UC-6 **[E]**, flujo 4 **[P]**, §10 supuesto 13; D-12 y D-13.
+Origen: UC-6 **[E]**, flujo 4 **[P]**, §10 supuesto 12; D-12 y D-13.
 
 - **CA-4.1** El sistema deberá mostrar un selector con la etiqueta «Divisa» y una opción por divisa ofrecida (CA-3.5), con los textos «EUR (euro)», «USD (dólar estadounidense)», «GBP (libra esterlina)», «CHF (franco suizo)» y «JPY (yen japonés)».
 - **CA-4.2** Mientras espera la respuesta de la API de tasas, el sistema deberá mostrar el selector desactivado, el indicador T-LRT «Cargando tasas…» y todos los importes en EUR.
@@ -94,7 +94,7 @@ Origen: UC-6 **[E]**, flujo 4 **[P]**, §10 supuesto 13; D-12 y D-13.
 
 ### RF-5. Conversión y formato
 
-Origen: RN-6 **[P]**, RN-7 **[E]**, §10 supuesto 13, ADR 0004 y 0005; D-6 a D-9.
+Origen: RN-6 **[P]**, RN-7 **[E]**, §10 supuesto 12, ADR 0004 y 0005; D-6 a D-9.
 
 - **CA-5.1** El sistema deberá mostrar cada importe a partir del campo `*_cents` que devuelve el backend, sin calcular ningún importe por su cuenta: no suma tramos, no aplica impuestos ni recalcula subtotales o totales.
 - **CA-5.2** Donde la divisa elegida no es EUR, el sistema deberá convertir cada importe por separado como `*_cents` × tasa ÷ 100 y redondear a 2 decimales con la regla «mitad hacia arriba» sobre el resultado exacto de esa operación, tomando la tasa con los decimales con que la escribe la respuesta (100 céntimos × 1.005 = 1,005 → 1,01).
@@ -663,7 +663,7 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 
 - [x] Cada caso U y C de las tablas 6.1 a 6.13 tiene un test automático que lo cita por su identificador y pasa (179 de 179, comprobado en T-17).
 - [x] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador y pasa (117 de 117).
-- [x] MA-1 a MA-9 se han comprobado a mano y su resultado está anotado (fecha, navegador y ancho): MA-1 a MA-6 y MA-8 el 17/11/2026 en Chromium, anotados en `tasks.md` (T-16); MA-7 y MA-9, en la revisión del autor.
+- [x] MA-1 a MA-9 se han comprobado a mano y su resultado está anotado (navegador y ancho): MA-1 a MA-6 y MA-8 en Chromium, anotados en `tasks.md` (T-16); MA-7 y MA-9, en la revisión del autor.
 - [x] Con backend y frontend arrancados de verdad y el seed cargado, los flujos 1 a 4 del 00 se completan, también sus caminos de error (T-16).
 - [x] Los comandos del frontend de `AGENTS.md` (arranque, tests y lint) funcionan y quedan confirmados en ese archivo.
 - [x] El README explica cómo levantar el frontend (versión de Node, instalación, arranque y dirección `http://localhost:4200`) y se ha probado en una carpeta limpia: una copia con solo lo que entraría en un commit, instalada de cero con `npm ci`, pasa tests, lint y compilación (T-17).
@@ -675,7 +675,7 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 - [x] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa (los 17 commits de T-01 a T-17).
 - [x] Principio 3: el navegador no calcula importes (CO-12 y revisión del código: ninguna operación con `*_cents` fuera de `money.ts`).
 - [x] Principio 4: los importes se reciben en céntimos de EUR y nunca se envían ni se guardan convertidos (ER-2 y CA-5.8).
-- [x] Principio 5: la suite pasa en cada commit; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`; el autor ha revisado la spec y el trabajo. Cumplido: cada commit se verificó por separado en una copia aparte (tests con el recuento de su tarea, lint y compilación); las correcciones son las entradas 32 a 40 del log; el autor aprobó el cierre el 17/11/2026.
+- [x] Principio 5: la suite pasa en cada commit; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`; el autor ha revisado la spec y el trabajo. Cumplido: cada commit se verificó por separado en una copia aparte (tests con el recuento de su tarea, lint y compilación); las correcciones son las entradas 32 a 40 del log; el autor aprobó el cierre.
 - [x] Principio 6: TypeScript estricto y lint sin errores; todos los textos visibles en español.
 
 ## 11. Decisiones y dudas abiertas
@@ -690,7 +690,7 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 
 ### 11.2 Decisiones tomadas al redactar
 
-Todas son **[P]** y quedan pendientes de la confirmación del autor. Ninguna contradice el enunciado.
+Todas son **[P]** y el autor las confirmó al aprobar la spec. Ninguna contradice el enunciado.
 
 - **D-1. Backend en `http://127.0.0.1:8000`** y no en `localhost:8000`: en Windows, `localhost` añade unos 0,2 s a cada conexión nueva (entrada 15 del log), más que la espera del slider. La app sigue sirviéndose en `http://localhost:4200`, el origen que autoriza CORS.
 - **D-2. Simulador e historial en la ficha:** el flujo 3 parte de la ficha y añade la simulación «arriba del historial»; así el comercial la ve aparecer sin cambiar de pantalla. Alternativa: una pantalla propia para el simulador.
@@ -701,7 +701,7 @@ Todas son **[P]** y quedan pendientes de la confirmación del autor. Ninguna con
 - **D-7. Formato español con miles agrupados también con 4 cifras.** La convención española no agrupa los números de 4 cifras («1234,56»); se agrupan para que las columnas de importes se lean igual. Símbolos: «€», «US$» y el código para GBP, CHF y JPY, los del formato español habitual.
 - **D-8. JPY con 2 decimales**, porque RN-7 **[E]** fija 2 decimales al mostrar. Mostrarlo sin decimales, lo habitual en yenes, exigiría cambiar RN-7.
 - **D-9. Fechas en la zona horaria del navegador**, con `dd/mm/aaaa hh:mm` en 24 horas.
-- **D-10. Tasas pedidas solo al cargar la app y con «Reintentar»**, válidas hasta `time_next_update_unix`; caducadas, solo sirven de respaldo si falla la API (ADR 0005, §10 supuesto 14).
+- **D-10. Tasas pedidas solo al cargar la app y con «Reintentar»**, válidas hasta `time_next_update_unix`; caducadas, solo sirven de respaldo si falla la API (ADR 0005, §10 supuesto 13).
 - **D-11. Atribución siempre visible**, también sin tasas: es más simple y cumple «junto a las tasas».
 - **D-12. T-EQ y T-ORI con una divisa distinta de EUR:** el comercial sabe a qué tasa se convierte y que la factura se calcula en EUR.
 - **D-13. Divisa recordada no disponible:** se muestra EUR sin borrar la preferencia, que vuelve cuando la divisa esté disponible.
@@ -723,7 +723,7 @@ No quedan dudas abiertas: el supuesto 1 del 00 se cerró como decisión D-22.
 
 | Versión | Cambio |
 | --- | --- |
-| 1.0 | Versión inicial, redactada tras cinco preguntas al autor (P-1 a P-5). Pendiente de la revisión del autor |
+| 1.0 | Versión inicial, redactada tras cinco preguntas al autor (P-1 a P-5) |
 | 1.1 | Al planificar: un DOM simulado no reproduce el teclado del slider, la activación con Intro ni el límite de caracteres al escribir, que son comportamientos nativos del navegador. LI-13, LI-17, AL-6, AL-17 y SM-10 comprueban en nivel C el control nativo que los garantiza, y MA-3 comprueba el comportamiento en un navegador real. No cambia ningún CA. El autor pidió seguir con el plan y la implementación y revisar la spec al final |
 | 1.1 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 319 tests en verde; los 117 CA y los 179 casos U y C con un test que los cita y pasa; copia limpia con `npm ci`, arranque real con el seed y MA-1 a MA-6 y MA-8 comprobados |
 | 1.2 (revisión) | El autor revisó la spec y el trabajo realizado y aprobó el cierre. El supuesto 1 del 00 se cierra como decisión D-22, sin cambiar ningún CA; las correcciones al código generado están anotadas en el log (entradas 32 a 40). Spec cerrada |

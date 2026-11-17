@@ -329,7 +329,7 @@ No hay dudas abiertas.
 
 | Versión | Cambio |
 | --- | --- |
-| 0.1 | Borrador creado al dividir la spec 001 (v1.2). Contenido movido desde 001 v1.1 sin cambios de comportamiento; los casos T-11 a T-19 y P-11 pasan a ser Q-11 a Q-20 |
+| 0.1 | Creada al dividir la spec 001 (v1.2). Contenido movido desde 001 v1.1 sin cambios de comportamiento; los casos T-11 a T-19 y P-11 pasan a ser Q-11 a Q-20 |
 | 1.0 | Revisión antes de planificar:<br>(1) E-23 escrito como escape JSON visible `\u00a0ES`;<br>(2) RF-9, CORS limitado al origen del frontend, con O-10 a O-12;<br>(3) CA-6.7, 404 `not_found` con el formato único para cualquier ruta inexistente, también con barra final (O-13, O-14);<br>(4) `Content-Type` sin distinguir mayúsculas (O-15), y `HEAD` y `OPTIONS` sin preflight responden 405;<br>(5) criterio de arranque con el comando `uvicorn` de `AGENTS.md`.<br>Aprobada |
 | 1.1 | Al planificar, un prototipo mostró que una preflight de CORS aceptada responde 200 con texto plano. CA-6.6 excluye ahora del formato JSON todas las respuestas a preflight, aceptadas o rechazadas, y CA-9.2 aclara que su cuerpo no forma parte del contrato. No cambia ningún caso de prueba. Aprobada |
 | 1.1 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 383 tests en verde en un clon limpio con un entorno virtual nuevo, los 15 commits de código en verde uno a uno, los 33 CA con al menos un test que los cita y pasa, los 77 casos de las tablas con test por HTTP, y los 12 criterios de la sección 10 marcados. p95 de la cotización: 6,3 ms (RNF-2). Spec completada |

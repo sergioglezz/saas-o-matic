@@ -6,7 +6,7 @@ Estado: aceptado (redactado con el plan de la spec 005 y confirmado en la revisi
 
 La ADR 0001 fija Angular para el frontend, con «el runner por defecto de Angular» para los tests, pero no fija versiones ni herramienta de lint. El principio 6 de la constitución exige que ESLint y TypeScript strict pasen sin errores, y `AGENTS.md` define el comando `npm run lint`, que un proyecto Angular recién creado no trae. Por el principio 1, todo lo que no forma parte del stack necesita un ADR, como el 0008 hizo con mypy.
 
-Al planificar la spec 005 (noviembre de 2026), la versión con soporte de Angular es la 22, que exige Node ^22.22.3, ^24.15.0 o ≥ 26. El equipo tenía Node 22.11.0, que solo admite Angular 19, sin soporte desde mayo de 2026. El autor decidió actualizar a una versión LTS de Node. Al instalarla, el paquete LTS del gestor de paquetes de Windows (winget) era Node 26.13.1, la LTS activa, y no ofrecía Node 24, que ya está en mantenimiento.
+Al planificar la spec 005, la versión con soporte de Angular es la 22, que exige Node ^22.22.3, ^24.15.0 o ≥ 26. El equipo tenía Node 22.11.0, que solo admite Angular 19, ya sin soporte. El autor decidió actualizar a una versión LTS de Node. Al instalarla, el paquete LTS del gestor de paquetes de Windows (winget) era Node 26.13.1, la LTS activa, y no ofrecía Node 24, que ya está en mantenimiento.
 
 ## Decisión
 

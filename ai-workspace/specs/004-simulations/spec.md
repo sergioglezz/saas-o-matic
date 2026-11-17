@@ -434,7 +434,7 @@ Todas son **[P]** y el autor las confirmó al aprobar la spec. Ninguna contradic
 - **D-2. Forma de la instantánea en la respuesta.** Los campos de la cotización menos `users`, que repetiría `active_users`. Alternativa: incluir también `users` para que el frontend reutilice el mismo tipo tal cual.
 - **D-3. Límites del tramo en la instantánea.** `simulation_tiers` guarda también `from_users` y `to_users`, que §8.5 no lista. Sin ellos, el historial tendría que reconstruir los límites con la constante actual del dominio y cambiaría si cambian los tramos, en contra de RN-8. Alternativa: seguir §8.5 al pie de la letra y reconstruirlos.
 - **D-4. Cliente cuyo país deja de estar soportado (cierra 003 D-7).** No se puede guardar una simulación nueva (422 CNS sobre `customer_id`, SC-3), pero su historial se sigue leyendo (SN-5). Se usa 422 porque §8.4 ya clasifica «país no soportado» como error de validación.
-- **D-5. Rangos de almacenamiento y llamadas.** RN-9 solo pide enteros ≥ 0. Se fijan máximos de 1 000 000 GB y 1 000 000 000 llamadas al mes para rechazar valores absurdos y números que SQLite no puede guardar. Son supuestos para documentar en el README junto a §10 supuesto 9.
+- **D-5. Rangos de almacenamiento y llamadas.** RN-9 solo pide enteros ≥ 0. Se fijan máximos de 1 000 000 GB y 1 000 000 000 llamadas al mes para rechazar valores absurdos y números que SQLite no puede guardar. Son supuestos para documentar en el README junto a §10 supuesto 8.
 - **D-6. Los cuatro campos son obligatorios.** Almacenamiento y llamadas no cambian el precio, pero el enunciado los registra en cada simulación; un valor por defecto escondería un olvido del formulario.
 - **D-7. Cliente inexistente en el cuerpo.** 404, como fija §8.2, aunque el identificador viaje en el cuerpo y no en la ruta; siempre después de validar (SV-18). En el historial, el 404 va antes que los parámetros (HP-4), porque sin cliente no hay nada que paginar.
 - **D-8. Historial paginado.** §8.2 no lo pide, pero se reutilizan `limit`, `offset` y la forma `{items, total}` de `GET /customers` para que la respuesta no crezca sin límite y el frontend use un único patrón.
@@ -446,7 +446,7 @@ Todas son **[P]** y el autor las confirmó al aprobar la spec. Ninguna contradic
 
 | Versión | Cambio |
 | --- | --- |
-| 1.0 | Versión inicial. Pendiente de la revisión del autor |
+| 1.0 | Versión inicial |
 | 1.0 (aprobación) | Sin cambios en los requisitos. El autor aprobó la spec y confirmó las decisiones D-1 a D-11 |
-| 1.0 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 1051 tests en verde (744 de 001 a 003 sin modificar); los 43 CA y los 86 casos con un test que los cita en su nivel y pasa; verificación completa en una copia limpia con un entorno virtual nuevo y arranque real con guardado, errores, historial, CORS y `/docs`. Commits uno por tarea, cada uno verificado por separado. Pendiente: entradas del log y revisión del autor |
+| 1.0 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 1051 tests en verde (744 de 001 a 003 sin modificar); los 43 CA y los 86 casos con un test que los cita en su nivel y pasa; verificación completa en una copia limpia con un entorno virtual nuevo y arranque real con guardado, errores, historial, CORS y `/docs`. Commits uno por tarea, cada uno verificado por separado |
 | 1.0 (revisión) | Sin cambios en los requisitos. El autor revisó la spec y el trabajo realizado y aprobó el cierre; las correcciones al código generado están anotadas en el log (entradas 21 a 31). Spec cerrada |

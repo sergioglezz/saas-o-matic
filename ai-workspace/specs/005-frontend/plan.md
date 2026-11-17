@@ -298,7 +298,7 @@ Comprobado con Node 22.11 (ICU 75.1), antes de este plan:
 | Fecha y hora con `Europe/Madrid` | «17/11/2026, 00:30» y «01/07/2026, 12:00» | DT-4: se compone sin la coma |
 | `String(1.005)` y `JSON.parse("1.005")` | `"1.005"` y `1.005` | DT-3: la escritura decimal más corta recupera la tasa exacta |
 
-Comprobado en T-01 (17/11/2026) con Node 26.13.1 (ICU 78.3), Angular CLI 22.2.7, TypeScript 6.0, Vitest 5.1 con jsdom y angular-eslint 22.7, en un prototipo fuera del repositorio, ya borrado:
+Comprobado en T-01 con Node 26.13.1 (ICU 78.3), Angular CLI 22.2.7, TypeScript 6.0, Vitest 5.1 con jsdom y angular-eslint 22.7, en un prototipo fuera del repositorio, ya borrado:
 
 | Comprobación | Resultado | Consecuencia |
 | --- | --- | --- |
