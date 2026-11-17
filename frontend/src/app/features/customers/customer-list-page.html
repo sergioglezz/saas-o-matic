@@ -1,0 +1,47 @@
+<section class="stack">
+  <div class="toolbar">
+    <div class="field search">
+      <label for="customer-search">{{ LABELS.search }}</label>
+      <input
+        id="customer-search"
+        type="search"
+        maxlength="120"
+        autocomplete="off"
+        (input)="search($event)"
+      />
+    </div>
+    <a class="button" routerLink="/clientes/nuevo">{{ T.NEW }}</a>
+  </div>
+
+  @switch (list.status()) {
+    @case ('loading') {
+      <p role="status">{{ T.LCL }}</p>
+    }
+    @case ('error') {
+      @if (list.failure(); as failure) {
+        <app-request-error [failure]="failure" (retry)="list.retry()" />
+      }
+    }
+    @case ('ready') {
+      @if (list.total() === 0) {
+        <p role="status">{{ emptyText() }}</p>
+      } @else {
+        <ul class="cards two-columns">
+          @for (customer of list.items(); track customer.id) {
+            <li>
+              <a class="card customer" [routerLink]="['/clientes', customer.id]">
+                <span class="name">{{ customer.company_name }}</span>
+                <span class="details">
+                  <span>{{ customer.tax_id }}</span>
+                  <span>{{ countryName(customer.country) }}</span>
+                  <span>{{ planName(customer.plan) }}</span>
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+        <app-load-more [list]="list" />
+      }
+    }
+  }
+</section>

@@ -1,0 +1,31 @@
+.search {
+  flex: 1 1 16rem;
+}
+
+.search input {
+  width: 100%;
+}
+
+.customer {
+  display: grid;
+  gap: 0.25rem;
+  height: 100%;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.customer:hover .name {
+  text-decoration: underline;
+}
+
+.name {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.75rem;
+  color: var(--muted-text);
+}
