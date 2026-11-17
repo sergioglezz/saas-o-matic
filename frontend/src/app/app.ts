@@ -1,12 +1,16 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { CurrencyBar } from './shared/ui/currency-bar';
+import { LABELS } from './shared/texts';
 
+/** Spec 005 CA-1.5: the same header on every screen, with the name, the currency and the rates. */
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
+  imports: [RouterLink, RouterOutlet, CurrencyBar],
   templateUrl: './app.html',
+  styleUrl: './app.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  protected readonly title = signal('saas-o-matic');
+  protected readonly LABELS = LABELS;
 }

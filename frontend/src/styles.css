@@ -1,1 +1,225 @@
-/* You can add global styles to this file, and also import other style files */
+/* Spec 005 RNF-3 and RNF-4 (plan DT-18): own CSS, contrast of at least 4.5:1, visible focus,
+   cards stacked on a phone and two columns from 768 px. */
+
+:root {
+  --text: #1f2328;
+  --muted-text: #57606a;
+  --background: #f6f8fa;
+  --surface: #ffffff;
+  --border: #d0d7de;
+  --control-border: #6e7781;
+  --primary: #0b57d0;
+  --primary-text: #ffffff;
+  --error-text: #b3261e;
+  --warning-text: #8a4b00;
+  --success-text: #1a7f37;
+  --focus: #0b57d0;
+
+  color: var(--text);
+  background: var(--background);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  line-height: 1.5;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  margin: 0 0 0.75rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+a {
+  color: var(--primary);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  background: var(--primary);
+  color: var(--primary-text);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button.secondary,
+.button.secondary {
+  background: var(--surface);
+  color: var(--primary);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+input,
+select {
+  max-width: 100%;
+  min-height: 2.5rem;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--control-border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+input[type='range'] {
+  padding: 0;
+  border: 0;
+}
+
+label {
+  font-weight: 600;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.narrow {
+  max-width: 40rem;
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .two-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.field-error,
+.error-text {
+  color: var(--error-text);
+}
+
+.field-error {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.success-text {
+  color: var(--success-text);
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--muted-text);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.375rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: end;
+  gap: 0.25rem 1rem;
+  margin: 0.75rem 0 0;
+}
+
+.totals dt {
+  font-weight: 600;
+}
+
+.totals dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.total {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
