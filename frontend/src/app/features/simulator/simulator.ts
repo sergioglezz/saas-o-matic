@@ -89,6 +89,14 @@ export class Simulator implements OnInit {
     this.flow.change(users);
   }
 
+  /** CA-12.8: the quote of the current users, at once. */
+  protected retryQuote(): void {
+    const users = this.users();
+    if (users !== null) {
+      this.flow.quoteNow(users);
+    }
+  }
+
   /** CA-11.9: storage and calls never ask for a quote. */
   protected onStorage(event: Event): void {
     this.storageText.set((event.target as HTMLInputElement).value);

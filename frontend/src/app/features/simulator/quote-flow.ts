@@ -1,12 +1,21 @@
 import { DestroyRef, computed, signal } from '@angular/core';
 import { Observable, Subject, Subscription, debounceTime } from 'rxjs';
 import { PriceQuote } from '../../core/api/api-models';
+import { RequestFailure, toRequestFailure } from '../../core/api/request-failure';
 
 /** D-4: the wait after the last change of the users (§6 of the 00: 200 to 300 ms). */
 export const QUOTE_WAIT_MS = 300;
 
-/** The result of the last quote that finished. */
-export type QuoteOutcome = 'none' | 'ok' | 'failed';
+/** The result of the last quote that finished: CA-12.8 (failed) and CA-12.9 (unsupported). */
+export type QuoteOutcome = 'none' | 'ok' | 'failed' | 'unsupported';
+
+/** CA-12.9: the only 422 of the quote with its own text. */
+function isUnsupportedCountry(failure: RequestFailure): boolean {
+  return (
+    failure.kind === 'validation' &&
+    failure.details.some((d) => d.field === 'country' && d.message === 'País no soportado')
+  );
+}
 
 interface QuoteState {
   /** The last 200, kept while a new one is asked (CA-12.7). */
@@ -56,7 +65,7 @@ export class QuoteFlow {
     this.changes.next(users);
   }
 
-  /** CA-12.1: without waiting. */
+  /** CA-12.1, and «Reintentar» of CA-12.8 with the current users: without waiting. */
   quoteNow(users: number): void {
     this.ask(users);
   }
@@ -85,7 +94,10 @@ export class QuoteFlow {
     this.patch({ inFlight: true });
     this.request = this.fetchQuote(users).subscribe({
       next: (quote) => this.patch({ quote, quotedUsers: users, outcome: 'ok', inFlight: false }),
-      error: () => this.patch({ outcome: 'failed', inFlight: false }),
+      error: (error: unknown) => {
+        const unsupported = isUnsupportedCountry(toRequestFailure(error));
+        this.patch({ outcome: unsupported ? 'unsupported' : 'failed', inFlight: false });
+      },
     });
   }
 

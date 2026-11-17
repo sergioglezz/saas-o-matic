@@ -63,10 +63,26 @@
     </div>
   </div>
 
-  <div class="quote" aria-live="polite">
-    @if (flow.quote(); as quote) {
-      <app-tier-table [tiers]="quote.tiers" />
-      <app-price-totals [price]="quote" />
+  <div class="quote">
+    <div class="quote-status" role="status">
+      @if (flow.outcome() === 'unsupported') {
+        <p class="error-text">{{ T.CNS }}</p>
+      } @else if (flow.pending()) {
+        <p class="muted">{{ T.UPD }}</p>
+      } @else if (flow.outcome() === 'failed') {
+        <p class="error-text">{{ T.NUP }}</p>
+      }
+    </div>
+    @if (flow.outcome() === 'failed' && !flow.pending()) {
+      <button type="button" class="secondary" (click)="retryQuote()">{{ T.RET }}</button>
+    }
+    @if (flow.outcome() !== 'unsupported') {
+      @if (flow.quote(); as quote) {
+        <app-tier-table [tiers]="quote.tiers" />
+        <div aria-live="polite">
+          <app-price-totals [price]="quote" />
+        </div>
+      }
     }
   </div>
 
