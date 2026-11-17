@@ -22,7 +22,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 
 | Fase | Tareas | RF | Estado |
 | --- | --- | --- | --- |
-| 1 — Base | T-01 | Soporte de todos | Pendiente |
+| 1 — Base | T-01 | Soporte de todos | ✅ Completada: Node 26.13.1 LTS (ADR 0010 ajustado), Angular 22.2 sin SSR ni zona, angular-eslint 22.7; `npm test` (una pasada), `npm run lint` y la compilación de producción en verde; el lint falla con `any`, `HttpClient` fuera de `core/`, Angular o RxJS en un módulo puro y una función de 44 líneas (comprobado y revertido); `npm start` sirve en `http://localhost:4200`. El prototipo confirmó el plan salvo tres ajustes anotados en la sección 10: la biblioteca ES2023 en `tsconfig.json`, `watch: false` y los archivos de test fuera de la compilación. DT-12 precisa de dónde se lee T-REG |
 | 2 — Núcleo | T-02 a T-05 | RF-2 a RF-5, RF-11 (reglas) | Pendiente |
 | 3 — Clientes | T-06 a T-09 | RF-1, RF-6 a RF-9 | Pendiente |
 | 4 — Simulador e historial | T-10 a T-14 | RF-4, RF-10 a RF-13 | Pendiente |
@@ -30,8 +30,8 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 
 ## Fase 1 — Base
 
-- [ ] **T-01. Proyecto Angular, lint, arranque de los tests y prototipo**
-  - **RF:** soporte de todos; ADR 0010; plan §2, DT-1, DT-2 y sección 10. **Depende de:** Node 24 instalado por el autor.
+- [x] **T-01. Proyecto Angular, lint, arranque de los tests y prototipo**
+  - **RF:** soporte de todos; ADR 0010; plan §2, DT-1, DT-2 y sección 10. **Depende de:** Node 26 LTS instalado (ADR 0010).
   - **Archivos:** `frontend/` generado por la CLI (sin git propio, sin renderizado en servidor, CSS), angular-eslint con la configuración de capas del plan §2, `src/test-setup.ts`, `src/index.html` (`lang="es"`, título) y `src/testing/spec-data.ts`.
   - **Prototipo (fuera del repositorio, desechable):** la zona del arranque llega a las fechas; el reloj falso con `debounceTime` y `timeout`; una petición cancelada por `switchMap` en el controlador de pruebas HTTP; navegación con estado en las pruebas de rutas; un botón desactivado no dispara su acción.
   - **Hecho cuando:** `npm test` (una pasada), `npm run lint` y la compilación pasan con el proyecto vacío; el lint falla con un `any` y con un import de `HttpClient` fuera de `core/` (comprobado y revertido); `npm start` sirve en `http://localhost:4200`; la sección 10 del plan está completa y el plan corregido si algo no coincidía.
@@ -130,7 +130,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 
 - [ ] **T-16. Arranque real, comprobaciones manuales y documentación**
   - **RF:** criterios de finalización de la spec y RNF-2 a RNF-4, RNF-10 y RNF-11. Casos MA-1 a MA-9. **Depende de:** T-15.
-  - **Archivos:** `README.md` (frontend: Node 24, instalación, arranque, dirección `http://localhost:4200`, decisiones visibles) y `AGENTS.md` (comandos del frontend confirmados).
+  - **Archivos:** `README.md` (frontend: Node 26, instalación, arranque, dirección `http://localhost:4200`, decisiones visibles) y `AGENTS.md` (comandos del frontend confirmados).
   - **Comprobación:** backend con una base de datos nueva y el seed, frontend con `npm start`; los flujos 1 a 4 del 00 con sus errores; MA-1 a MA-9 con su resultado anotado aquí. Lo que no se pueda comprobar desde este equipo (otros navegadores, lector de pantalla) queda anotado como pendiente del autor.
   - **Hecho cuando:** los flujos funcionan de verdad y el README y `AGENTS.md` describen el frontend.
 

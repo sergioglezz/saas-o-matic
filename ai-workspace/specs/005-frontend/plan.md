@@ -2,7 +2,7 @@
 
 Estado: v1.0, pendiente de la revisión del autor junto con la spec · Spec: `spec.md` v1.1 · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5 de `00-spec-first.md` y ADR 0001, 0004, 0005 y 0010 · Base: los contratos de 002, 003 y 004, sin cambios
 
-Antes de escribir este plan se comprobaron con Node las salidas de `Intl` para `es-ES` en las que se apoya el formato de RF-5. El resto del prototipo (runner, DOM simulado, reloj y peticiones falsas) necesita Node 24, que el autor está instalando. Se hace en T-01, antes de cualquier código de la aplicación, y su resultado completa la sección 10.
+Antes de escribir este plan se comprobaron con Node las salidas de `Intl` para `es-ES` en las que se apoya el formato de RF-5. El resto del prototipo (runner, DOM simulado, reloj y peticiones falsas) necesitaba una versión de Node compatible con Angular 22 (finalmente Node 26.13.1 LTS, ADR 0010). Se hace en T-01, antes de cualquier código de la aplicación, y su resultado completa la sección 10.
 
 ## 1. Resumen y alcance
 
@@ -13,7 +13,7 @@ Antes de escribir este plan se comprobaron con Node las salidas de `Intl` para `
 - **Cubre:** RF-1 a RF-13 y RNF-1 a RNF-11 de la spec. La sección 8 indica qué parte del plan cubre cada RF y cada CA.
 - **Reutiliza sin cambiar:** los endpoints de 002 a 004 y su formato de error. El backend no se toca.
 - **Fuera:** spec, sección 9.
-- **Dependencias:** las del proyecto base de Angular CLI 22 y angular-eslint, solo de desarrollo. **ADR:** 0010 (nuevo), con Node 24 LTS.
+- **Dependencias:** las del proyecto base de Angular CLI 22 y angular-eslint, solo de desarrollo. **ADR:** 0010 (nuevo), con Node 26 LTS.
 
 ## 2. Estructura de módulos
 
@@ -211,7 +211,7 @@ Ficha, al recibir saved: historial cargado -> prepend; si no -> reload       # C
 
 | # | Decisión | Por qué | Alternativa descartada | RF |
 | --- | --- | --- | --- | --- |
-| DT-1 | Angular 22 con Node 24 LTS, proyecto base de la CLI sin renderizado en servidor | Única versión con soporte; elegida por el autor (ADR 0010) | Angular 19 con Node 22.11 | Todos |
+| DT-1 | Angular 22 con Node 26 LTS, proyecto base de la CLI sin renderizado en servidor | Única versión con soporte; elegida por el autor (ADR 0010) | Angular 19 con Node 22.11 | Todos |
 | DT-2 | Tests con el runner por defecto y un archivo de arranque que fija la zona `Europe/Madrid` | Las fechas de la spec (CV-18 a CV-21) dependen de la zona; el equipo de cada uno no debe cambiar el resultado | Pasar la zona como parámetro a cada función | 5 |
 | DT-3 | Conversión con enteros grandes sobre la escritura decimal de la tasa | `100 × 1.005` en coma flotante da 100,4999…, y la spec exige 1,01 (CV-11 a CV-13) | Multiplicar en coma flotante y redondear | 5 |
 | DT-4 | Fechas con hora compuestas por partes (`dd/mm/aaaa` + espacio + `hh:mm`) | Comprobado: `Intl` para `es-ES` escribe «17/11/2026, 00:30», con coma (sección 10) | Usar el formato completo de `Intl` | 5 |
@@ -222,7 +222,7 @@ Ficha, al recibir saved: historial cargado -> prepend; si no -> reload       # C
 | DT-9 | `PagedList` común al listado y al historial | Las mismas reglas de «Cargar más» (RF-7) con un solo código | Copiar la lógica en las dos pantallas | 7, 10 |
 | DT-10 | Campos numéricos como texto con teclado numérico (`inputmode="numeric"`) y slider de rango nativo | Un campo de tipo número del navegador transforma o vacía `1e3` y `-1` antes de que se puedan validar (CA-11.5); el rango nativo ya responde al teclado (CA-11.4) | Campos de tipo número; slider propio | 11 |
 | DT-11 | Controles nativos para el teclado, Intro, enlaces y límites de caracteres (`maxlength`) | Accesibles sin código propio; el test C comprueba el control y MA-3 el comportamiento (spec v1.1) | Manejar el teclado a mano | 1, 6, 8, 11 |
-| DT-12 | El aviso T-REG viaja en el estado de la navegación | Desaparece al salir y volver a la ficha (FI-9) sin guardar nada | Un parámetro en la dirección | 8, 9 |
+| DT-12 | El aviso T-REG viaja en el estado de la navegación; la ficha lo lee de la navegación en curso al crearse (sección 10) | Desaparece al salir y volver a la ficha (FI-9) sin guardar nada | Un parámetro en la dirección | 8, 9 |
 | DT-13 | La ficha es dueña de la `PagedList` del historial; el simulador emite `saved` | El simulador no necesita saber nada del historial (CA-10.8, CA-10.9) | Un servicio compartido de historial | 10, 13 |
 | DT-14 | Formulario de alta con formularios reactivos tipados, sin validadores de formato | P-2: solo obligatorios y longitudes; los mensajes de formato los da el backend | Validadores de email e identificador | 8 |
 | DT-15 | Pipes puros con la divisa como argumento | Cambiar de divisa vuelve a formatear sin pedir nada (CA-4.3) | Convertir en cada componente | 4, 5 |
@@ -293,4 +293,20 @@ Comprobado con Node 22.11 (ICU 75.1), antes de este plan:
 | Fecha y hora con `Europe/Madrid` | «17/11/2026, 00:30» y «01/07/2026, 12:00» | DT-4: se compone sin la coma |
 | `String(1.005)` y `JSON.parse("1.005")` | `"1.005"` y `1.005` | DT-3: la escritura decimal más corta recupera la tasa exacta |
 
-Pendiente para T-01, con Node 24 y Angular 22: el runner y su DOM simulado con la zona fijada en el arranque; reloj falso con `debounceTime` y `timeout`; el controlador de pruebas HTTP con peticiones canceladas; navegación con estado en las pruebas de rutas; y qué genera exactamente la CLI (nombres de archivos, `package.json` y scripts). Lo que no coincida con este plan se corrige aquí antes de seguir y se anota en el log.
+Comprobado en T-01 (17/11/2026) con Node 26.13.1 (ICU 78.3), Angular CLI 22.2.7, TypeScript 6.0, Vitest 5.1 con jsdom y angular-eslint 22.7, en un prototipo fuera del repositorio, ya borrado:
+
+| Comprobación | Resultado | Consecuencia |
+| --- | --- | --- |
+| Las salidas de `Intl` de la tabla anterior con ICU 78.3 | Idénticas | Nada cambia |
+| Tipos de TypeScript para `useGrouping: "always"` e importes como texto en `Intl.NumberFormat` | El proyecto generado usa la biblioteca de ES2022 y no los admite: error de compilación | `tsconfig.json` declara `"lib": ["es2023", "dom"]`. Los navegadores de RNF-10 lo admiten |
+| Zona fijada en el archivo de arranque de los tests (`vi.stubEnv('TZ', 'Europe/Madrid')`) | `Intl` y `Date` usan Madrid: «17/11/2026, 00:30» y «12:00» en verano | DT-2 se cumple con `src/test-setup.ts`, declarado en `setupFiles` de `angular.json` |
+| Reloj falso de Vitest con `debounceTime(300)` y `timeout(10 000)` | 299 ms sin emitir y 300 ms emite; a los 9 999 ms nada y a los 10 000 ms `TimeoutError`, que cancela la petición | DT-7 y DT-8 se prueban con `vi.useFakeTimers()` |
+| `switchMap` con el controlador de pruebas HTTP | La petición anterior queda `cancelled` y su respuesta no llega | LI-12 y CO-5 comprueban la cancelación |
+| Aplicación sin zona (opción por defecto de Angular 22) bajo el reloj falso | Los cambios de signals se pintan solos tras `await vi.advanceTimersByTimeAsync(0)` | Los tests C avanzan el reloj con la versión asíncrona |
+| Navegación con estado en las pruebas de rutas | `router.currentNavigation()?.extras.state` llega a la pantalla al crearse; `history.state` vale `null` en el DOM simulado; al salir y volver, el estado ya no está | DT-12: la ficha lee T-REG de la navegación en curso al crearse, no de `history.state` |
+| Botón desactivado | `click()` no dispara su acción | CM-6, AL-15 y GU-5 se prueban con el botón real |
+| Slider nativo en el DOM simulado | `type="range"` con `min`, `max` y `step`; un valor de 250 queda en 200 | SM-4 se comprueba en el control |
+| Lo que genera la CLI | `app.ts`, `app.html`, `app.css`, `app.config.ts`, `app.routes.ts` y `app.spec.ts` (sin el sufijo `.component`); scripts `start`, `build`, `watch` y `test`; dependencias de desarrollo `@angular/build`, `@angular/cli`, `@angular/compiler-cli`, `jsdom`, `prettier`, `typescript` y `vitest`; carpeta `.vscode/` | Los nombres de la sección 2 coinciden. `angular-eslint` añade el script `lint` y sus dependencias `eslint`, `typescript-eslint` y `@eslint/js` (ADR 0010) |
+| `ng test` | Por defecto vigila los cambios en un terminal interactivo y no aísla los archivos de test entre sí | `angular.json` fija `watch: false`, así que `npm test` hace una sola pasada, como `pytest`. Cada test limpia el almacenamiento del navegador |
+| Archivos solo de tests en la compilación | `src/test-setup.ts` usa `vi` y rompía la compilación de producción | `tsconfig.app.json` excluye `src/test-setup.ts` y `src/testing/`; `tsconfig.spec.json` los incluye |
+| Lint con las reglas de capas | Falla con `any`, con `HttpClient` fuera de `core/`, con Angular o RxJS en un módulo puro y con una función de 44 líneas; un `HttpClient` dentro de `core/` pasa | Reglas del ADR 0010 más `max-lines` (300) y `max-lines-per-function` (40, salvo en los `*.spec.ts`, cuyos `describe` agrupan casos) |
