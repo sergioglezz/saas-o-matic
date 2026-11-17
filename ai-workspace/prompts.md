@@ -1,6 +1,6 @@
 # Prompts clave
 
-Prompts que más influyeron en el proyecto, ordenados por las fases del Spec-Driven Development. Se copian **tal cual** se escribieron en las conversaciones con el asistente (Claude Code), con sus erratas. Los fallos que se encontraron en lo que generó la IA están en [`ai-review-log.md`](ai-review-log.md).
+Prompts que más influyeron en el proyecto, ordenados por las fases del Spec-Driven Development. Se copian **tal cual** se escribieron en las conversaciones con el asistente (Claude Code), con sus erratas. La excepción son P-18 y P-19: fueron mensajes muy informales, en parte dictados por voz, y se recogen redactados, con el mismo contenido y sin añadir nada. Cada uno lo indica. Los fallos que se encontraron en lo que generó la IA están en [`ai-review-log.md`](ai-review-log.md).
 
 Patrón común a casi todos: dar el contexto y la fuente de verdad, decir qué NO hacer, fijar el formato de salida y **pedir que pare y espere la aprobación** antes de seguir.
 
@@ -254,24 +254,26 @@ Con las specs 001 a 005 cerradas y publicadas, el autor usó la aplicación como
 
 ### P-18 · Interfaz moderna
 
+*Mensaje informal, recogido aquí redactado.*
+
 ```text
-Quiero que mejores la interfaz, que la hagas moderna, que importes una librería guay o algo y que se haga con alguna animación chula, que se teste. Por ejemplo, no está centrado como la caja de añadir usuario, pues no está bien centrada. Si quieres incluso puedes hacer una spec nueva, así más chiquitilla, que sea mejorar el frontend o algo así para que se vea bonito y añadir lo que tú ves que es necesario.
+Quiero modernizar la interfaz del dashboard. Puedes usar una librería de estilos conocida si aporta algo, y añadir animaciones discretas, todo con sus tests. Corrige también lo que se ve mal: por ejemplo, el formulario de alta de cliente no está centrado. Si lo ves conveniente, abre una spec nueva y pequeña para esta mejora del frontend, e incluye lo que consideres necesario para que quede bien.
 ```
 
-**Por qué influyó:** era una petición abierta («una librería guay o algo»), y se convirtió en la spec 006, con criterios que se pueden comprobar. La librería nueva (Tailwind CSS) entró con su ADR 0011, como pide el principio 1. Las animaciones también se probaron. Dos opciones de Angular se descartaron tras un prototipo: una no aplicaba sus clases en el DOM de los tests y la otra bloqueaba los tests con el reloj simulado.
+**Por qué influyó:** era una petición abierta, sin una librería concreta ni criterios, y se convirtió en la spec 006, con criterios que se pueden comprobar. La librería nueva (Tailwind CSS) entró con su ADR 0011, como pide el principio 1. Las animaciones también se probaron. Dos opciones de Angular se descartaron tras un prototipo: una no aplicaba sus clases en el DOM de los tests y la otra bloqueaba los tests con el reloj simulado.
 
 ### P-19 · Una funcionalidad que faltaba
 
-Al usar la aplicación terminada, el autor echó en falta poder borrar un cliente. Lo pidió así:
+Al usar la aplicación terminada, el autor echó en falta poder borrar un cliente. Lo pidió así (mensajes informales, recogidos aquí redactados):
 
 ```text
-crea una funcionalidad nueva que simplemente sea borrar cliente
+Crea una funcionalidad nueva: borrar un cliente.
 ```
 
 La IA no se puso a programar. Primero preguntó qué hacer con las simulaciones del cliente, porque la base de datos impide borrar un cliente que las tiene (004 CA-7.3). El autor respondió:
 
 ```text
-si tambien borra el historial, pero es necesario crear una spec entera para este cambio?
+Sí, que se borre también su historial de simulaciones. ¿Hace falta una spec completa para un cambio así?
 ```
 
 **Por qué influyó:**
@@ -280,6 +282,8 @@ si tambien borra el historial, pero es necesario crear una spec entera para este
 - **El cambio de alcance siguió el mismo proceso que el resto.** A la pregunta del autor, la IA respondió que sí hacía falta una spec, aunque fuera corta. Amplía el alcance del documento 00 (principio 1), y todo cambio de código responde a un requisito de una spec (principio 2). El resultado es la spec 007: spec, plan y 4 tareas, con los tests escritos antes que el código.
 - **La decisión de negocio la tomó el autor**: borrar también el historial (decisión P-1 de la spec 007). La IA solo la planteó.
 - **Escribir los tests primero destapó algo que el plan no había previsto.** Dos tests de specs anteriores, 003 ER-3 y 004 ER-10, daban por hecho que la ficha no admitía `DELETE`. Se actualizaron sin relajarlos y quedaron anotados (log #43).
+
+Al cerrar la spec, el autor pidió dejar constancia de cómo surgió la funcionalidad. Está en el §1 de la spec 007, en el README, en el paso 5 de «Cómo se revisa» del log de revisión y en este documento.
 
 ---
 
