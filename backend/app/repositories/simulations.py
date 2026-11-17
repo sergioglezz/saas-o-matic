@@ -4,7 +4,7 @@ Spec 004 RNF-1. Like the customer repository, ``add`` commits by itself: the API
 whether the save succeeded before it answers (plan 004 DT-4, plan 003 DT-5).
 """
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.db.models import SimulationRecord, SimulationTierRecord
@@ -41,6 +41,22 @@ class SimulationRepository:
             self._session.rollback()
             raise
         return _to_simulation(record)
+
+    def delete_for_customer(self, customer_id: int) -> int:
+        """Delete the customer's simulations and their tiers, without committing (spec 007 DT-2).
+
+        The tiers go first because of their foreign key. Whoever deletes the customer commits
+        both in one transaction (CA-1.2). Returns how many simulations were deleted.
+        """
+        of_customer = SimulationRecord.customer_id == customer_id
+        ids = select(SimulationRecord.id).where(of_customer)
+        count = select(func.count()).select_from(SimulationRecord).where(of_customer)
+        removed = self._session.scalar(count) or 0
+        self._session.execute(
+            delete(SimulationTierRecord).where(SimulationTierRecord.simulation_id.in_(ids))
+        )
+        self._session.execute(delete(SimulationRecord).where(of_customer))
+        return removed
 
     def list_for_customer(self, customer_id: int, limit: int, offset: int) -> SimulationPage:
         """One page of the customer's simulations, newest first and by id within the same

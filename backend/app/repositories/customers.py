@@ -4,7 +4,7 @@ Unlike the tax rate repository, ``add`` commits by itself: registering a custome
 write, and the API must know whether it succeeded before it answers (plan 003 DT-5).
 """
 
-from sqlalchemy import ColumnElement, func, or_, select
+from sqlalchemy import ColumnElement, delete, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -43,6 +43,19 @@ class CustomerRepository:
                 raise DuplicateTaxIdError(new.tax_id) from None
             raise
         return _to_customer(record)
+
+    def delete(self, customer_id: int) -> None:
+        """Delete the customer and commit, together with whatever is pending in the session.
+
+        Spec 007 CA-1.2: the service removes the history first in the same session, so a
+        failure here rolls back both.
+        """
+        try:
+            self._session.execute(delete(CustomerRecord).where(CustomerRecord.id == customer_id))
+            self._session.commit()
+        except Exception:
+            self._session.rollback()
+            raise
 
     def get(self, customer_id: int) -> Customer | None:
         record = self._session.get(CustomerRecord, customer_id)

@@ -26,6 +26,18 @@ class CustomerStore(Protocol):
         self, name_fragment: str, tax_id_fragment: str, limit: int, offset: int
     ) -> CustomerPage: ...
 
+    def delete(self, customer_id: int) -> None:
+        """Delete the customer and commit everything pending in the same transaction."""
+        ...
+
+
+class CustomerHistory(Protocol):
+    """The part of the simulation store that deleting a customer needs (plan 007 DT-1)."""
+
+    def delete_for_customer(self, customer_id: int) -> int:
+        """Delete the customer's simulations without committing; return how many."""
+        ...
+
 
 def register_customer(
     new: NewCustomer, customers: CustomerStore, rates: TaxRateSource, now: datetime
@@ -58,3 +70,17 @@ def get_customer(customer_id: int, customers: CustomerStore) -> Customer:
     if customer is None:
         raise CustomerNotFoundError(customer_id)
     return customer
+
+
+def delete_customer(customer_id: int, customers: CustomerStore, history: CustomerHistory) -> int:
+    """Delete the customer and its whole history; return how many simulations went (spec 007 RF-1).
+
+    Both stores share the session of the request, so the history and the customer go in one
+    transaction: if deleting the customer fails, nothing is deleted (CA-1.2). The database still
+    rejects any other deletion of a customer with simulations (spec 004 CA-7.3, D-2).
+    Raises CustomerNotFoundError (CA-1.3).
+    """
+    get_customer(customer_id, customers)
+    removed = history.delete_for_customer(customer_id)
+    customers.delete(customer_id)
+    return removed

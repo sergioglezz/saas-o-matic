@@ -43,6 +43,9 @@ class BrokenStore:
     ) -> CustomerPage:
         raise self._fail()
 
+    def delete(self, customer_id: int) -> None:  # spec 007: the store also deletes
+        raise self._fail()
+
 
 @pytest.mark.parametrize("method", ["PUT", "PATCH", "DELETE", "OPTIONS"])
 def test_customers_path_names_both_of_its_methods(client: TestClient, method: str) -> None:
