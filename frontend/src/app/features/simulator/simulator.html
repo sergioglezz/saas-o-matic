@@ -9,6 +9,7 @@
           [max]="SLIDER_MAX"
           step="1"
           aria-labelledby="sim-users-label"
+          [disabled]="saving()"
           [value]="sliderValue()"
           (input)="onSlider($event)"
         />
@@ -17,6 +18,7 @@
           type="text"
           inputmode="numeric"
           autocomplete="off"
+          [disabled]="saving()"
           [value]="usersText()"
           [attr.aria-invalid]="users() === null ? 'true' : null"
           [attr.aria-describedby]="users() === null ? 'sim-users-error' : null"
@@ -35,6 +37,7 @@
         type="text"
         inputmode="numeric"
         autocomplete="off"
+        [disabled]="saving()"
         [value]="storageText()"
         [attr.aria-invalid]="storage() === null ? 'true' : null"
         [attr.aria-describedby]="storage() === null ? 'sim-storage-error' : null"
@@ -52,6 +55,7 @@
         type="text"
         inputmode="numeric"
         autocomplete="off"
+        [disabled]="saving()"
         [value]="callsText()"
         [attr.aria-invalid]="calls() === null ? 'true' : null"
         [attr.aria-describedby]="calls() === null ? 'sim-calls-error' : null"
@@ -87,6 +91,27 @@
   </div>
 
   <div class="save">
-    <button type="button" [disabled]="!canSave()">{{ LABELS.saveSimulation }}</button>
+    <button type="button" [disabled]="!canSave()" (click)="save()">
+      {{ saving() ? T.GDO : LABELS.saveSimulation }}
+    </button>
+    <div role="status">
+      @switch (saveNotice()) {
+        @case ('saved') {
+          <p class="success-text">{{ T.SOK }}</p>
+        }
+        @case ('unsupported') {
+          <p class="error-text">{{ T.CNS }}</p>
+        }
+        @case ('failed') {
+          <p class="error-text">{{ T.SKO }}</p>
+        }
+        @case ('failed-retry') {
+          <p class="error-text">{{ T.SKO }}</p>
+        }
+      }
+    </div>
+    @if (saveNotice() === 'failed-retry') {
+      <button type="button" class="secondary" (click)="retrySave()">{{ T.RET }}</button>
+    }
   </div>
 </section>

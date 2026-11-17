@@ -6,9 +6,11 @@ import {
   computed,
   inject,
   input,
+  output,
   signal,
 } from '@angular/core';
-import { Customer } from '../../core/api/api-models';
+import { Customer, NewSimulation, Simulation } from '../../core/api/api-models';
+import { RequestFailure, toRequestFailure } from '../../core/api/request-failure';
 import { SimulationsApi } from '../../core/api/simulations-api';
 import { LABELS, T } from '../../shared/texts';
 import { PriceTotals } from '../../shared/ui/price-totals';
@@ -23,6 +25,18 @@ import {
   parseCount,
 } from './usage-input';
 
+/** The notice under «Guardar simulación» (CA-13.4 and CA-13.6 to CA-13.8). */
+export type SaveNotice = 'none' | 'saved' | 'failed' | 'failed-retry' | 'unsupported';
+
+/** Table 5.3, column «Guardar simulación». */
+function noticeFor(failure: RequestFailure): SaveNotice {
+  if (failure.kind === 'connection' || failure.kind === 'server') {
+    return 'failed-retry';
+  }
+  const unsupported = failure.details.some((d) => d.field === 'customer_id' && d.message === T.CNS);
+  return failure.kind === 'validation' && unsupported ? 'unsupported' : 'failed';
+}
+
 /** Spec 005 RF-11 to RF-13: the simulator of the customer card. */
 @Component({
   selector: 'app-simulator',
@@ -33,8 +47,11 @@ import {
 })
 export class Simulator implements OnInit {
   readonly customer = input.required<Customer>();
+  /** CA-13.4: the card adds the saved simulation to the history (plan DT-13). */
+  readonly saved = output<Simulation>();
 
   private readonly api = inject(SimulationsApi);
+  private lastSave: NewSimulation | null = null;
 
   protected readonly T = T;
   protected readonly LABELS = LABELS;
@@ -51,6 +68,9 @@ export class Simulator implements OnInit {
   protected readonly storage = computed(() => parseCount(this.storageText(), MAX_STORAGE_GB));
   protected readonly calls = computed(() => parseCount(this.callsText(), MAX_API_CALLS));
 
+  protected readonly saving = signal(false);
+  protected readonly saveNotice = signal<SaveNotice>('none');
+
   protected readonly flow = new QuoteFlow(
     (users) => this.api.quote(users, this.customer().country),
     inject(DestroyRef),
@@ -65,7 +85,8 @@ export class Simulator implements OnInit {
       this.calls() !== null &&
       this.flow.outcome() === 'ok' &&
       this.flow.quotedUsers() === users &&
-      !this.flow.pending()
+      !this.flow.pending() &&
+      !this.saving()
     );
   });
 
@@ -73,7 +94,31 @@ export class Simulator implements OnInit {
     this.flow.quoteNow(INITIAL_USERS);
   }
 
+  /** CA-13.2. */
+  protected save(): void {
+    const users = this.users();
+    const storage = this.storage();
+    const calls = this.calls();
+    if (!this.canSave() || users === null || storage === null || calls === null) {
+      return;
+    }
+    this.send({
+      customer_id: this.customer().id,
+      active_users: users,
+      storage_gb: storage,
+      api_calls_per_month: calls,
+    });
+  }
+
+  /** CA-13.6: exactly the body that failed. */
+  protected retrySave(): void {
+    if (this.lastSave !== null && !this.saving()) {
+      this.send(this.lastSave);
+    }
+  }
+
   protected onSlider(event: Event): void {
+    this.saveNotice.set('none');
     const text = (event.target as HTMLInputElement).value;
     this.usersText.set(text);
     this.sliderValue.set(Number(text));
@@ -81,6 +126,7 @@ export class Simulator implements OnInit {
   }
 
   protected onUsers(event: Event): void {
+    this.saveNotice.set('none');
     this.usersText.set((event.target as HTMLInputElement).value);
     const users = this.users();
     if (users !== null) {
@@ -99,10 +145,30 @@ export class Simulator implements OnInit {
 
   /** CA-11.9: storage and calls never ask for a quote. */
   protected onStorage(event: Event): void {
+    this.saveNotice.set('none');
     this.storageText.set((event.target as HTMLInputElement).value);
   }
 
   protected onCalls(event: Event): void {
+    this.saveNotice.set('none');
     this.callsText.set((event.target as HTMLInputElement).value);
+  }
+
+  /** CA-13.3 to CA-13.8; the values and the quote stay as they are (D-19). */
+  private send(body: NewSimulation): void {
+    this.lastSave = body;
+    this.saving.set(true);
+    this.saveNotice.set('none');
+    this.api.save(body).subscribe({
+      next: (simulation) => {
+        this.saving.set(false);
+        this.saveNotice.set('saved');
+        this.saved.emit(simulation);
+      },
+      error: (error: unknown) => {
+        this.saving.set(false);
+        this.saveNotice.set(noticeFor(toRequestFailure(error)));
+      },
+    });
   }
 }

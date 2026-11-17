@@ -68,6 +68,15 @@ export class CustomerDetailPage {
     inject(DestroyRef).onDestroy(() => this.request?.unsubscribe());
   }
 
+  /** CA-10.8 and CA-10.9: the new simulation first, or the first page again. */
+  protected onSaved(simulation: Simulation): void {
+    if (this.history.status() === 'ready') {
+      this.history.prepend(simulation);
+    } else {
+      this.history.reload();
+    }
+  }
+
   /** CA-9.5 and CA-2.5. */
   protected retry(): void {
     this.load(this.id());

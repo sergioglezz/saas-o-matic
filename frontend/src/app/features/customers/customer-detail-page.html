@@ -39,7 +39,7 @@
         </div>
       </dl>
     </article>
-    <app-simulator [customer]="current.customer" />
+    <app-simulator [customer]="current.customer" (saved)="onSaved($event)" />
     <app-simulation-history [list]="history" />
   }
 </div>
