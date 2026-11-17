@@ -40,6 +40,7 @@ Todo vive en `frontend/src/app/`, con las tres carpetas de §5 del 00: `core/` (
 | `shared/ui/request-error.ts` | Texto T-CON o T-SRV y botón «Reintentar» | Angular, `texts` | 2 |
 | `shared/ui/load-more.ts` | T-MOS y «Cargar más» de una `PagedList` | Angular, `paged-list`, `texts` | 7 |
 | `shared/ui/tier-table.ts` | Tabla de desglose (CA-12.6), usada por el simulador y por el historial | Angular, `format-pipes` | 10, 12 |
+| `shared/ui/price-totals.ts` | «Subtotal», «Impuesto ({tasa})» y «Total mensual» (CA-10.2, CA-12.6), comunes al simulador y a cada tarjeta del historial, que muestra los totales con el desglose plegado (añadido en T-10) | Angular, `format-pipes` | 10, 12 |
 | `shared/ui/currency-bar.ts` | Selector «Divisa», línea de tasas, avisos, T-EQ, T-ORI y atribución | Angular, `core/rates`, `format`, `texts` | 3, 4 |
 | `shared/ui/not-found-page.ts` | T-NFP con «Volver al listado» | Angular, `texts` | 1 |
 | `features/customers/customer-list-page.ts` | Buscador con espera, listado, estados y «Cargar más» | Angular, RxJS, `core/api`, `shared` | 6, 7 |
@@ -55,7 +56,7 @@ Todo vive en `frontend/src/app/`, con las tres carpetas de §5 del 00: `core/` (
 | `src/index.html`, `src/styles.css` | `lang="es"`, título y estilos comunes (foco visible, contraste, tarjetas) | — | RNF-3, RNF-4 |
 | `src/test-setup.ts` | Zona horaria `Europe/Madrid` para todos los tests | — | Tests |
 | `src/testing/spec-data.ts` | Datos de la spec escritos una sola vez: cliente Acme, tasas de 5.4, cotizaciones de 15 y 60 usuarios, simulación de SI-1 | `api-models` | Tests |
-| `src/testing/text.ts`, `dom.ts`, `http.ts`, `rates.ts`, `app.ts`, `customers.ts` y `customer-form.ts` | Ayudas de los tests (añadidas en las fases 2 y 3): texto con los espacios normalizados, controles por su etiqueta, respuestas preparadas del backend y de la API de tasas, y montaje y recarga de la barra de divisa | Angular (pruebas) | Tests |
+| `src/testing/text.ts`, `dom.ts`, `http.ts`, `rates.ts`, `app.ts`, `customers.ts`, `customer-form.ts`, `detail.ts` y `simulator.ts` | Ayudas de los tests (añadidas en las fases 2 a 4): texto con los espacios normalizados, controles por su etiqueta, respuestas preparadas del backend y de la API de tasas, y montaje y recarga de la barra de divisa | Angular (pruebas) | Tests |
 
 **Reglas de capas** (comprobadas por el lint, ADR 0010):
 
@@ -118,7 +119,8 @@ PagedList<T extends { id: number }>(fetch: (offset) -> Observable<Page<T>>, dest
 # features
 parseCount(text, max) -> number | null                                # CA-11.5, 11.7, 11.8
 fieldErrorsFrom(details) -> { fields: Partial<Record<CustomerField, string[]>>, general: boolean }   # T-08: recibe los details; varios mensajes por campo
-QuoteFlow(country): change(text), retry(), quote(), state(), pending(), quotedUsers()
+QuoteFlow(fetchQuote, destroyRef): change(users | null), quoteNow(users), quote(), outcome(), pending(), quotedUsers()
+      # T-11 y T-12: outcome = none | ok | failed | unsupported; el simulador hace el «Reintentar» con quoteNow
 ```
 
 ## 5. Algoritmos

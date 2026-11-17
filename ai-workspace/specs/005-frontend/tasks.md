@@ -25,7 +25,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 | 1 — Base | T-01 | Soporte de todos | ✅ Completada: Node 26.13.1 LTS (ADR 0010 ajustado), Angular 22.2 sin SSR ni zona, angular-eslint 22.7; `npm test` (una pasada), `npm run lint` y la compilación de producción en verde; el lint falla con `any`, `HttpClient` fuera de `core/`, Angular o RxJS en un módulo puro y una función de 44 líneas (comprobado y revertido); `npm start` sirve en `http://localhost:4200`. El prototipo confirmó el plan salvo tres ajustes anotados en la sección 10: la biblioteca ES2023 en `tsconfig.json`, `watch: false` y los archivos de test fuera de la compilación. DT-12 precisa de dónde se lee T-REG |
 | 2 — Núcleo | T-02 a T-05 | RF-2 a RF-5, RF-11 (reglas) | ✅ Completada: 150 tests (148 nuevos) en verde, lint y compilación de producción sin errores ni avisos. Cada tarea empezó en rojo con esbozos que fallaban con «pendiente». Cubiertos CV-1 a CV-23, VE-1 a VE-11, TC-1 a TC-12, TC-14, TC-15, DV-1, DV-6 a DV-11, y ER-1 y ER-2 en el nivel de servicio. Revisión de la fase: un fallo propio corregido en el prototipo de T-01 (un cambio hecho dentro de un temporizador no se pinta hasta el siguiente fotograma; los tests llaman a `TestBed.tick()`), dos errores en mis tests (`match` retira las peticiones y compara la URL con sus parámetros) y una diferencia del plan con la spec corregida en el plan: el navegador guarda los cinco campos de 5.4, no tres (spec 5.5). Añadidos anotados en el plan §2: `decimal.ts`, `rateOf`, `EUR_DISPLAY` y las ayudas de `src/testing/`; `api-config.ts` son constantes |
 | 3 — Clientes | T-06 a T-09 | RF-1, RF-6 a RF-9 | ✅ Completada: 242 tests (92 nuevos) en verde, lint y compilación de producción sin errores ni avisos; cada tarea empezó en rojo. Cubiertos FI-1 a FI-9 (la parte de la ficha), TC-13, TC-16, LI-1 a LI-19, CM-1 a CM-11, AL-1 a AL-20 y la parte visible de AL-5 y AL-18 en la ficha. Revisión de la fase: un error propio corregido (una desestructuración con una variable sin usar, que el lint rechazó). Ajustes anotados en el plan: la búsqueda cancela con `PagedList.reload` en lugar de `switchMap`, `fieldErrorsFrom` recibe los `details` y admite varios mensajes por campo, y la ficha recibe el `{id}` como `input` de la ruta. Por el límite de 300 líneas, los casos CM y los fallos del alta van en `customer-list-more.spec.ts` y `customer-form-failures.spec.ts`. Vista rápida del alta en el navegador, sin problemas |
-| 4 — Simulador e historial | T-10 a T-14 | RF-4, RF-10 a RF-13 | Pendiente |
+| 4 — Simulador e historial | T-10 a T-14 | RF-4, RF-10 a RF-13 | ✅ Completada: 312 tests (70 nuevos) en verde, lint y compilación de producción sin errores ni avisos. Cubiertos HI-1 a HI-9, CM-12, SM-1 a SM-13, CO-1 a CO-16, GU-1 a GU-14, DV-2 a DV-5 y la petición de historial y cotización de FI-1. Pasaron a la primera, porque el código de una tarea anterior ya los cumplía, nueve casos CO (el flujo de la T-11), los siete de GU-10 (la regla de activación de la T-11) y los de la T-14 (la conversión de la T-05 y la T-10); se comprobaron con mutaciones. Las de GU-10 no fallaron: tres casos pasaban por la condición equivocada (el valor escrito ya era distinto del de la cotización) y se reforzaron hasta que cada mutación hizo fallar el suyo. Añadido anotado en el plan: `price-totals.ts` |
 | 5 — Cierre | T-15 a T-17 | Todos | Pendiente |
 
 ## Fase 1 — Base
@@ -90,31 +90,31 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan ·
 
 ## Fase 4 — Simulador e historial (nivel C)
 
-- [ ] **T-10. Historial de simulaciones**
+- [x] **T-10. Historial de simulaciones**
   - **RF:** RF-10 (CA-10.1 a CA-10.7) y RF-12 (CA-12.6, tabla de desglose). Plan DT-9 y DT-13. Casos HI-1 a HI-7, HI-9, CM-12 y FI-1 (petición del historial). **Depende de:** T-09.
   - **Archivos:** `features/customers/simulation-history.*`, `simulation-card.*`, `shared/ui/tier-table.ts` y sus `*.spec.ts`.
   - **Rojo (C):** la tabla 6.9 salvo HI-8 (divisa, en T-14), con la ficha montada.
   - **Hecho cuando:** esos casos pasan y un error del historial no afecta a la tarjeta del cliente.
 
-- [ ] **T-11. Simulador: valores de entrada**
+- [x] **T-11. Simulador: valores de entrada**
   - **RF:** RF-11 (CA-11.1 a CA-11.10). Plan DT-10 y DT-11. Casos SM-1 a SM-13. **Depende de:** T-10.
   - **Archivos:** `features/simulator/simulator.*` y `simulator-inputs.spec.ts`.
   - **Rojo (C):** la tabla 6.10, respondiendo 200 a las cotizaciones.
   - **Hecho cuando:** esos casos pasan y un valor no válido nunca sale en una petición.
 
-- [ ] **T-12. Simulador: cotización en tiempo real**
+- [x] **T-12. Simulador: cotización en tiempo real**
   - **RF:** RF-12 (CA-12.1 a CA-12.10). Plan §5 «Cotización», DT-8. Casos CO-1 a CO-16 y FI-1 (petición de cotización). **Depende de:** T-11.
   - **Archivos:** `features/simulator/quote-flow.ts`, `simulator.*` y `simulator-quote.spec.ts`.
   - **Rojo (C):** la tabla 6.11 con reloj falso; CO-5 comprueba que la petición vieja queda cancelada.
   - **Hecho cuando:** esos casos pasan y CO-12 confirma que se muestra el subtotal del backend.
 
-- [ ] **T-13. Guardar simulación**
+- [x] **T-13. Guardar simulación**
   - **RF:** RF-13 (CA-13.1 a CA-13.8) y RF-10 (CA-10.8, CA-10.9). Plan §5 «Guardar», DT-13. Casos GU-1 a GU-14. **Depende de:** T-12.
   - **Archivos:** `features/simulator/simulator.*`, `features/customers/customer-detail-page.*` y `simulator-save.spec.ts`.
   - **Rojo (C):** la tabla 6.12 con la ficha completa.
   - **Hecho cuando:** esos casos pasan; GU-10 confirma los siete estados con el botón desactivado.
 
-- [ ] **T-14. Divisa en la ficha**
+- [x] **T-14. Divisa en la ficha**
   - **RF:** RF-4 (CA-4.3), RF-5 (CA-5.1 a CA-5.3) y RF-12 (CA-12.10). Plan DT-15. Casos DV-2 a DV-5, HI-8, CO-15 y GU-12. **Depende de:** T-13.
   - **Archivos:** `features/customers/currency-on-detail.spec.ts` y lo que haga falta en las plantillas.
   - **Rojo (C):** cambiar de divisa con la ficha completa: importes convertidos en simulador e historial, sin ninguna petición.
