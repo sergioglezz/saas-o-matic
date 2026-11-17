@@ -8,7 +8,7 @@ SaaS-O-Matic es una herramienta interna con la que el equipo comercial simulada,
 - **Qué se evalúa:** planificación y diseño 35 %, criterio técnico y control de calidad 25 %, calidad del software 30 %, README y despliegue 10 %. El proceso con IA pesa más que el código.
 - **Repositorio:** `saas-o-matic`, con una carpeta `ai-workspace/` en la raíz que documenta el proceso.
 
-Leyenda de este documento: **[Enunciado]** es lo que dice la prueba; **[Propuesta]** es una decisión que el enunciado no fija y que conviene confirmar o cambiar.
+Leyenda de este documento: **[Enunciado]** es lo que dice la prueba; **[Propuesta]** es una decisión que el enunciado no fija.
 
 ## 2. Usuarios y casos de uso
 
@@ -33,8 +33,6 @@ Hay un único tipo de usuario: el comercial de Roams, que presupuesta suscripcio
 | UC-5 | Guardar una simulación | Queda persistida con usuarios, almacenamiento, llamadas API y coste calculado |
 | UC-6 | Cambiar la divisa de visualización (EUR, USD, GBP…) | Todos los importes en pantalla se convierten al instante |
 
-Audiencia indirecta: los evaluadores de Roams. Clonan el repositorio, levantan el proyecto con el README y leen `ai-workspace/`. Su experiencia es parte del producto.
-
 ## 3. Funcionalidades
 
 El sistema tiene cuatro módulos: clientes, simulaciones y precios, divisas y dashboard. En cada línea, **[E]** = lo exige el enunciado y **[P]** = propuesta para completar un hueco.
@@ -55,7 +53,7 @@ El sistema tiene cuatro módulos: clientes, simulaciones y precios, divisas y da
 - El sistema calcula el coste mensual base con precios acumulativos por tramos y le suma el impuesto del país del cliente. **[E]**
 - El sistema persiste la simulación con su cálculo: subtotal, tasa aplicada, impuesto, total y desglose por tramo. **[E]** + **[P]** para el desglose
 - El usuario puede obtener una cotización en vivo sin guardarla (`POST /pricing/quote`). **[P]**
-- El sistema guarda almacenamiento y llamadas API, pero no modifican el precio, porque el enunciado solo define tramos por usuario. **[P]** Pendiente de confirmar.
+- El sistema guarda almacenamiento y llamadas API, pero no modifican el precio, porque el enunciado solo define tramos por usuario. **[P]**
 - El usuario puede ver el historial de simulaciones de un cliente, de más reciente a más antigua. **[E]**
 
 **Módulo de divisas (frontend)**
@@ -274,7 +272,7 @@ Estas reglas son la fuente de los tests: cada fila de las tablas se convierte en
 **7.2 Impuestos**
 
 - **RN-3 [E]:** total = subtotal + impuesto, donde impuesto = subtotal × tasa del país del cliente.
-- **RN-4 [P]:** las tasas viven en una tabla configurable por país, no en la lógica. El enunciado no da valores; estos son supuestos de ejemplo a confirmar: ES 21 %, PT 23 %, FR 20 %, DE 19 %, IT 22 %, GB 20 %, US 0 % (sin IVA federal; el impuesto sobre ventas depende del estado y no se modela). Un país fuera de la lista devuelve 422 «País no soportado».
+- **RN-4 [P]:** las tasas viven en una tabla configurable por país, no en la lógica. El enunciado no da valores; se adoptan estos supuestos: ES 21 %, PT 23 %, FR 20 %, DE 19 %, IT 22 %, GB 20 %, US 0 % (sin IVA federal; el impuesto sobre ventas depende del estado y no se modela). Un país fuera de la lista devuelve 422 «País no soportado».
 - **RN-5 [P]:** el impuesto se calcula en céntimos y se redondea una sola vez, con la regla «mitad hacia arriba». Con estas tasas y precios el resultado ya es exacto; la regla protege ante tasas con decimales.
 - **Fuera de alcance:** IGIC de Canarias, Ceuta y Melilla, e inversión del sujeto pasivo en operaciones entre empresas de la UE. Se mencionan en el README.
 
@@ -294,7 +292,7 @@ Estas reglas son la fuente de los tests: cada fila de las tablas se convierte en
 - **RN-6 [P]:** los importes son céntimos enteros en dominio, API y base de datos, con campos terminados en `_cents`. La API devuelve también `currency: "EUR"`.
 - **RN-7 [E]:** convertir a otra divisa es solo presentación en el frontend: importe mostrado = importe en EUR × tasa EUR→divisa, redondeado a 2 decimales al mostrarlo. Nunca se guarda.
 - **RN-8 [P]:** cada simulación guarda una instantánea: tasa de impuesto aplicada, desglose por tramo, subtotal, impuesto y total. Así el histórico no cambia si cambian las tarifas.
-- **RN-9 [P]:** almacenamiento (en GB) y llamadas a la API (por mes) son enteros mayores o iguales que 0; se guardan pero no afectan al precio. Las unidades son un supuesto a confirmar.
+- **RN-9 [P]:** almacenamiento (en GB) y llamadas a la API (por mes) son enteros mayores o iguales que 0; se guardan pero no afectan al precio. Las unidades son un supuesto (§10, supuesto 9).
 
 **7.4 Identificador fiscal español [E]**
 
@@ -501,19 +499,19 @@ Se entregan tres cosas en un solo repositorio: la aplicación funcionando, la ca
 
 **Cómo entregar [P]**
 
-- Responder al correo de Andrea con el enlace al repositorio antes del límite indicado en el correo (23:00 del último día). Lo ideal es entregar la noche anterior o a mediodía del último día.
+- Entregar el enlace al repositorio antes del jueves 19 de noviembre a las 23:00. Lo ideal es entregar el miércoles por la noche o el jueves a mediodía.
 - Mantener el repositorio privado mientras se trabaja; hacerlo público al entregar o invitar a quien indique la empresa.
 - No subir el `.docx` de la prueba, `.env`, `node_modules`, `.venv` ni la base de datos.
 - Probar el README clonando el repositorio en una carpeta limpia antes de enviar.
 
-## 10. Supuestos y decisiones por confirmar
+## 10. Supuestos y decisiones
 
-El enunciado deja 14 huecos. Dos conviene preguntarlos a Andrea y el resto se documenta como decisión propia en el README (sección «Decisiones y supuestos») y en un ADR cuando afecten a la arquitectura. Documentarlos con una razón clara demuestra criterio.
+El enunciado deja 14 huecos. Cada uno se documenta como decisión propia en el README (sección «Decisiones y supuestos») y en un ADR cuando afecten a la arquitectura. Documentarlos con una razón clara demuestra criterio.
 
 | # | Tema | Qué dice el enunciado | Supuesto adoptado | Acción |
 | --- | --- | --- | --- | --- |
-| 1 | Almacenamiento y llamadas API | Se registran en la simulación, pero la tarifa solo define tramos por usuario | Se guardan y no cambian el precio | **Preguntar** |
-| 2 | Fecha límite | El día de la semana del correo no coincide con el día del mes indicado | Se toma el día del mes indicado, a las 23:00 | **Preguntar** (confirmar por escrito) |
+| 1 | Almacenamiento y llamadas API | Se registran en la simulación, pero la tarifa solo define tramos por usuario | Se guardan y no cambian el precio | Documentar |
+| 2 | Fecha límite | El plazo dice «lunes 19 de noviembre»; el 19 es jueves | Jueves 19 de noviembre de 2026, 23:00 | Documentar |
 | 3 | Planes | «Plan elegido», sin lista | `starter`, `business`, `enterprise`, sin efecto en precio | Documentar |
 | 4 | Tasas de impuesto | «Impuesto correspondiente al país», sin valores | Tabla de 7 países (7.2) | Documentar |
 | 5 | País fuera de la lista | No dice | Error 422 «País no soportado» | Documentar |
@@ -529,17 +527,17 @@ El enunciado deja 14 huecos. Dos conviene preguntarlos a Andrea y el resto se do
 
 ## 11. Orden de implementación y prompt de arranque
 
-Se trabaja en seis jornadas más un día de entrega, siempre en orden: dominio, base de datos, API, frontend y revisión. Cada pieza sigue el mismo ciclo: spec, pedir tests, pedir código, revisar, anotar lo corregido. **[P]**
+Se trabaja en seis jornadas, de hoy viernes 13 al jueves 19 de noviembre, siempre en orden: dominio, base de datos, API, frontend y revisión. Cada pieza sigue el mismo ciclo: spec, pedir tests, pedir código, revisar, anotar lo corregido. **[P]**
 
-| Jornada | Objetivo | Entregable de la jornada |
+| Fecha | Objetivo | Entregable de la jornada |
 | --- | --- | --- |
-| 1 | Entender y preparar | Repositorio con el kit, este documento revisado, correo a Andrea enviado |
-| 2 | Specs y arquitectura | Specs del backend, modelo de datos y ADRs; commit `docs:` antes de programar |
-| 3 | Backend | Dominio con tests, base de datos y endpoints |
-| 4 | Frontend (1) | Cliente de API, servicio de divisas, dashboard y buscador |
-| 5 | Frontend (2) | Ficha del cliente, simulador, estados de carga y error, responsive |
-| 6 | Revisión y README | Pasada de revisor independiente, correcciones, README, resumen de `ai-workspace`, prueba en carpeta limpia |
-| Entrega | Colchón y entrega | Enviar antes de mediodía; el límite es a las 23:00 |
+| Vie 13 nov | Entender y preparar | Repositorio con el kit y este documento revisado |
+| Sáb 14 nov | Specs y arquitectura | Specs del backend, modelo de datos y ADRs; commit `docs:` antes de programar |
+| Dom 15 nov | Backend | Dominio con tests, base de datos y endpoints |
+| Lun 16 nov | Frontend (1) | Cliente de API, servicio de divisas, dashboard y buscador |
+| Mar 17 nov | Frontend (2) | Ficha del cliente, simulador, estados de carga y error, responsive |
+| Mié 18 nov | Revisión y README | Pasada de revisor independiente, correcciones, README, resumen de `ai-workspace`, prueba en carpeta limpia |
+| Jue 19 nov | Colchón y entrega | Enviar antes de mediodía; el límite es a las 23:00 |
 
 **Orden de construcción**
 
@@ -548,13 +546,6 @@ Se trabaja en seis jornadas más un día de entrega, siempre en orden: dominio, 
 3. **API:** manejador de errores uniforme, `POST /customers`, lecturas de clientes, `POST /pricing/quote`, `POST /simulations` e historial.
 4. **Frontend:** cliente de API y servicio de divisas, dashboard con buscador, ficha del cliente, simulador, formulario de cliente, y estados de carga, error y vacío.
 5. **Cierre:** revisión independiente, README y prueba desde cero.
-
-**Antes de abrir Claude Code**
-
-- [ ] Leer este documento entero y cambiar lo que no compartas o no entiendas.
-- [ ] Enviar el correo a Andrea con las dos preguntas de la sección 10.
-- [ ] Guardar este documento como `ai-workspace/specs/00-spec-first.md` (exportado a Markdown) y hacer commit.
-- [ ] Abrir Claude Code en la carpeta del repositorio, en modo plan, y pegar el prompt de arranque.
 
 **Prompt de arranque**
 
@@ -580,15 +571,9 @@ Vamos con la feature: <nombre>.
 No añadas nada fuera de la spec. Si algo es ambiguo, pregúntame.
 ```
 
-**Prompt de revisor independiente (jornada 6, en una sesión nueva)**
-
-```markdown
-Actúa como revisor independiente: no has escrito este código. Revisa el repositorio con esta lista: 1) corrección de las reglas RN-1 a RN-11, 2) seguridad (SQL, validación de entrada, CORS, secretos), 3) manejo de errores y estados de carga, 4) mantenibilidad (archivos largos, capas rotas, duplicación), 5) tests que faltan. Devuelve los hallazgos ordenados por gravedad, con archivo y línea, sin modificar nada.
-```
-
 ## Fuentes
 
-- Enunciado del reto técnico de Roams y correo de Andrea (documentos recibidos por el candidato).
+- Enunciado del reto técnico de Roams.
 - Plantilla Spec-First, de dominicode (estructura de las secciones 1 a 6).
 - [ExchangeRate-API, Open Access endpoint](https://www.exchangerate-api.com/docs/free): actualización diaria, límite de peticiones, caché permitida y atribución obligatoria.
 - [LookupTax, guía de identificadores fiscales de España](https://lookuptax.com/docs/tax-identification-number/spain-tax-id-guide): DNI, NIE, CIF y NIF K/L/M.

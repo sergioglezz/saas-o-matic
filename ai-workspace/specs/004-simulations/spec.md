@@ -400,7 +400,7 @@ Simulaciones de demostración (clientes de 003 RF-10):
 ## 9. Fuera de alcance
 
 - Editar o borrar simulaciones, y borrar clientes (§3 del 00).
-- Que el almacenamiento o las llamadas a la API cambien el precio: pendiente de la respuesta de Andrea (§10 supuesto 1). Si cambia, será otra spec.
+- Que el almacenamiento o las llamadas a la API cambien el precio: se guardan sin efecto en el precio (§10 supuesto 1).
 - Leer una simulación suelta (`GET /simulations/{id}`), comparar simulaciones o generar un PDF.
 - Guardar la divisa de visualización o el tipo de cambio: la conversión es solo presentación (RN-7).
 - Las pantallas del simulador y del historial: spec de frontend.
