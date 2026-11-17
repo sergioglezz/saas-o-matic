@@ -1,6 +1,6 @@
 # Log de revisión del trabajo generado por IA
 
-Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 006, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
+Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 007, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
 
 ## Cómo se revisa
 
@@ -11,6 +11,7 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
    - instalación desde cero en un clon limpio con un entorno virtual nuevo (en el frontend, `npm ci`);
    - la suite, el lint y los tipos ejecutados en cada commit de código, uno a uno;
    - comprobación de que cada CA y cada caso de la spec aparecen citados en algún test.
+5. **Con la aplicación terminada:** el autor la usa como lo haría un comercial. Así detectó lo que ningún test podía detectar, porque no estaba en ninguna spec: una interfaz que había que modernizar y que no se podía borrar un cliente. Cada cambio entró por una spec nueva (006 y 007), con el mismo proceso desde el paso 1 (`prompts.md`, P-18 y P-19).
 
 ## Registro
 
@@ -58,6 +59,10 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 40 | 005 T-16, anotación de resultados en `tasks.md` | Texto con comillas invertidas pasado entre comillas dobles a un comando de bash | Bash las interpretó como órdenes: borró varias rutas del texto e intentó ejecutar `npm start` | Al leer el resultado del comando | Texto restaurado con el editor antes de seguir; sin efecto en el código (`4ffae58`) |
 | 41 | 006, test LY-7 | Un test que abría la app dos veces | El mismo fallo de la entrada 38: el módulo de pruebas no admite configurarse dos veces sin reiniciarse | El test falló con el código correcto | Se reinicia el módulo entre las dos aperturas |
 | 42 | 006, ayudante del test AN-4 | Buscaba el aviso con `find` entre los elementos con `role="status"` | Devolvía el contenedor exterior, no el aviso más interno, que es el que lleva la animación | El test falló con el código correcto | Se toma el último elemento que coincide, el más interno |
+| 43 | Plan 007, §4 | «El único test anterior que cambia es ER-3 de 003» | 004 ER-10 también comprobaba con `DELETE` que la ficha anunciaba `Allow: GET`. Con la ruta nueva, esa petición daba 404 y el test fallaba | La suite completa del backend en la verificación de T-02 (1 fallo de 1069) | El test sondea con `PUT`, que ninguna de sus tres rutas admite, y la ficha espera «DELETE, GET»: comprueba lo mismo que antes. Plan (§1 y §4) y spec (§8) actualizados |
+| 44 | 007 T-01, `SimulationRepository.delete_for_customer` | Devolvía el `rowcount` de la sentencia `DELETE` | mypy lo rechaza: `Session.execute` está tipado como `Result`, que no tiene `rowcount` (solo lo tiene `CursorResult`, en tiempo de ejecución) | `mypy .` en la verificación de la tarea | Cuenta las simulaciones con una consulta antes de borrarlas, en la misma transacción, sin `cast` ni `type: ignore` |
+| 45 | 007 T-01 | Una línea de test de 105 caracteres, y el doble de pruebas `BrokenStore` (003 ER-5) sin el método `delete` que se añadió al protocolo | ruff (E501) y mypy los rechazan | Lint de la tarea | Línea partida, y `delete` añadido al doble, que sigue fallando como los demás métodos |
+| 46 | 007 T-03, `delete-customer.spec.ts` | Un ayudante `TestBedReset()` que usaba `TestBed` sin importarlo | No compilaba, y el nombre en PascalCase no sigue las convenciones | Relectura del archivo antes de ejecutarlo | Se llama directamente a `TestBed.resetTestingModule()`, con su import |
 
 ## Reglas que salen de este registro
 
@@ -83,4 +88,5 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 - **Cada condición de un criterio con varias se prueba en un caso donde solo ella decide el resultado** (entrada 37).
 - **El diseño se comprueba en un navegador real al ancho mínimo de la spec, con los datos más largos (JPY, desgloses abiertos)** (entrada 39).
 - **El texto con comillas invertidas se escribe con el editor o en un archivo, nunca entre comillas dobles de bash** (entrada 40).
+- **Antes de cambiar un contrato, se buscan en todos los tests las comprobaciones del contrato viejo, no solo en los de la spec que lo definió** (entrada 43).
 - **Cada vez que un test abre la app más de una vez, reinicia el módulo de pruebas entre aperturas** (entradas 38 y 41).

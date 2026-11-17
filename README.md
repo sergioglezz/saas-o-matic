@@ -62,7 +62,7 @@ El enunciado pide sumar «el impuesto correspondiente al país del cliente», pe
 - **Ficha.** `GET /customers/{id}` responde 404 tanto si el cliente no existe como si `{id}` no es un número de cliente.
 - **Datos de demostración.** `python -m app.db.seed` crea 10 clientes inventados, con identificadores sintéticos y correos de dominios `.example`. Se puede ejecutar varias veces: no duplica ni modifica lo que ya existe.
 
-**Fuera de alcance:** editar o borrar clientes, validar el identificador fiscal de otros países y comprobar que el identificador o el correo existen de verdad.
+**Fuera de alcance:** editar clientes, validar el identificador fiscal de otros países y comprobar que el identificador o el correo existen de verdad. Borrar clientes se añadió después, con la spec 007.
 
 ### Simulaciones (spec 004)
 
@@ -74,7 +74,7 @@ El enunciado pide sumar «el impuesto correspondiente al país del cliente», pe
 - **Errores.** Un cliente inexistente responde 404, siempre después de validar los datos. Si el país del cliente ya no tiene tasa de impuesto, no se puede guardar una simulación nueva (422 sobre `customer_id`), pero su historial se sigue leyendo.
 - **Datos de demostración.** `python -m app.db.seed` añade 6 simulaciones a 5 clientes de demostración, que cubren los tres tramos y un país con impuesto 0. Solo se crean para los clientes de demostración que aún no tienen ninguna, así que se puede repetir y completa una base de datos sembrada antes.
 
-**Fuera de alcance:** editar o borrar simulaciones, consultar una simulación suelta, comparar simulaciones, generar un PDF y guardar la divisa de visualización (la conversión es solo presentación).
+**Fuera de alcance:** editar o borrar una simulación suelta (se borran todas con su cliente, spec 007), consultar una simulación suelta, comparar simulaciones, generar un PDF y guardar la divisa de visualización (la conversión es solo presentación).
 
 ### Frontend (spec 005)
 
@@ -88,6 +88,16 @@ El enunciado pide sumar «el impuesto correspondiente al país del cliente», pe
 - **Listas largas.** El listado y el historial cargan de 50 en 50 con «Cargar más».
 
 **Fuera de alcance:** refrescar las tasas con la app abierta, más divisas, conservar la búsqueda en la dirección, avisar al salir con datos sin guardar, funcionar sin conexión y pruebas automáticas en un navegador real, que se sustituyen por las comprobaciones manuales de la spec 005.
+
+### Borrar clientes (spec 007)
+
+Llegó con la aplicación ya terminada: al usarla, el autor echó en falta poder borrar un cliente y lo pidió como una funcionalidad nueva. Pasó por el mismo proceso que el resto: spec, plan, tareas y tests antes que el código (`ai-workspace/specs/007-delete-customer/` y el prompt P-19 de `ai-workspace/prompts.md`).
+
+- **Desde la ficha.** «Borrar cliente» abre una confirmación que dice cuántas simulaciones se perderán y avisa de que no se puede deshacer. Escape o «Cancelar» la cierran sin borrar nada. Después de borrar, el listado muestra «Cliente «…» borrado».
+- **Con todo su historial.** `DELETE /customers/{id}` borra el cliente, sus simulaciones y sus tramos en una sola transacción, y responde 204 sin cuerpo. Si algo falla, no se borra nada. Un cliente inexistente, o un `{id}` que no es un número de cliente, da 404.
+- **Sin migraciones nuevas.** La base de datos sigue rechazando que se borre un cliente con simulaciones (spec 004). Por eso el servicio borra antes, de forma explícita, su historial. El identificador fiscal queda libre para un alta nueva, y el `id` no se vuelve a usar.
+
+**Fuera de alcance:** deshacer un borrado o tener una papelera, borrar desde el listado o varios clientes a la vez, y borrar una simulación suelta.
 
 ## Backend: puesta en marcha
 

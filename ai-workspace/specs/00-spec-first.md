@@ -46,6 +46,7 @@ El sistema tiene cuatro módulos: clientes, simulaciones y precios, divisas y da
 - El sistema valida el formato del email y que los campos obligatorios no estén vacíos. **[P]**
 - El usuario puede buscar clientes por nombre de empresa o por identificador fiscal. **[E]**
 - El usuario puede abrir la ficha de un cliente y ver sus datos. **[E]**
+- El usuario puede borrar un cliente desde su ficha, tras una confirmación, y con él se borra todo su historial de simulaciones. **[P]** Se añadió con la aplicación ya terminada, a petición del autor (spec 007).
 
 **Módulo de simulaciones y precios**
 
@@ -78,7 +79,7 @@ El sistema tiene cuatro módulos: clientes, simulaciones y precios, divisas y da
 - Publica documentación interactiva de la API (OpenAPI en `/docs`). **[P]**
 - Carga datos de demostración con un script de seed para que el dashboard no esté vacío. **[P]**
 
-**Fuera de alcance [P]:** autenticación y roles, editar o borrar clientes, generar PDF, facturación real, varios idiomas, despliegue real en AWS.
+**Fuera de alcance [P]:** autenticación y roles, editar clientes, generar PDF, facturación real, varios idiomas, despliegue real en AWS.
 
 ## 4. Flujos de usuario
 
@@ -351,6 +352,7 @@ La API es REST con JSON y su contrato fija rutas, campos y errores antes de escr
 | `POST /customers` | Registra un cliente | 201 | 422, 409 | **[E]** |
 | `GET /customers?q=&limit=&offset=` | Busca por nombre o identificador fiscal; sin `q`, lista todos (por defecto 50) | 200 | 422 | **[P]** |
 | `GET /customers/{id}` | Datos de un cliente | 200 | 404 | **[P]** |
+| `DELETE /customers/{id}` | Borra el cliente y todo su historial, en una transacción (spec 007) | 204 | 404 | **[P]** |
 | `POST /simulations` | Calcula y guarda una simulación | 201 | 404, 422 | **[E]** |
 | `GET /customers/{id}/simulations` | Historial, de más reciente a más antigua | 200 | 404 | **[P]** |
 | `POST /pricing/quote` | Cotiza sin guardar, para el slider | 200 | 422 | **[P]** |

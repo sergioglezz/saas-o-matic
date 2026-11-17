@@ -6,7 +6,9 @@ Leyenda de origen: **[E]** viene del enunciado; **[P]** es una propuesta, una pe
 
 ## 1. Contexto y objetivo
 
-El documento 00 dejó «borrar clientes» fuera de alcance como propuesta (§3) **[P]**, y las specs 003, 004 y 005 lo repitieron. El autor pide ahora poder borrar un cliente **[P]**, y decidió que al borrarlo se borre también su historial de simulaciones (P-1).
+El documento 00 dejó «borrar clientes» fuera de alcance como propuesta (§3) **[P]**, y las specs 003, 004 y 005 lo repitieron. Con esta spec, el 00 ya lo recoge en §3 y en la tabla de endpoints (§8.2). El autor pide ahora poder borrar un cliente **[P]**, y decidió que al borrarlo se borre también su historial de simulaciones (P-1).
+
+**De dónde sale esta spec:** la aplicación ya estaba terminada (specs 001 a 006). Al usarla, el autor vio que no había forma de borrar un cliente y lo pidió en una petición nueva (prompt P-19 de `ai-workspace/prompts.md`). La funcionalidad no se añadió directamente al código. Pasó por el mismo proceso que el resto (spec, plan, tareas y tests primero), porque amplía el alcance que fijó el documento 00 (constitución, principios 1 y 2). Antes de escribir la spec, la IA preguntó qué hacer con el historial del cliente, que era la única decisión de negocio abierta (P-1).
 
 **Objetivo:** borrar un cliente desde su ficha, después de una confirmación que dice cuánto historial se pierde, y que el backend borre el cliente y todas sus simulaciones en una sola transacción.
 
@@ -131,10 +133,10 @@ Niveles: **D** = servicio y repositorio con una base de datos de prueba; **I** =
 
 ## 8. Criterios de finalización
 
-- [ ] Cada caso D, I y C de la sección 4 tiene un test que lo cita y pasa.
-- [ ] Las suites del backend y del frontend pasan; los tests anteriores que cambian por el nuevo contrato (cabecera `Allow` de 003 ER-3) están anotados.
-- [ ] MA-1 y MA-2 comprobados en un navegador real.
-- [ ] ruff, mypy, lint y compilación del frontend sin errores.
+- [x] Cada caso D, I y C de la sección 4 tiene un test que lo cita y pasa.
+- [x] Las suites del backend y del frontend pasan, y los tests anteriores que cambian por el nuevo contrato están anotados: la cabecera `Allow` de 003 ER-3 y de 004 ER-10.
+- [x] MA-1 y MA-2 comprobados en un navegador real.
+- [x] ruff, mypy, lint y compilación del frontend sin errores.
 
 ## 9. Decisiones
 
@@ -154,3 +156,4 @@ Niveles: **D** = servicio y repositorio con una base de datos de prueba; **I** =
 | Versión | Cambio |
 | --- | --- |
 | 1.0 | Versión inicial, tras la respuesta del autor (P-1) |
+| 1.0 | Sin cambios de requisitos: §1 explica de dónde sale la petición, y §8 cita también 004 ER-10, el segundo test anterior afectado por CA-1.6 (encontrado en T-02) |

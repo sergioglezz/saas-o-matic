@@ -14,6 +14,7 @@ Patrón común a casi todos: dar el contexto y la fuente de verdad, decir qué N
 | 4. Tareas | [P-09](#p-09--tareas) | `specs/00X-*/tasks.md` |
 | 5. Implementar | [P-10](#p-10--implementación-por-bloques-primera-versión), [P-11](#p-11--implementación-con-tests-primero-versión-final) | Código y tests |
 | 6. Verificar y cerrar | [P-12](#p-12--verificación-de-la-spec-requisito-a-requisito), [P-13](#p-13--cierre-y-siguiente-paso) | Trazabilidad RF → test y veredicto |
+| 7. Cambios con la aplicación terminada | [P-18](#p-18--interfaz-moderna), [P-19](#p-19--una-funcionalidad-que-faltaba) | Specs 006 y 007 |
 | Transversal | [P-14](#p-14--cuestionar-el-razonamiento-de-la-ia) a [P-17](#p-17--prompts-cortos-de-control) | Control humano del proceso |
 
 ---
@@ -244,6 +245,41 @@ Para cada uno indica: qué test lo cubre, y el resultado de ejecutarlo. Si algú
 ```text
 Mira, he vuelto a renombrar el archivo porque al final va a ser mucho más lío. Cambiar todas las referencias a ese archivo, posiblemente ponerle un dígito. Así que lo he vuelto a renombrar. Ahora quiero, al comprobar que está todo bien, todo listo y perfecto, pues quiero que hagas un commit de todas las cosas que hemos hecho de la primera spec y hagas un push ya al GitHub y dejemos ese spec primero por completado. Y quiero que analices ahora también la documentación y para ver cuál es el nuevo paso que hay que tomar para tener este proyecto a punto.
 ```
+
+---
+
+## Fase 7 · Cambios con la aplicación terminada
+
+Con las specs 001 a 005 cerradas y publicadas, el autor usó la aplicación como lo haría un comercial y pidió dos cambios más. Ninguno se hizo tocando el código sin más: cada uno tuvo su propia spec, con su plan, sus tareas y sus tests primero.
+
+### P-18 · Interfaz moderna
+
+```text
+Quiero que mejores la interfaz, que la hagas moderna, que importes una librería guay o algo y que se haga con alguna animación chula, que se teste. Por ejemplo, no está centrado como la caja de añadir usuario, pues no está bien centrada. Si quieres incluso puedes hacer una spec nueva, así más chiquitilla, que sea mejorar el frontend o algo así para que se vea bonito y añadir lo que tú ves que es necesario.
+```
+
+**Por qué influyó:** era una petición abierta («una librería guay o algo»), y se convirtió en la spec 006, con criterios que se pueden comprobar. La librería nueva (Tailwind CSS) entró con su ADR 0011, como pide el principio 1. Las animaciones también se probaron. Dos opciones de Angular se descartaron tras un prototipo: una no aplicaba sus clases en el DOM de los tests y la otra bloqueaba los tests con el reloj simulado.
+
+### P-19 · Una funcionalidad que faltaba
+
+Al usar la aplicación terminada, el autor echó en falta poder borrar un cliente. Lo pidió así:
+
+```text
+crea una funcionalidad nueva que simplemente sea borrar cliente
+```
+
+La IA no se puso a programar. Primero preguntó qué hacer con las simulaciones del cliente, porque la base de datos impide borrar un cliente que las tiene (004 CA-7.3). El autor respondió:
+
+```text
+si tambien borra el historial, pero es necesario crear una spec entera para este cambio?
+```
+
+**Por qué influyó:**
+
+- **Fue una prueba de aceptación hecha por una persona.** Ningún test podía encontrar este hueco: el documento 00 había dejado el borrado fuera de alcance, y la aplicación cumplía todo lo especificado. Solo apareció al usar la aplicación de verdad.
+- **El cambio de alcance siguió el mismo proceso que el resto.** A la pregunta del autor, la IA respondió que sí hacía falta una spec, aunque fuera corta. Amplía el alcance del documento 00 (principio 1), y todo cambio de código responde a un requisito de una spec (principio 2). El resultado es la spec 007: spec, plan y 4 tareas, con los tests escritos antes que el código.
+- **La decisión de negocio la tomó el autor**: borrar también el historial (decisión P-1 de la spec 007). La IA solo la planteó.
+- **Escribir los tests primero destapó algo que el plan no había previsto.** Dos tests de specs anteriores, 003 ER-3 y 004 ER-10, daban por hecho que la ficha no admitía `DELETE`. Se actualizaron sin relajarlos y quedaron anotados (log #43).
 
 ---
 
