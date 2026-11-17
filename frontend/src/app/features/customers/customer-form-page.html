@@ -1,0 +1,84 @@
+<section class="card narrow stack">
+  <h1>{{ T.NEW }}</h1>
+
+  @if (failure(); as failure) {
+    <app-request-error [failure]="failure" (retry)="retry()" />
+  }
+  @if (invalidData()) {
+    <p class="error-text" role="status">{{ T.DNV }}</p>
+  }
+
+  <form class="stack" novalidate [formGroup]="form" (ngSubmit)="submit()">
+    @for (field of TEXT_FIELDS; track field.name) {
+      <div class="field">
+        <label [for]="'customer-' + field.name">{{ field.label }}</label>
+        <input
+          type="text"
+          [id]="'customer-' + field.name"
+          [formControlName]="field.name"
+          [attr.maxlength]="field.max"
+          [attr.autocomplete]="field.autocomplete"
+          [attr.inputmode]="field.name === 'contact_email' ? 'email' : null"
+          [attr.aria-invalid]="errors()[field.name] ? 'true' : null"
+          [attr.aria-describedby]="errorId(field.name)"
+        />
+        @if (errors()[field.name]; as messages) {
+          <p class="field-error" [id]="errorId(field.name)">
+            @for (message of messages; track $index) {
+              <span>{{ message }} </span>
+            }
+          </p>
+        }
+      </div>
+    }
+
+    <div class="field">
+      <label for="customer-country">{{ LABELS.country }}</label>
+      <select
+        id="customer-country"
+        formControlName="country"
+        [attr.aria-invalid]="errors().country ? 'true' : null"
+        [attr.aria-describedby]="errorId('country')"
+      >
+        @for (country of COUNTRIES; track country.code) {
+          <option [value]="country.code">{{ country.name }}</option>
+        }
+      </select>
+      @if (errors().country; as messages) {
+        <p class="field-error" [id]="errorId('country')">
+          @for (message of messages; track $index) {
+            <span>{{ message }} </span>
+          }
+        </p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="customer-plan">{{ LABELS.plan }}</label>
+      <select
+        id="customer-plan"
+        formControlName="plan"
+        [attr.aria-invalid]="errors().plan ? 'true' : null"
+        [attr.aria-describedby]="errorId('plan')"
+      >
+        @for (plan of PLANS; track plan.value) {
+          <option [value]="plan.value">{{ plan.name }}</option>
+        }
+      </select>
+      @if (errors().plan; as messages) {
+        <p class="field-error" [id]="errorId('plan')">
+          @for (message of messages; track $index) {
+            <span>{{ message }} </span>
+          }
+        </p>
+      }
+    </div>
+
+    <div class="toolbar">
+      <button type="submit" [disabled]="saving()">{{ saving() ? T.GDO : LABELS.save }}</button>
+      <button type="button" class="secondary" (click)="cancel()">{{ LABELS.cancel }}</button>
+    </div>
+  </form>
+
+  <a routerLink="/clientes">{{ T.VOL }}</a>
+</section>
