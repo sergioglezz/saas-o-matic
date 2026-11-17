@@ -1,6 +1,6 @@
 # Tareas — 007 Borrar cliente
 
-Estado: v1.0, pendiente de la revisión del autor junto con la spec y el plan · Spec: `spec.md` v1.0 · Plan: `plan.md` v1.0
+Estado: v1.0 ejecutadas, revisadas y aprobadas por el autor · Spec: `spec.md` v1.0 (aprobada) · Plan: `plan.md` v1.0
 
 ## Reglas de ejecución
 

@@ -1,6 +1,6 @@
 # Plan técnico — 007 Borrar cliente
 
-Estado: v1.0, pendiente de la revisión del autor junto con la spec · Spec: `spec.md` v1.0 · Base: el código de 003, 004, 005 y 006
+Estado: v1.0, ejecutado según `tasks.md`, revisado y aprobado por el autor · Spec: `spec.md` v1.0 (aprobada) · Base: el código de 003, 004, 005 y 006
 
 ## 1. Archivos
 

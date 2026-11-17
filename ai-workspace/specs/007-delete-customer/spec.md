@@ -1,6 +1,6 @@
 # 007 — Borrar cliente
 
-Estado: v1.0 · Pendiente de la revisión del autor · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 003, 004, 005 y 006
+Estado: v1.0 aprobada por el autor, con la decisión P-1 y las decisiones D-1 a D-9 confirmadas · ✅ Completada, revisada y aprobada por el autor, con los 4 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 003, 004, 005 y 006
 
 Leyenda de origen: **[E]** viene del enunciado; **[P]** es una propuesta, una petición del autor o una decisión D-x de la sección 9.
 
