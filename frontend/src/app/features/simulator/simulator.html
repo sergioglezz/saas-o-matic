@@ -1,0 +1,76 @@
+<section class="card stack simulator">
+  <div class="values">
+    <div class="field users">
+      <label id="sim-users-label" for="sim-users">{{ LABELS.activeUsers }}</label>
+      <div class="users-controls">
+        <input
+          type="range"
+          min="0"
+          [max]="SLIDER_MAX"
+          step="1"
+          aria-labelledby="sim-users-label"
+          [value]="sliderValue()"
+          (input)="onSlider($event)"
+        />
+        <input
+          id="sim-users"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          [value]="usersText()"
+          [attr.aria-invalid]="users() === null ? 'true' : null"
+          [attr.aria-describedby]="users() === null ? 'sim-users-error' : null"
+          (input)="onUsers($event)"
+        />
+      </div>
+      @if (users() === null) {
+        <p class="field-error" id="sim-users-error">{{ T.USR }}</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="sim-storage">{{ LABELS.storageField }}</label>
+      <input
+        id="sim-storage"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        [value]="storageText()"
+        [attr.aria-invalid]="storage() === null ? 'true' : null"
+        [attr.aria-describedby]="storage() === null ? 'sim-storage-error' : null"
+        (input)="onStorage($event)"
+      />
+      @if (storage() === null) {
+        <p class="field-error" id="sim-storage-error">{{ T.STO }}</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="sim-calls">{{ LABELS.apiCalls }}</label>
+      <input
+        id="sim-calls"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        [value]="callsText()"
+        [attr.aria-invalid]="calls() === null ? 'true' : null"
+        [attr.aria-describedby]="calls() === null ? 'sim-calls-error' : null"
+        (input)="onCalls($event)"
+      />
+      @if (calls() === null) {
+        <p class="field-error" id="sim-calls-error">{{ T.APC }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="quote" aria-live="polite">
+    @if (flow.quote(); as quote) {
+      <app-tier-table [tiers]="quote.tiers" />
+      <app-price-totals [price]="quote" />
+    }
+  </div>
+
+  <div class="save">
+    <button type="button" [disabled]="!canSave()">{{ LABELS.saveSimulation }}</button>
+  </div>
+</section>

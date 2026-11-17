@@ -18,6 +18,7 @@ import { DayPipe } from '../../shared/format/format-pipes';
 import { PagedList } from '../../shared/paged-list';
 import { LABELS, T, countryName, planName } from '../../shared/texts';
 import { RequestError } from '../../shared/ui/request-error';
+import { Simulator } from '../simulator/simulator';
 import { SimulationHistory } from './simulation-history';
 
 type CardState =
@@ -29,7 +30,7 @@ type CardState =
 /** Spec 005 RF-9: the customer card, and below it the simulator and the history. */
 @Component({
   selector: 'app-customer-detail-page',
-  imports: [RouterLink, DayPipe, RequestError, SimulationHistory],
+  imports: [RouterLink, DayPipe, RequestError, Simulator, SimulationHistory],
   templateUrl: './customer-detail-page.html',
   styleUrl: './customer-detail-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

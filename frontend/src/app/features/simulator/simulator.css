@@ -1,0 +1,52 @@
+.values {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .values {
+    grid-template-columns: 2fr 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.users-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.users-controls input[type='range'] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.field input[type='text'] {
+  width: 100%;
+}
+
+.users-controls input[type='text'] {
+  width: 7rem;
+  flex: 0 0 auto;
+}
+
+.quote {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.quote p {
+  margin: 0;
+}
+
+.save {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.save p {
+  margin: 0;
+}
