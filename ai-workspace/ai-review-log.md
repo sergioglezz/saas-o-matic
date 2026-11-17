@@ -1,14 +1,14 @@
 # Log de revisión del trabajo generado por IA
 
-Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 004, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
+Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 005, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
 
 ## Cómo se revisa
 
 1. **Antes del código:** cada documento (constitución, spec, plan, tareas) se revisa contra `00-spec-first.md` y `AGENTS.md` y lo aprueba el autor antes de pasar al siguiente.
 2. **Durante el código:** cada tarea sigue rojo → verde → revisar. Los tests salen de las tablas de la spec y se ejecutan antes de implementar, para confirmar que fallan por el motivo esperado.
-3. **Al cerrar cada bloque:** verificación completa con `pytest`, `ruff check`, `ruff format --check` y `mypy` estricto; validación contra los CA de la spec; y aprobación del autor antes de cada commit.
-4. **Al cerrar la funcionalidad (T-12 en 001, T-18 en 002, T-20 en 003, T-14 en 004):**
-   - instalación desde cero en un clon limpio con un entorno virtual nuevo;
+3. **Al cerrar cada bloque:** verificación completa con `pytest`, `ruff check`, `ruff format --check` y `mypy` estricto (en el frontend, `npm test`, `npm run lint` y la compilación de producción); validación contra los CA de la spec; y aprobación del autor antes de cada commit.
+4. **Al cerrar la funcionalidad (T-12 en 001, T-18 en 002, T-20 en 003, T-14 en 004, T-17 en 005):**
+   - instalación desde cero en un clon limpio con un entorno virtual nuevo (en el frontend, `npm ci`);
    - la suite, el lint y los tipos ejecutados en cada commit de código, uno a uno;
    - comprobación de que cada CA y cada caso de la spec aparecen citados en algún test.
 
@@ -47,6 +47,15 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 29 | 004 T-14, informe de trazabilidad | Un plugin de pytest desechable que filtraba los tests de la 004 por el texto «spec 004» | Distinguía mayúsculas: el módulo de protocolo dice «Spec 004», y los diez casos ER y dos CA salieron como «sin test» | El informe contradecía tests que se sabía que existían y pasaban | Filtro insensible a mayúsculas: 43 de 43 CA y 86 de 86 casos |
 | 30 | 004 T-14, recuentos en la spec, las tareas y los mensajes al autor | «42 CA» y «11 de los 13 criterios» | Son 43 CA y 12 criterios (10 cumplidos entonces): cifras escritas de memoria | Al contar las casillas de la sección 10 | Cifras corregidas con un recuento sobre el propio documento (`34c0bb5`) |
 | 31 | 004, commit de T-05 | Prefijo `refactor:` | `AGENTS.md` solo admite `docs`, `feat`, `test`, `fix` y `chore` | Revisión del mensaje justo después de crear el commit | Mensaje cambiado a `chore:` con `--amend` antes del push, con el mismo árbol (`5d70bf4`) |
+| 32 | Spec 005 v1.0, casos LI-13, LI-17, AL-6, AL-17 y SM-10 | Tests de pantalla que escribían más caracteres que el límite, pulsaban Intro o movían el slider con el teclado | El DOM simulado de los tests no reproduce esos comportamientos nativos del navegador: los casos no se podían cumplir en el nivel C | Al planificar, antes de escribir código | Spec v1.1: el test C comprueba el control nativo que los garantiza y MA-3 el comportamiento en un navegador real (`f99d8d4`) |
+| 33 | Plan 005, §3 | El navegador guardaba tres campos de la respuesta de tasas | La spec 5.5 dice que se guardan los cinco campos de 5.4 | Revisión de la fase 2 contra la spec | El plan sigue a la spec, y lo guardado se valida con la misma función que la respuesta (`4b19bc2`, `1725a26`) |
+| 34 | Plan 005, sección 10 (prototipo de T-01) | «Los cambios de signals se pintan solos tras avanzar el reloj» | Sin zone.js, un cambio hecho dentro de un temporizador (el límite de 10 s) se pinta en el siguiente fotograma: TC-7 fallaba aunque el estado era correcto. El prototipo solo había probado cambios hechos desde el test | Depuración de TC-7 en T-05 | `settle()` de los tests avanza el reloj y llama a `TestBed.tick()`, que pinta sin mover el reloj; sección 10 corregida (`53c587d`, `1725a26`) |
+| 35 | 005 T-04 y T-05, tests de los clientes de la API y de las tasas | `HttpTestingController.match` con una URL de texto, y la misma lista de peticiones leída dos veces | Con texto, `match` compara también los parámetros de la URL; y retira las peticiones que encuentra, así que la siguiente comprobación ya no las veía | Los tests fallaron con el código correcto | Se compara la ruta con una función y cada petición se lee una sola vez (`6b12b65`, `53c587d`) |
+| 36 | 005 T-08, `customer-form-page.ts` | Quitar el error de un campo desestructurando el objeto con una variable sin usar | El lint la rechaza (`no-unused-vars`) | `npm run lint` en la verificación de la tarea | Copia del objeto y `delete` del campo (`b48d075`) |
+| 37 | 005 T-13, casos GU-10 | Tres casos («cotización en curso», «cotización fallida» y T-CNS) que escribían un valor distinto del de la cotización mostrada | El botón ya se desactivaba solo por esa diferencia: los tests pasaban sin comprobar las dos condiciones de CA-13.1 que decían cubrir | Dos mutaciones (quitar «sin cotización pendiente» y «cotización correcta») que no hicieron fallar nada | Cada caso vuelve al valor de la cotización mostrada, y cada mutación hace fallar el suyo (`17d72be`) |
+| 38 | 005 T-15, `api-errors.spec.ts` | Dos tests que abrían la app varias veces seguidas | El módulo de pruebas no admite configurarse dos veces sin reiniciarse | Los tests fallaron con el código correcto | Se reinicia el módulo entre aperturas (`9c13763`) |
+| 39 | 005, estilos de la ficha | Grids con columnas implícitas alrededor de la tabla de tramos; después, `overflow-wrap: anywhere` en todo el documento | A 360 px la ficha medía 528 px y obligaba a desplazarse en horizontal. El primer arreglo partía las cabeceras de la tabla letra a letra | Comprobación manual MA-1 en un navegador real (T-16) | Columnas con `minmax(0, 1fr)`, ajuste normal dentro de las tablas y, hasta 480 px, cada tramo como un bloque con sus etiquetas (`4ffae58`) |
+| 40 | 005 T-16, anotación de resultados en `tasks.md` | Texto con comillas invertidas pasado entre comillas dobles a un comando de bash | Bash las interpretó como órdenes: borró varias rutas del texto e intentó ejecutar `npm start` | Al leer el resultado del comando | Texto restaurado con el editor antes de seguir; sin efecto en el código (`4ffae58`) |
 
 ## Reglas que salen de este registro
 
@@ -68,3 +77,7 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 - **Solo se para o se borra lo que la propia sesión arrancó o creó** (entrada 28).
 - **Las cifras de un informe salen de un recuento, no de memoria** (entradas 29 y 30).
 - **El mensaje de cada commit se comprueba contra las convenciones de `AGENTS.md` antes de crearlo** (entrada 31).
+- **Un prototipo prueba también el caso difícil que usará la aplicación, no solo el más sencillo** (entrada 34).
+- **Cada condición de un criterio con varias se prueba en un caso donde solo ella decide el resultado** (entrada 37).
+- **El diseño se comprueba en un navegador real al ancho mínimo de la spec, con los datos más largos (JPY, desgloses abiertos)** (entrada 39).
+- **El texto con comillas invertidas se escribe con el editor o en un archivo, nunca entre comillas dobles de bash** (entrada 40).

@@ -1,6 +1,6 @@
 # ADR 0010 — Herramientas del frontend: Angular 22, Node 26 y angular-eslint
 
-Estado: propuesto (redactado con el plan de la spec 005; pendiente de la revisión del autor)
+Estado: aceptado (redactado con el plan de la spec 005 y confirmado en la revisión del autor)
 
 ## Contexto
 

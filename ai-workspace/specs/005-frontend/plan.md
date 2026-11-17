@@ -1,6 +1,6 @@
 # Plan técnico — 005 Frontend
 
-Estado: v1.0, pendiente de la revisión del autor junto con la spec · Spec: `spec.md` v1.1 · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5 de `00-spec-first.md` y ADR 0001, 0004, 0005 y 0010 · Base: los contratos de 002, 003 y 004, sin cambios
+Estado: v1.0, ejecutado según `tasks.md`, revisado y aprobado por el autor · Spec: `spec.md` v1.2 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5 de `00-spec-first.md` y ADR 0001, 0004, 0005 y 0010 · Base: los contratos de 002, 003 y 004, sin cambios
 
 Antes de escribir este plan se comprobaron con Node las salidas de `Intl` para `es-ES` en las que se apoya el formato de RF-5. El resto del prototipo (runner, DOM simulado, reloj y peticiones falsas) necesitaba una versión de Node compatible con Angular 22 (finalmente Node 26.13.1 LTS, ADR 0010). Se hace en T-01, antes de cualquier código de la aplicación, y su resultado completa la sección 10.
 

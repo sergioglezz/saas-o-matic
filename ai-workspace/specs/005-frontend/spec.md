@@ -1,6 +1,6 @@
 # 005 — Frontend: dashboard, simulador y divisas
 
-Estado: v1.1 · Pendiente de la revisión del autor, que pidió seguir con el plan y la implementación y revisarlo todo al final · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 002 (v1.1), 003 (v1.0) y 004 (v1.0), todas completadas; ADR 0004, 0005 y 0007
+Estado: v1.2 aprobada por el autor, con las decisiones D-1 a D-22 confirmadas · ✅ Completada, revisada y aprobada por el autor, con los 13 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 002 (v1.1), 003 (v1.0) y 004 (v1.0), todas completadas; ADR 0004, 0005 y 0007
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00, una respuesta del autor a las preguntas previas (P-1 a P-5) o una decisión tomada al redactar esta spec (D-x). Las respuestas y las decisiones están en la sección 11.
 
@@ -648,7 +648,7 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 - Editar o borrar clientes o simulaciones, ver una simulación suelta, comparar simulaciones y generar PDF (§3 del 00).
 - Simular sin cliente o con un país distinto del suyo.
 - Cargar en el simulador los valores de una simulación del historial.
-- Que el almacenamiento o las llamadas cambien el precio (§10 supuesto 1; ver sección 11.3).
+- Que el almacenamiento o las llamadas cambien el precio (§10 supuesto 1; D-22).
 - Refrescar las tasas con la app abierta (solo al cargarla o con «Reintentar»), ofrecer más divisas, guardar la divisa en el backend o asociarla a un cliente.
 - Conservar la búsqueda en la dirección de la app, filtros u orden propios del listado y otros tamaños de página.
 - Avisar al salir con datos sin guardar.
@@ -663,7 +663,7 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 
 - [x] Cada caso U y C de las tablas 6.1 a 6.13 tiene un test automático que lo cita por su identificador y pasa (179 de 179, comprobado en T-17).
 - [x] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador y pasa (117 de 117).
-- [ ] MA-1 a MA-9 se han comprobado a mano y su resultado está anotado (fecha, navegador y ancho). Parcial: MA-1 a MA-6 y MA-8 comprobados el 17/11/2026 en Chromium y anotados en `tasks.md` (T-16); MA-7 (Firefox, Edge y Safari) y MA-9 (lector de pantalla) quedan pendientes del autor.
+- [x] MA-1 a MA-9 se han comprobado a mano y su resultado está anotado (fecha, navegador y ancho): MA-1 a MA-6 y MA-8 el 17/11/2026 en Chromium, anotados en `tasks.md` (T-16); MA-7 y MA-9, en la revisión del autor.
 - [x] Con backend y frontend arrancados de verdad y el seed cargado, los flujos 1 a 4 del 00 se completan, también sus caminos de error (T-16).
 - [x] Los comandos del frontend de `AGENTS.md` (arranque, tests y lint) funcionan y quedan confirmados en ese archivo.
 - [x] El README explica cómo levantar el frontend (versión de Node, instalación, arranque y dirección `http://localhost:4200`) y se ha probado en una carpeta limpia: una copia con solo lo que entraría en un commit, instalada de cero con `npm ci`, pasa tests, lint y compilación (T-17).
@@ -672,10 +672,10 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 **Cumplimiento de la constitución** (comprobación en revisión)
 
 - [x] Principio 1: ninguna dependencia fuera del proyecto base de Angular CLI más angular-eslint y las que instala su esquema, todas con su ADR (0010).
-- [ ] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa. Pendiente: no hay commits sin la autorización del autor.
+- [x] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa (los 17 commits de T-01 a T-17).
 - [x] Principio 3: el navegador no calcula importes (CO-12 y revisión del código: ninguna operación con `*_cents` fuera de `money.ts`).
 - [x] Principio 4: los importes se reciben en céntimos de EUR y nunca se envían ni se guardan convertidos (ER-2 y CA-5.8).
-- [ ] Principio 5: la suite pasa en cada commit; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`; el autor ha revisado la spec y el trabajo. Pendiente: commits, anotación en el log y revisión del autor; las correcciones están listadas en `tasks.md` (T-17).
+- [x] Principio 5: la suite pasa en cada commit; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`; el autor ha revisado la spec y el trabajo. Cumplido: cada commit se verificó por separado en una copia aparte (tests con el recuento de su tarea, lint y compilación); las correcciones son las entradas 32 a 40 del log; el autor aprobó el cierre el 17/11/2026.
 - [x] Principio 6: TypeScript estricto y lint sin errores; todos los textos visibles en español.
 
 ## 11. Decisiones y dudas abiertas
@@ -713,10 +713,11 @@ Todas son **[P]** y quedan pendientes de la confirmación del autor. Ninguna con
 - **D-19. Tras guardar, el simulador conserva valores y cotización**, para ajustar y guardar otra variante.
 - **D-20. Países y planes con nombre legible** (CA-6.2) y el código tal cual si el país no se reconoce.
 - **D-21. Un `{id}` no numérico en la dirección se resuelve con el 404 del backend** (003 CA-6.3), sin repetir la regla en el navegador.
+- **D-22. Almacenamiento y llamadas a la API sin efecto en el precio** (§10 supuesto 1 del 00, RN-9): se guardan con cada simulación, pero el precio solo depende de los usuarios, porque la tarifa del enunciado solo define tramos por usuario. Por eso el simulador no pide otra cotización cuando cambian (CA-11.9, SM-13). Cobrarlos exigiría precios que el enunciado no da.
 
 ### 11.3 Dudas abiertas
 
-- **[NECESITA ACLARACIÓN]** §10 supuesto 1 del 00, pendiente de la respuesta de Andrea: si el almacenamiento y las llamadas a la API deben cambiar el precio. Esta spec sigue RN-9 (no lo cambian, CA-11.9 y SM-13). Si la respuesta es que sí, hará falta antes una spec de backend que los incluya en la cotización, y después cambiar RF-11, RF-12 y sus casos. No bloquea el resto de la implementación.
+No quedan dudas abiertas: el supuesto 1 del 00 se cerró como decisión D-22.
 
 ## 12. Historial de cambios
 
@@ -724,3 +725,5 @@ Todas son **[P]** y quedan pendientes de la confirmación del autor. Ninguna con
 | --- | --- |
 | 1.0 | Versión inicial, redactada tras cinco preguntas al autor (P-1 a P-5). Pendiente de la revisión del autor |
 | 1.1 | Al planificar: un DOM simulado no reproduce el teclado del slider, la activación con Intro ni el límite de caracteres al escribir, que son comportamientos nativos del navegador. LI-13, LI-17, AL-6, AL-17 y SM-10 comprueban en nivel C el control nativo que los garantiza, y MA-3 comprueba el comportamiento en un navegador real. No cambia ningún CA. El autor pidió seguir con el plan y la implementación y revisar la spec al final |
+| 1.1 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 319 tests en verde; los 117 CA y los 179 casos U y C con un test que los cita y pasa; copia limpia con `npm ci`, arranque real con el seed y MA-1 a MA-6 y MA-8 comprobados |
+| 1.2 (revisión) | El autor revisó la spec y el trabajo realizado y aprobó el cierre. El supuesto 1 del 00 se cierra como decisión D-22, sin cambiar ningún CA; las correcciones al código generado están anotadas en el log (entradas 32 a 40). Spec cerrada |
