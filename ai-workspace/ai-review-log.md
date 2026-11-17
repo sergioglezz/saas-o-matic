@@ -1,6 +1,6 @@
 # Log de revisión del trabajo generado por IA
 
-Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 005, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
+Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 006, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
 
 ## Cómo se revisa
 
@@ -56,6 +56,8 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 38 | 005 T-15, `api-errors.spec.ts` | Dos tests que abrían la app varias veces seguidas | El módulo de pruebas no admite configurarse dos veces sin reiniciarse | Los tests fallaron con el código correcto | Se reinicia el módulo entre aperturas (`9c13763`) |
 | 39 | 005, estilos de la ficha | Grids con columnas implícitas alrededor de la tabla de tramos; después, `overflow-wrap: anywhere` en todo el documento | A 360 px la ficha medía 528 px y obligaba a desplazarse en horizontal. El primer arreglo partía las cabeceras de la tabla letra a letra | Comprobación manual MA-1 en un navegador real (T-16) | Columnas con `minmax(0, 1fr)`, ajuste normal dentro de las tablas y, hasta 480 px, cada tramo como un bloque con sus etiquetas (`4ffae58`) |
 | 40 | 005 T-16, anotación de resultados en `tasks.md` | Texto con comillas invertidas pasado entre comillas dobles a un comando de bash | Bash las interpretó como órdenes: borró varias rutas del texto e intentó ejecutar `npm start` | Al leer el resultado del comando | Texto restaurado con el editor antes de seguir; sin efecto en el código (`4ffae58`) |
+| 41 | 006, test LY-7 | Un test que abría la app dos veces | El mismo fallo de la entrada 38: el módulo de pruebas no admite configurarse dos veces sin reiniciarse | El test falló con el código correcto | Se reinicia el módulo entre las dos aperturas |
+| 42 | 006, ayudante del test AN-4 | Buscaba el aviso con `find` entre los elementos con `role="status"` | Devolvía el contenedor exterior, no el aviso más interno, que es el que lleva la animación | El test falló con el código correcto | Se toma el último elemento que coincide, el más interno |
 
 ## Reglas que salen de este registro
 
@@ -81,3 +83,4 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 - **Cada condición de un criterio con varias se prueba en un caso donde solo ella decide el resultado** (entrada 37).
 - **El diseño se comprueba en un navegador real al ancho mínimo de la spec, con los datos más largos (JPY, desgloses abiertos)** (entrada 39).
 - **El texto con comillas invertidas se escribe con el editor o en un archivo, nunca entre comillas dobles de bash** (entrada 40).
+- **Cada vez que un test abre la app más de una vez, reinicia el módulo de pruebas entre aperturas** (entradas 38 y 41).
