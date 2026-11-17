@@ -10,12 +10,15 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Customer } from '../../core/api/api-models';
+import { Customer, Simulation } from '../../core/api/api-models';
 import { CustomersApi } from '../../core/api/customers-api';
 import { RequestFailure, toRequestFailure } from '../../core/api/request-failure';
+import { SimulationsApi } from '../../core/api/simulations-api';
 import { DayPipe } from '../../shared/format/format-pipes';
+import { PagedList } from '../../shared/paged-list';
 import { LABELS, T, countryName, planName } from '../../shared/texts';
 import { RequestError } from '../../shared/ui/request-error';
+import { SimulationHistory } from './simulation-history';
 
 type CardState =
   | { readonly status: 'loading' }
@@ -26,7 +29,7 @@ type CardState =
 /** Spec 005 RF-9: the customer card, and below it the simulator and the history. */
 @Component({
   selector: 'app-customer-detail-page',
-  imports: [RouterLink, DayPipe, RequestError],
+  imports: [RouterLink, DayPipe, RequestError, SimulationHistory],
   templateUrl: './customer-detail-page.html',
   styleUrl: './customer-detail-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,13 +39,21 @@ export class CustomerDetailPage {
   readonly id = input.required<string>();
 
   private readonly api = inject(CustomersApi);
+  private readonly simulations = inject(SimulationsApi);
   private request: Subscription | null = null;
+  private customerId = 0;
 
   protected readonly T = T;
   protected readonly LABELS = LABELS;
   protected readonly countryName = countryName;
   protected readonly planName = planName;
   protected readonly state = signal<CardState>({ status: 'loading' });
+
+  /** CA-10.1 (plan DT-13): the card owns the history, asked only once the card is shown (D-17). */
+  protected readonly history = new PagedList<Simulation>(
+    (offset) => this.simulations.history(this.customerId, offset),
+    inject(DestroyRef),
+  );
 
   /** CA-9.6 (plan DT-12): only when the navigation that opened the card comes from a new customer. */
   protected readonly registered =
@@ -61,11 +72,17 @@ export class CustomerDetailPage {
     this.load(this.id());
   }
 
+  private show(customer: Customer): void {
+    this.customerId = customer.id;
+    this.state.set({ status: 'ready', customer });
+    this.history.reload();
+  }
+
   private load(id: string): void {
     this.request?.unsubscribe();
     this.state.set({ status: 'loading' });
     this.request = this.api.get(id).subscribe({
-      next: (customer) => this.state.set({ status: 'ready', customer }),
+      next: (customer) => this.show(customer),
       error: (error: unknown) => {
         const failure = toRequestFailure(error);
         // CA-9.4: a 404 is the only failure with its own text; it asks for nothing else.

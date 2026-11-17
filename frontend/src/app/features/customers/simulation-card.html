@@ -1,0 +1,29 @@
+<article class="card simulation">
+  <p class="when">{{ simulation().created_at | dateTime }}</p>
+  <dl class="inputs">
+    <div>
+      <dt>{{ LABELS.activeUsers }}</dt>
+      <dd>{{ simulation().active_users | count }}</dd>
+    </div>
+    <div>
+      <dt>{{ LABELS.storage }}</dt>
+      <dd>{{ simulation().storage_gb | count }} GB</dd>
+    </div>
+    <div>
+      <dt>{{ LABELS.apiCalls }}</dt>
+      <dd>{{ simulation().api_calls_per_month | count }}</dd>
+    </div>
+  </dl>
+  <app-price-totals [price]="simulation()" />
+  <button
+    type="button"
+    class="secondary"
+    [attr.aria-expanded]="open() ? 'true' : 'false'"
+    (click)="toggle()"
+  >
+    {{ open() ? LABELS.hideBreakdown : LABELS.showBreakdown }}
+  </button>
+  @if (open()) {
+    <app-tier-table [tiers]="simulation().tiers" />
+  }
+</article>
