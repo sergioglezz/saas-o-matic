@@ -20,6 +20,7 @@ import { PagedList } from '../../shared/paged-list';
 import { LABELS, T, TITLES, countryName, planName } from '../../shared/texts';
 import { Icon } from '../../shared/ui/icon';
 import { RequestError } from '../../shared/ui/request-error';
+import { SkeletonCards } from '../../shared/ui/skeleton-cards';
 import { Simulator } from '../simulator/simulator';
 import { SimulationHistory } from './simulation-history';
 
@@ -32,7 +33,7 @@ type CardState =
 /** Spec 005 RF-9: the customer card, and below it the simulator and the history. */
 @Component({
   selector: 'app-customer-detail-page',
-  imports: [RouterLink, DayPipe, Icon, RequestError, Simulator, SimulationHistory],
+  imports: [RouterLink, DayPipe, Icon, RequestError, SkeletonCards, Simulator, SimulationHistory],
   templateUrl: './customer-detail-page.html',
   styleUrl: './customer-detail-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

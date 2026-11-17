@@ -17,6 +17,7 @@ import { LABELS, T, TITLES, countryName, planName } from '../../shared/texts';
 import { Icon } from '../../shared/ui/icon';
 import { LoadMore } from '../../shared/ui/load-more';
 import { RequestError } from '../../shared/ui/request-error';
+import { SkeletonCards } from '../../shared/ui/skeleton-cards';
 
 /** D-4: the wait after the last change of the search box. */
 const SEARCH_WAIT_MS = 300;
@@ -24,7 +25,7 @@ const SEARCH_WAIT_MS = 300;
 /** Spec 005 RF-6 and RF-7: search and list of customers. */
 @Component({
   selector: 'app-customer-list-page',
-  imports: [RouterLink, Icon, LoadMore, RequestError],
+  imports: [RouterLink, Icon, LoadMore, RequestError, SkeletonCards],
   templateUrl: './customer-list-page.html',
   styleUrl: './customer-list-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,6 +4,7 @@
   @let current = state();
   @if (current.status === 'loading') {
     <p role="status" class="muted">{{ T.LCU }}</p>
+    <app-skeleton-cards [count]="1" [columns]="1" />
   } @else if (current.status === 'not_found') {
     <section class="card narrow not-found">
       <span class="not-found-icon"><app-icon name="alert" [size]="28" /></span>

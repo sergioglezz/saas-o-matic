@@ -74,7 +74,7 @@
           <app-icon name="alert" [size]="16" />{{ T.CNS }}
         </p>
       } @else if (flow.pending()) {
-        <p class="muted">{{ T.UPD }}</p>
+        <p class="updating"><app-icon name="refresh" class="spin" [size]="16" />{{ T.UPD }}</p>
       } @else if (flow.outcome() === 'failed') {
         <p class="notice notice-error">
           <app-icon name="alert" [size]="16" />{{ T.NUP }}

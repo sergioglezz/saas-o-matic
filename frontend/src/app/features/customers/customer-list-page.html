@@ -21,6 +21,7 @@
   @switch (list.status()) {
     @case ('loading') {
       <p role="status" class="muted">{{ T.LCL }}</p>
+      <app-skeleton-cards [count]="4" />
     }
     @case ('error') {
       @if (list.failure(); as failure) {

@@ -4,6 +4,7 @@ import { PagedList } from '../../shared/paged-list';
 import { T } from '../../shared/texts';
 import { LoadMore } from '../../shared/ui/load-more';
 import { RequestError } from '../../shared/ui/request-error';
+import { SkeletonCards } from '../../shared/ui/skeleton-cards';
 import { SimulationCard } from './simulation-card';
 
 /**
@@ -12,12 +13,13 @@ import { SimulationCard } from './simulation-card';
  */
 @Component({
   selector: 'app-simulation-history',
-  imports: [LoadMore, RequestError, SimulationCard],
+  imports: [LoadMore, RequestError, SimulationCard, SkeletonCards],
   template: `
     <div class="stack">
       @switch (list().status()) {
         @case ('loading') {
           <p role="status" class="muted">{{ T.LHI }}</p>
+          <app-skeleton-cards [count]="2" [avatar]="false" />
         }
         @case ('error') {
           @if (list().failure(); as failure) {

@@ -1,6 +1,7 @@
 /* Spec 006 (ADR 0011): Tailwind CSS, the theme of the app and its common classes. Contrast of
    every pair in spec 006 table 5.3; spec 005 RNF-3 and RNF-4 still hold. */
 @import 'tailwindcss';
+@import './styles/motion.css';
 
 /* `static`: the component stylesheets read these variables, so they are always emitted. */
 @theme static {
