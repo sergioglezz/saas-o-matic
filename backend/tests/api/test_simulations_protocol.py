@@ -188,13 +188,17 @@ def test_er_9_every_answer_is_json(client_with_customers: TestClient) -> None:
     ("path", "allow"),
     [
         pytest.param(CUSTOMERS_PATH, "GET, POST", id="customers"),
-        pytest.param(f"{CUSTOMERS_PATH}/1", "GET", id="customer-detail"),
+        pytest.param(f"{CUSTOMERS_PATH}/1", "DELETE, GET", id="customer-detail"),
         pytest.param("/pricing/quote", "POST", id="quote"),
     ],
 )
 def test_er_10_existing_routes_keep_their_allow(client: TestClient, path: str, allow: str) -> None:
-    """ER-10, CA-6.2: the new routes change no Allow header of the routes before them."""
-    response = client.delete(path)
+    """ER-10, CA-6.2: the new routes change no Allow header of the routes before them.
+
+    Spec 007 CA-1.6 made DELETE a method of the customer detail, so the probe is PUT, which no
+    path here allows, and that path now announces "DELETE, GET".
+    """
+    response = client.put(path)
 
     assert response.status_code == 405
     assert response.headers["allow"] == allow

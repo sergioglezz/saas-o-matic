@@ -35,10 +35,11 @@ def create_app(database_url: str | None = None, frontend_origin: str | None = No
     app.state.session_factory = create_session_factory(engine)
     # Only the dashboard may call the API from a browser (RF-9, plan 002 DT-7). GET is listed
     # too: a simple GET needs no permission, but its preflight would be refused (003 CA-8.2).
+    # DELETE is for deleting a customer from its detail page (spec 007 CA-1.6).
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[frontend_origin or get_frontend_origin()],
-        allow_methods=["GET", "POST"],
+        allow_methods=["DELETE", "GET", "POST"],
         allow_headers=["Content-Type"],
     )
     register_error_handlers(app)

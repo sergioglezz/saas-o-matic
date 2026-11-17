@@ -14,7 +14,7 @@ from app.core.clock import utc_now
 from app.repositories.customers import CustomerRepository
 from app.repositories.simulations import SimulationRepository
 from app.repositories.tax_rates import TaxRateRepository
-from app.services.customers import CustomerStore
+from app.services.customers import CustomerHistory, CustomerStore
 from app.services.pricing import TaxRateSource
 from app.services.simulations import SimulationStore
 
@@ -35,6 +35,11 @@ def get_customer_store(session: Annotated[Session, Depends(get_db_session)]) -> 
 
 
 def get_simulation_store(session: Annotated[Session, Depends(get_db_session)]) -> SimulationStore:
+    return SimulationRepository(session)
+
+
+def get_customer_history(session: Annotated[Session, Depends(get_db_session)]) -> CustomerHistory:
+    """The simulations of a customer, on the same session as its store (spec 007 D-3)."""
     return SimulationRepository(session)
 
 

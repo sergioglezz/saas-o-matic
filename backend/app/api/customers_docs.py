@@ -54,6 +54,10 @@ DETAIL_RESPONSES: Responses = {
     200: json_example("Datos del cliente", CUSTOMER_RESPONSE_EXAMPLE),
     404: _NOT_FOUND,
 }
+DELETE_RESPONSES: Responses = {
+    204: {"description": "Cliente borrado junto con todo su historial de simulaciones"},
+    404: _NOT_FOUND,
+}
 
 _FRAMEWORK_VALIDATION_SCHEMAS = ("HTTPValidationError", "ValidationError")
 

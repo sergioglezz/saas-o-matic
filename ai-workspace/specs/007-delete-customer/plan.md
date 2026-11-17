@@ -9,12 +9,14 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec · Spec: `sp
 | `backend/app/repositories/simulations.py` | `delete_for_customer(customer_id) -> int`: borra los tramos y las simulaciones del cliente, sin confirmar la transacción | 1 |
 | `backend/app/repositories/customers.py` | `delete(customer_id)`: borra el cliente y confirma la transacción; si falla, la deshace | 1 |
 | `backend/app/services/customers.py` | `delete_customer(id, customers, simulations)`, el protocolo `CustomerHistory` y `delete` en `CustomerStore` | 1 |
+| `backend/app/api/dependencies.py` | `get_customer_history`: el repositorio de simulaciones como `CustomerHistory`, sobre la sesión de la petición | 1 |
 | `backend/app/api/customers.py` | `DELETE /customers/{customer_id}`: valida el `{id}`, llama al servicio y responde 204 | 1 |
 | `backend/app/api/customers_docs.py` | `DELETE_RESPONSES` con 204 y 404 | 1 |
 | `backend/app/main.py` | `DELETE` en los métodos de CORS | 1 |
 | `backend/tests/integration/test_customer_deletion.py` | BR-8 y BR-11 (D) | 1 |
 | `backend/tests/api/test_customers_delete.py` | BR-1 a BR-7, BR-9 y BR-10 (I) | 1 |
 | `backend/tests/api/test_customers_protocol.py` | ER-3 de 003: `Allow` pasa a «DELETE, GET» y `DELETE` sale de los métodos rechazados (CA-1.6) | 1 |
+| `backend/tests/api/test_simulations_protocol.py` | ER-10 de 004: sondea con `PUT` en lugar de `DELETE` y la ficha espera «DELETE, GET» (CA-1.6) | 1 |
 | `frontend/src/app/core/api/customers-api.ts` | `remove(id)` | 2 |
 | `frontend/src/app/shared/texts.ts` | Textos T7 | 2 |
 | `frontend/src/app/features/customers/delete-customer.ts` | Nuevo: botón, confirmación y estado del borrado | 2 |
@@ -51,4 +53,4 @@ Los dos repositorios reciben la misma `Session`: FastAPI resuelve `get_db_sessio
 - **D:** `test_customer_deletion.py`, con la base de datos de prueba de 003 y 004.
 - **I:** `test_customers_delete.py`, con el cliente de pruebas de la API.
 - **C:** `delete-customer.spec.ts`, con los ayudantes de 005.
-- **Regresión:** las suites completas; el único test anterior que cambia es ER-3 de 003, por CA-1.6.
+- **Regresión:** las suites completas. Por CA-1.6 cambian dos tests anteriores: ER-3 de 003 y ER-10 de 004, que comprobaba con `DELETE` el `Allow` de la ficha. Los dos siguen comprobando lo mismo, ahora con «DELETE, GET».

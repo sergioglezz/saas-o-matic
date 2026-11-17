@@ -66,13 +66,17 @@ def test_head_on_customers_is_405_without_a_body(client: TestClient) -> None:
     assert response.content == b""
 
 
-@pytest.mark.parametrize("method", ["POST", "PUT", "PATCH", "DELETE"])
-def test_customer_detail_path_allows_only_get(client: TestClient, method: str) -> None:
-    """ER-3, CA-7.2: 405 with Allow: GET, whether or not the customer exists."""
+@pytest.mark.parametrize("method", ["POST", "PUT", "PATCH"])
+def test_customer_detail_path_allows_get_and_delete(client: TestClient, method: str) -> None:
+    """ER-3, CA-7.2: 405 with the methods of the path, whether or not the customer exists.
+
+    Spec 007 CA-1.6 added DELETE to this path: it left the rejected methods and the header
+    went from "GET" to "DELETE, GET" (the only earlier test that 007 changes, plan 007 §4).
+    """
     response = client.request(method, DETAIL_PATH)
 
     assert response.status_code == 405
-    assert response.headers["allow"] == "GET"
+    assert response.headers["allow"] == "DELETE, GET"
     assert response.json() == METHOD_NOT_ALLOWED
 
 

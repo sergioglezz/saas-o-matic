@@ -7,17 +7,23 @@ code and the storage is behind CustomerStore.
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from pydantic import ValidationError
 
 from app.api.countries import invalid_request
 from app.api.customers_docs import (
+    DELETE_RESPONSES,
     DETAIL_RESPONSES,
     LIST_RESPONSES,
     REGISTER_BODY_DOC,
     REGISTER_RESPONSES,
 )
-from app.api.dependencies import get_customer_store, get_now, get_rate_source
+from app.api.dependencies import (
+    get_customer_history,
+    get_customer_store,
+    get_now,
+    get_rate_source,
+)
 from app.api.identifiers import parse_customer_id
 from app.api.validation import field_errors, read_json_object, validation_error
 from app.schemas.customers import (
@@ -29,7 +35,9 @@ from app.schemas.customers import (
     CustomerResponse,
 )
 from app.services.customers import (
+    CustomerHistory,
     CustomerStore,
+    delete_customer,
     get_customer,
     register_customer,
     search_customers,
@@ -100,3 +108,15 @@ def get_customer_detail(
     """The data of one customer (RF-6)."""
     # Declared as text: what is not an id is the same 404 as an unknown id (CA-6.3, D-3).
     return CustomerResponse.from_customer(get_customer(parse_customer_id(customer_id), customers))
+
+
+@router.delete("/customers/{customer_id}", status_code=204, responses=DELETE_RESPONSES)
+def delete_customer_route(
+    customer_id: str,
+    customers: Annotated[CustomerStore, Depends(get_customer_store)],
+    history: Annotated[CustomerHistory, Depends(get_customer_history)],
+) -> Response:
+    """Delete a customer together with its whole history of simulations (spec 007 RF-1)."""
+    # The same id rules as the detail (spec 007 D-4); the service maps an unknown id to 404.
+    delete_customer(parse_customer_id(customer_id), customers, history)
+    return Response(status_code=204)
