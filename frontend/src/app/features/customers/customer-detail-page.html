@@ -52,6 +52,14 @@
             <dd>{{ current.customer.created_at | day }}</dd>
           </div>
         </dl>
+        <div class="card-footer">
+          <app-delete-customer
+            [customer]="current.customer"
+            [historyTotal]="history.status() === 'ready' ? history.total() : null"
+            (deleted)="onDeleted(current.customer)"
+            (missing)="state.set({ status: 'not_found' })"
+          />
+        </div>
       </article>
       <section class="stack lg:col-span-2" aria-labelledby="simulator-title">
         <h2 id="simulator-title" class="section-title">

@@ -7,13 +7,13 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject, debounceTime } from 'rxjs';
 import { Customer } from '../../core/api/api-models';
 import { CustomersApi } from '../../core/api/customers-api';
 import { initials } from '../../shared/format/initials';
 import { PagedList } from '../../shared/paged-list';
-import { LABELS, T, TITLES, countryName, planName } from '../../shared/texts';
+import { LABELS, T, T7, TITLES, countryName, planName } from '../../shared/texts';
 import { Icon } from '../../shared/ui/icon';
 import { LoadMore } from '../../shared/ui/load-more';
 import { RequestError } from '../../shared/ui/request-error';
@@ -37,6 +37,7 @@ export class CustomerListPage {
   private readonly query = signal('');
 
   protected readonly T = T;
+  protected readonly T7 = T7;
   protected readonly LABELS = LABELS;
   protected readonly TITLES = TITLES;
   protected readonly initials = initials;
@@ -46,6 +47,9 @@ export class CustomerListPage {
     (offset) => this.api.list(this.query(), offset),
     inject(DestroyRef),
   );
+
+  /** Spec 007 CA-2.6 (D-8): the customer just deleted, only on the navigation that comes from it. */
+  protected readonly deleted = deletedCompany(inject(Router).currentNavigation()?.extras.state);
 
   /** CA-6.8 and CA-6.9. */
   protected readonly emptyText = computed(() => {
@@ -65,4 +69,9 @@ export class CustomerListPage {
   protected search(event: Event): void {
     this.searches.next((event.target as HTMLInputElement).value);
   }
+}
+
+function deletedCompany(state: Readonly<Record<string, unknown>> | undefined): string | null {
+  const company = state?.['deleted'];
+  return typeof company === 'string' ? company : null;
 }

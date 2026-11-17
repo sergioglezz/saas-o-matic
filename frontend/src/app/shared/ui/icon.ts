@@ -14,6 +14,7 @@ const PATHS = {
   sliders: ['M4 7h16', 'M4 17h16', 'M9 4v6', 'M15 14v6'],
   clock: ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18', 'M12 7v5l3 2'],
   logo: ['M6 19V12', 'M12 19V6', 'M18 19v-9'],
+  trash: ['M4 7h16', 'M9 7V4h6v3', 'M6 7l1 13h10l1-13', 'M10 11v6', 'M14 11v6'],
 } as const;
 
 export type IconName = keyof typeof PATHS;

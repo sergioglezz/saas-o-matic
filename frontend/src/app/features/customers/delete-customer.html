@@ -1,0 +1,56 @@
+@let current = state();
+<button
+  #opener
+  type="button"
+  class="danger-outline"
+  [attr.aria-expanded]="current !== 'closed'"
+  (click)="ask()"
+>
+  <app-icon name="trash" [size]="16" />{{ T7.BTN }}
+</button>
+
+@if (current !== 'closed') {
+  <div
+    #box
+    class="confirm anim-fade"
+    role="alertdialog"
+    aria-labelledby="delete-question"
+    aria-describedby="delete-warning"
+    tabindex="-1"
+    (keydown.escape)="cancel()"
+  >
+    <p id="delete-question" class="confirm-question">{{ T7.ASK(customer().company_name) }}</p>
+    <p id="delete-warning" class="m-0">
+      @if (historyWarning(); as warning) {
+        {{ warning }}
+      }
+      {{ T7.IRR }}
+    </p>
+    @if (current === 'failed') {
+      <div class="notice notice-error anim-fade" role="status">
+        <app-icon name="alert" [size]="16" />{{ T7.KO }}
+        <button type="button" class="secondary compact" (click)="confirm()">
+          <app-icon name="refresh" [size]="16" />{{ T.RET }}
+        </button>
+      </div>
+    }
+    <div class="confirm-actions">
+      <button
+        type="button"
+        class="danger"
+        [disabled]="current === 'deleting'"
+        (click)="confirm()"
+      >
+        {{ current === 'deleting' ? T7.BDO : T7.YES }}
+      </button>
+      <button
+        type="button"
+        class="secondary"
+        [disabled]="current === 'deleting'"
+        (click)="cancel()"
+      >
+        {{ LABELS.cancel }}
+      </button>
+    </div>
+  </div>
+}

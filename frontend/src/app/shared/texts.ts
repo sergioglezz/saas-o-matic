@@ -77,6 +77,20 @@ export const TITLES = {
   history: 'Historial de simulaciones',
 } as const;
 
+/** Spec 007 §3: the texts of deleting a customer, by their identifier without «T7-». */
+export const T7 = {
+  BTN: 'Borrar cliente',
+  ASK: (company: string) => `¿Borrar «${company}»?`,
+  HN: (count: string) => `Se borrarán también sus ${count} simulaciones.`,
+  H1: 'Se borrará también su simulación.',
+  HX: 'Se borrará también todo su historial de simulaciones.',
+  IRR: 'Esta acción no se puede deshacer.',
+  YES: 'Sí, borrar',
+  BDO: 'Borrando…',
+  OK: (company: string) => `Cliente «${company}» borrado`,
+  KO: 'No se pudo borrar el cliente',
+} as const;
+
 export interface Option {
   readonly value: string;
   readonly name: string;

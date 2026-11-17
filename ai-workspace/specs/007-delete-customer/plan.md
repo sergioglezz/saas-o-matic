@@ -22,7 +22,7 @@ Estado: v1.0, pendiente de la revisión del autor junto con la spec · Spec: `sp
 | `frontend/src/app/features/customers/delete-customer.ts` | Nuevo: botón, confirmación y estado del borrado | 2 |
 | `frontend/src/app/features/customers/customer-detail-page.*` | Usa `app-delete-customer` en la tarjeta; pasa el total del historial y atiende el 404 | 2 |
 | `frontend/src/app/features/customers/customer-list-page.*` | Aviso T7-OK leído del estado de la navegación | 2 |
-| `frontend/src/styles.css` | Botón de peligro y caja de confirmación | 2 |
+| `frontend/src/app/features/customers/delete-customer.css` | Botón de peligro y caja de confirmación, con los colores del tema de 006 (en el componente, para que `styles.css` no crezca) | 2 |
 | `frontend/src/app/features/customers/delete-customer.spec.ts` | BF-1 a BF-9 (C) | 2 |
 
 ## 2. Algoritmos

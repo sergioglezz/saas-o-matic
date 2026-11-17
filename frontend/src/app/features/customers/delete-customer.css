@@ -1,0 +1,46 @@
+/* Spec 007 D-9 and CA-2.9: red for what deletes (6.5:1 against white), with the theme of 006. */
+button.danger {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: #fff;
+}
+
+button.danger:hover:not(:disabled) {
+  border-color: #991b1b;
+  background: #991b1b;
+}
+
+button.danger-outline {
+  border-color: color-mix(in oklab, var(--color-danger) 30%, transparent);
+  background: #fff;
+  color: var(--color-danger);
+}
+
+button.danger-outline:hover:not(:disabled) {
+  border-color: color-mix(in oklab, var(--color-danger) 50%, transparent);
+  background: var(--color-danger-soft);
+}
+
+.confirm {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in oklab, var(--color-danger) 20%, transparent);
+  border-radius: 0.75rem;
+  background: var(--color-danger-soft);
+  font-size: 0.875rem;
+}
+
+.confirm-question {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

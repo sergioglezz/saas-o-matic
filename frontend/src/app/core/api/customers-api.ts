@@ -30,6 +30,13 @@ export class CustomersApi {
       .pipe(timeout(REQUEST_TIMEOUT_MS));
   }
 
+  /** Spec 007 CA-2.5: no body; the 204 has none either (plan 007 DT-4 explains the name). */
+  remove(id: number): Observable<void> {
+    return this.http
+      .delete<void>(`${API_BASE_URL}/customers/${id}`)
+      .pipe(timeout(REQUEST_TIMEOUT_MS));
+  }
+
   /** CA-8.7: the body exactly as the form gives it. */
   create(body: NewCustomer): Observable<Customer> {
     return this.http

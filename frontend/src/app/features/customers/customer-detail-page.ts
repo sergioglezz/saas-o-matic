@@ -22,6 +22,7 @@ import { Icon } from '../../shared/ui/icon';
 import { RequestError } from '../../shared/ui/request-error';
 import { SkeletonCards } from '../../shared/ui/skeleton-cards';
 import { Simulator } from '../simulator/simulator';
+import { DeleteCustomer } from './delete-customer';
 import { SimulationHistory } from './simulation-history';
 
 type CardState =
@@ -33,7 +34,16 @@ type CardState =
 /** Spec 005 RF-9: the customer card, and below it the simulator and the history. */
 @Component({
   selector: 'app-customer-detail-page',
-  imports: [RouterLink, DayPipe, Icon, RequestError, SkeletonCards, Simulator, SimulationHistory],
+  imports: [
+    RouterLink,
+    DayPipe,
+    DeleteCustomer,
+    Icon,
+    RequestError,
+    SkeletonCards,
+    Simulator,
+    SimulationHistory,
+  ],
   templateUrl: './customer-detail-page.html',
   styleUrl: './customer-detail-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,9 +71,11 @@ export class CustomerDetailPage {
     inject(DestroyRef),
   );
 
+  private readonly router = inject(Router);
+
   /** CA-9.6 (plan DT-12): only when the navigation that opened the card comes from a new customer. */
   protected readonly registered =
-    inject(Router).currentNavigation()?.extras.state?.['registered'] === true;
+    this.router.currentNavigation()?.extras.state?.['registered'] === true;
 
   constructor() {
     effect(() => {
@@ -80,6 +92,11 @@ export class CustomerDetailPage {
     } else {
       this.history.reload();
     }
+  }
+
+  /** Spec 007 CA-2.6 (D-8): the notice travels with the navigation, like T-REG. */
+  protected onDeleted(customer: Customer): void {
+    void this.router.navigate(['/clientes'], { state: { deleted: customer.company_name } });
   }
 
   /** CA-9.5 and CA-2.5. */

@@ -1,6 +1,12 @@
 <section class="stack anim-page">
   <h1>{{ TITLES.customers }}</h1>
 
+  @if (deleted; as company) {
+    <p class="notice notice-success justify-self-start anim-fade" role="status">
+      <app-icon name="check" [size]="16" />{{ T7.OK(company) }}
+    </p>
+  }
+
   <div class="toolbar">
     <div class="field search">
       <label for="customer-search">{{ LABELS.search }}</label>
