@@ -8,7 +8,7 @@ Leyenda de origen: **[E]** viene del enunciado; **[P]** es una propuesta, una pe
 
 El documento 00 dejó «borrar clientes» fuera de alcance como propuesta (§3) **[P]**, y las specs 003, 004 y 005 lo repitieron. Con esta spec, el 00 ya lo recoge en §3 y en la tabla de endpoints (§8.2). El autor pide ahora poder borrar un cliente **[P]**, y decidió que al borrarlo se borre también su historial de simulaciones (P-1).
 
-**De dónde sale esta spec:** la aplicación ya estaba terminada (specs 001 a 006). Al usarla, el autor vio que no había forma de borrar un cliente y lo pidió en una petición nueva (prompt P-18 de `ai-workspace/prompts.md`). La funcionalidad no se añadió directamente al código. Pasó por el mismo proceso que el resto (spec, plan, tareas y tests primero), porque amplía el alcance que fijó el documento 00 (constitución, principios 1 y 2). Antes de escribir la spec, la IA preguntó qué hacer con el historial del cliente, que era la única decisión de negocio abierta (P-1).
+**De dónde sale esta spec:** la aplicación ya estaba terminada (specs 001 a 006). Al usarla, el autor vio que no había forma de borrar un cliente y lo pidió en una petición nueva (prompt P-16 de `ai-workspace/prompts.md`). La funcionalidad no se añadió directamente al código. Pasó por el mismo proceso que el resto (spec, plan, tareas y tests primero), porque amplía el alcance que fijó el documento 00 (constitución, principios 1 y 2). Antes de escribir la spec, la IA preguntó qué hacer con el historial del cliente, que era la única decisión de negocio abierta (P-1).
 
 **Objetivo:** borrar un cliente desde su ficha, después de una confirmación que dice cuánto historial se pierde, y que el backend borre el cliente y todas sus simulaciones en una sola transacción.
 
@@ -157,4 +157,4 @@ Niveles: **D** = servicio y repositorio con una base de datos de prueba; **I** =
 | --- | --- |
 | 1.0 | Versión inicial, tras la respuesta del autor (P-1) |
 | 1.0 (cierre) | Sin cambios de requisitos: §1 explica de dónde sale la petición, y §8 cita también 004 ER-10, el segundo test anterior afectado por CA-1.6 (encontrado en T-02) |
-| 1.0 (edición) | Sin cambios en los requisitos. Línea de estado al día, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`), y §1 cita el prompt con su número nuevo (P-18), tras ordenar `prompts.md` |
+| 1.0 (edición) | Sin cambios en los requisitos. Línea de estado al día, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`), y §1 cita el prompt con su número nuevo (P-16), tras ordenar `prompts.md` |

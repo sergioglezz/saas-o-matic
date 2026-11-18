@@ -10,7 +10,7 @@ Esta carpeta documenta el proceso: qué se especificó antes de pedir código a 
 | 2 | [00-spec-first](specs/00-spec-first.md) | El enunciado analizado: casos de uso, reglas de negocio (RN-x) con sus casos de prueba, contrato de la API, modelo de datos y los 13 supuestos que el enunciado deja abiertos |
 | 3 | Una spec completa, por ejemplo la [003](specs/003-customers/spec.md) | Cómo se baja una funcionalidad a requisitos, plan y tareas |
 | 4 | [Log de revisión](ai-review-log.md) | 54 fallos reales en lo que generó la IA: cómo se detectaron y cómo se corrigieron |
-| 5 | [Prompts clave](prompts.md) | Los prompts que guiaron cada fase, de la constitución a la revisión independiente y la última corrección del autor (P-20) |
+| 5 | [Prompts clave](prompts.md) | Los prompts que guiaron cada fase, de la constitución a la revisión independiente y la última corrección del autor (P-18) |
 | — | [ADR](architecture/adr/) | Las 11 decisiones de arquitectura, una por archivo |
 
 Las reglas permanentes para la IA están en [`AGENTS.md`](../AGENTS.md), en la raíz; `CLAUDE.md` lo importa para que Claude Code las cargue en cada sesión.
@@ -43,7 +43,7 @@ Cada carpeta tiene `spec.md` (qué), `plan.md` (cómo) y `tasks.md` (pasos; en 0
 | [007](specs/007-delete-customer/spec.md) | Borrar un cliente con todo su historial | 17 |
 | [008](specs/008-currency-decimals/spec.md) | Importes en yenes sin decimales: cada divisa con los suyos | 5 |
 
-Las specs 006, 007 y 008 no estaban en el plan inicial. Salieron de usar la aplicación terminada (prompts P-17, P-18 y P-20) y siguieron el mismo proceso. Hoy la suite tiene 1071 tests en el backend y 378 en el frontend.
+Las specs 006, 007 y 008 no estaban en el plan inicial. Salieron de usar la aplicación terminada (prompts P-15, P-16 y P-18) y siguieron el mismo proceso. Hoy la suite tiene 1071 tests en el backend y 378 en el frontend.
 
 ## Decisiones de arquitectura
 
@@ -64,12 +64,11 @@ Las specs 006, 007 y 008 no estaban en el plan inicial. Salieron de usar la apli
 ## Cómo se usó la IA
 
 - **Asistente:** Claude Code, con las reglas de `AGENTS.md` en cada sesión.
-- **La IA propone y el autor decide.** Las dudas se resuelven con preguntas de una en una, con opciones y una recomendación, y cada fase termina con una parada para que el autor revise y apruebe (P-02, P-16).
+- **La IA propone y el autor decide.** Las dudas se resuelven con preguntas de una en una, con opciones y una recomendación, y cada fase termina con una parada para que el autor revise y apruebe (P-02, P-14).
 - **Trabaja contra los documentos, no de memoria.** Cada prompt dice qué leer, qué no tocar y cuándo parar.
 - **Tiene que demostrar, no afirmar.** Para cerrar una spec, la IA dice qué test cubre cada requisito y con qué resultado (P-11). Así apareció un criterio que se daba por cubierto sin ningún test (entrada 11 del log).
-- **Lo delegado también se revisa.** El cierre de la spec 002 y la 003 entera se delegaron (P-14), pero no se publicaron hasta que el autor las revisó en otra sesión (P-15).
-- **Una revisión independiente al final.** Una sesión sin historial previo auditó el proyecto entero en un clon limpio, ejecutándolo todo (P-19); lo que encontró está en las entradas 50 a 53 del log.
-- **El autor corrige a la IA.** Al usar la aplicación terminada, el autor vio que los yenes salían con decimales («27.319,14 JPY»). No era un fallo del código, sino una decisión que la IA había tomado en la spec 005 sin preguntarla, y los tests la daban por buena. El autor la corrigió (P-20), y la corrección entró como la spec 008, con tests primero y una nota en cada documento que la cambiaba (entrada 54 del log).
+- **Una revisión independiente al final.** Una sesión sin historial previo auditó el proyecto entero en un clon limpio, ejecutándolo todo (P-17); lo que encontró está en las entradas 50 a 53 del log.
+- **El autor corrige a la IA.** Al usar la aplicación terminada, el autor vio que los yenes salían con decimales («27.319,14 JPY»). No era un fallo del código, sino una decisión que la IA había tomado en la spec 005 sin preguntarla, y los tests la daban por buena. El autor la corrigió (P-18), y la corrección entró como la spec 008, con tests primero y una nota en cada documento que la cambiaba (entrada 54 del log).
 
 ## Glosario de identificadores
 
@@ -87,5 +86,5 @@ Cada identificador vale dentro de su documento: «P-1» es un caso de prueba en 
 | P-4, T-7, Q-20, TI-3, SV-12… | Casos de prueba: el prefijo indica la tabla | Sección de casos de cada spec |
 | U, D, I, C, M | Nivel del caso: unitario, con base de datos, por HTTP, de pantalla o comprobación manual | Sección de casos de cada spec |
 | T-CON, T6-CLI, T7-OK… | Textos de la interfaz | Specs 005 a 007 |
-| P-01 a P-20 | Prompts | [`prompts.md`](prompts.md) |
+| P-01 a P-18 | Prompts | [`prompts.md`](prompts.md) |
 | Entrada n | Fallo anotado en el log | [`ai-review-log.md`](ai-review-log.md) |

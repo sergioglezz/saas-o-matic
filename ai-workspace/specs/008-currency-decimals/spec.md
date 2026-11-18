@@ -8,7 +8,7 @@ Leyenda de origen: **[E]** viene del enunciado; **[P]** es una propuesta, una pe
 
 La spec 005 muestra todos los importes con 2 decimales, también en yenes (CA-5.4 y D-8): 169,40 € salen como «27.319,14 JPY». Se decidió así porque RN-7 **[E]** dice «redondeado a 2 decimales al mostrarlo», y D-8 ya avisaba de que mostrar el yen sin decimales exigiría cambiar esa regla.
 
-**De dónde sale esta spec:** al usar la aplicación terminada, el autor vio los yenes con decimales y lo corrigió (prompt P-20 de `ai-workspace/prompts.md`). El yen no tiene subunidad: esos decimales son fracciones de yen que no aparecen en ningún precio real. Pidió mostrarlos sin decimales y lo más parecido a la realidad, redondeando u ocultando los decimales. Como cambia un criterio de una spec aprobada, el cambio entra por una spec nueva, igual que la 006 y la 007 (constitución, principio 2).
+**De dónde sale esta spec:** al usar la aplicación terminada, el autor vio los yenes con decimales y lo corrigió (prompt P-18 de `ai-workspace/prompts.md`). El yen no tiene subunidad: esos decimales son fracciones de yen que no aparecen en ningún precio real. Pidió mostrarlos sin decimales y lo más parecido a la realidad, redondeando u ocultando los decimales. Como cambia un criterio de una spec aprobada, el cambio entra por una spec nueva, igual que la 006 y la 007 (constitución, principio 2).
 
 **Objetivo:** mostrar cada importe con los decimales que tiene su divisa según la norma ISO 4217 (2 en EUR, USD, GBP y CHF, ninguno en JPY), con un único redondeo «mitad hacia arriba» sobre el valor exacto.
 
@@ -110,5 +110,5 @@ Niveles: **U** = función pura; **C** = pantalla en el DOM simulado, como en 005
 
 | Versión | Cambio |
 | --- | --- |
-| 1.0 | Versión inicial, a partir de la corrección del autor (P-20) |
-| 1.0 (revisión) | El autor revisó el cambio y lo dio por bueno (P-20). Sin cambios en los requisitos: §1 cita las notas que se añadieron, con su aprobación, en los documentos anteriores, y §8 marca la revisión |
+| 1.0 | Versión inicial, a partir de la corrección del autor (P-18) |
+| 1.0 (revisión) | El autor revisó el cambio y lo dio por bueno (P-18). Sin cambios en los requisitos: §1 cita las notas que se añadieron, con su aprobación, en los documentos anteriores, y §8 marca la revisión |

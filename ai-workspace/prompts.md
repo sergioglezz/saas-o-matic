@@ -14,10 +14,10 @@ Patrón común a casi todos: dar el contexto y la fuente de verdad, decir qué N
 | 4. Tareas | [P-08](#p-08--tareas) | `specs/00X-*/tasks.md` |
 | 5. Implementar | [P-09](#p-09--implementación-por-bloques-primera-versión), [P-10](#p-10--implementación-con-tests-primero-versión-final) | Código y tests |
 | 6. Verificar y cerrar | [P-11](#p-11--verificación-de-la-spec-requisito-a-requisito), [P-12](#p-12--cierre-y-siguiente-paso) | Trazabilidad RF → test y veredicto |
-| Transversal | [P-13](#p-13--cuestionar-el-razonamiento-de-la-ia) a [P-16](#p-16--prompts-cortos-de-control) | Control humano del proceso |
-| 7. Cambios con la aplicación terminada | [P-17](#p-17--interfaz-moderna), [P-18](#p-18--una-funcionalidad-que-faltaba) | Specs 006 y 007 |
-| 8. Revisión independiente | [P-19](#p-19--revisión-independiente-del-proyecto) | Auditoría del proyecto entero (log #50 a #53) |
-| 9. Corrección del autor | [P-20](#p-20--el-autor-corrige-a-la-ia-yenes-sin-decimales) | Spec 008 (log #54) |
+| Transversal | [P-13](#p-13--cuestionar-el-razonamiento-de-la-ia), [P-14](#p-14--prompts-cortos-de-control) | Control humano del proceso |
+| 7. Cambios con la aplicación terminada | [P-15](#p-15--interfaz-moderna), [P-16](#p-16--una-funcionalidad-que-faltaba) | Specs 006 y 007 |
+| 8. Revisión independiente | [P-17](#p-17--revisión-independiente-del-proyecto) | Auditoría del proyecto entero (log #50 a #53) |
+| 9. Corrección del autor | [P-18](#p-18--el-autor-corrige-a-la-ia-yenes-sin-decimales) | Spec 008 (log #54) |
 
 ---
 
@@ -247,7 +247,7 @@ He vuelto a renombrar el archivo: cambiar todas las referencias a ese nombre, qu
 
 ## Transversal · Control humano del proceso
 
-Mensajes de las specs 001 a 005 que muestran cómo el autor mantuvo el control del proceso. Hay otro ejemplo en la fase 7: en P-20, el autor corrige una decisión que había tomado la IA.
+Mensajes de las specs 001 a 005 que muestran cómo el autor mantuvo el control del proceso. Hay otro ejemplo en la fase 9: en P-18, el autor corrige una decisión que había tomado la IA.
 
 ### P-13 · Cuestionar el razonamiento de la IA
 
@@ -257,21 +257,7 @@ Mensajes de las specs 001 a 005 que muestran cómo el autor mantuvo el control d
 
 **Por qué influyó:** la IA propuso un orden y el autor pidió que lo justificara antes de aceptarlo. Al final se siguió con la 002.
 
-### P-14 · Delegar trabajo largo…
-
-```text
-Me voy a trabajar, así que te dejo un encargo: termina tú solo toda la spec 002 y haz los commits necesarios, como hemos hecho hasta ahora, sin preguntarme. Comprueba toda la spec 002 y crea la spec 003, con su spec, su plan y sus tareas, y ponte con las tareas. Como hemos hablado, por bloques: revisa cada tarea y, cuando termines, revísalas todas juntas. Ve comprobando el trabajo contra el proceso para que todo salga según el plan. Yo lo revisaré cuando hayas terminado la spec 003.
-```
-
-### P-15 · …y revisarlo después
-
-```text
-Lee toda la documentación del proyecto: Fable ha terminado las specs 002 y 003. Explícame de forma sencilla, para que lo pueda entender, toda la spec 003 y las tareas que ha hecho, y dime si hay que cambiar algo de la documentación. Si todo está bien, haz commit y push para dejarlo cerrado.
-```
-
-**Por qué influyeron (P-14 y P-15):** el autor delegó dos specs enteras, pero no las dio por buenas hasta revisarlas en otra sesión y que se las explicaran. Se publicaron después de esa revisión.
-
-### P-16 · Prompts cortos de control
+### P-14 · Prompts cortos de control
 
 Prompts breves y repetidos que muestran cómo el autor fue aprobando y entendiendo cada paso:
 
@@ -286,9 +272,9 @@ Prompts breves y repetidos que muestran cómo el autor fue aprobando y entendien
 
 ## Fase 7 · Cambios con la aplicación terminada
 
-Con las specs 001 a 005 cerradas y publicadas, el autor usó la aplicación como lo haría un comercial y pidió dos cambios más; después de la revisión independiente llegó un tercero (P-20, fase 9). Ninguno se hizo tocando el código sin más: cada uno tuvo su propia spec, con su plan, sus tareas y sus tests primero.
+Con las specs 001 a 005 cerradas y publicadas, el autor usó la aplicación como lo haría un comercial y pidió dos cambios más; después de la revisión independiente llegó un tercero (P-18, fase 9). Ninguno se hizo tocando el código sin más: cada uno tuvo su propia spec, con su plan, sus tareas y sus tests primero.
 
-### P-17 · Interfaz moderna
+### P-15 · Interfaz moderna
 
 ```text
 Quiero modernizar la interfaz del dashboard. Puedes usar una librería de estilos conocida si aporta algo, y añadir animaciones discretas, todo con sus tests. Corrige también lo que se ve mal: por ejemplo, el formulario de alta de cliente no está centrado. Si lo ves conveniente, abre una spec nueva y pequeña para esta mejora del frontend, e incluye lo que consideres necesario para que quede bien.
@@ -296,7 +282,7 @@ Quiero modernizar la interfaz del dashboard. Puedes usar una librería de estilo
 
 **Por qué influyó:** era una petición abierta, sin una librería concreta ni criterios, y se convirtió en la spec 006, con criterios que se pueden comprobar. La librería nueva (Tailwind CSS) entró con su ADR 0011, como pide el principio 1. Las animaciones también se probaron. Dos opciones de Angular se descartaron tras un prototipo: una no aplicaba sus clases en el DOM de los tests y la otra bloqueaba los tests con el reloj simulado.
 
-### P-18 · Una funcionalidad que faltaba
+### P-16 · Una funcionalidad que faltaba
 
 Al usar la aplicación terminada, el autor echó en falta poder borrar un cliente. Lo pidió así:
 
@@ -321,7 +307,7 @@ Sí, que también se borre su historial. Pero ¿es necesario crear una spec ente
 
 ## Fase 8 · Revisión independiente
 
-### P-19 · Revisión independiente del proyecto
+### P-17 · Revisión independiente del proyecto
 
 Con todo terminado, el autor abrió una sesión nueva, sin historial, para auditar el proyecto antes de entregarlo.
 
@@ -397,7 +383,7 @@ permiso para leer archivos ni para ejecutar tests dentro de la copia temporal.
 
 ## Fase 9 · Corrección del autor
 
-### P-20 · El autor corrige a la IA: yenes sin decimales
+### P-18 · El autor corrige a la IA: yenes sin decimales
 
 Después de la revisión independiente, el autor usó la aplicación con la divisa en yenes y vio importes como «27.319,14 JPY». El yen no tiene céntimos, así que ese precio no existe en la realidad. No era un fallo del código: era una decisión que la IA había tomado en la spec 005 (D-8). El autor la corrigió así:
 
