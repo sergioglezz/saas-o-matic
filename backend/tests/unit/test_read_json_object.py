@@ -1,6 +1,6 @@
 """Reading the request body without a server (level U): spec 002 RF-7, task T-10.
 
-Covers CA-7.1 to CA-7.3 with cases E-37 to E-42, O-1, O-2 and O-15. The requests are built by
+Covers CA-7.1 to CA-7.3 with cases E-37 to E-43, O-1, O-2 and O-15. The requests are built by
 hand as Starlette sees them, so the exact bytes and headers of each case are under control.
 """
 
@@ -14,7 +14,7 @@ from app.api.validation import read_json_object
 from app.core.errors import ApiError, FieldError
 
 VALID_BODY = b'{"users": 15, "country": "ES"}'
-# Deeper than the JSON parser can go: it gives up with RecursionError instead of a JSON error.
+# E-43: deeper than the JSON parser can go, so it raises RecursionError instead of a JSON error.
 TOO_DEEP_BODY = b'{"users": ' + b"[" * 100_000 + b"]" * 100_000 + b', "country": "ES"}'
 BODY_ERROR = FieldError(field="body", message="El cuerpo debe ser un objeto JSON")
 
@@ -41,11 +41,11 @@ def _read(body: bytes, content_type: str | None) -> dict[str, object]:
         pytest.param(b"", "application/json", id="E-40"),
         pytest.param(VALID_BODY, "text/plain", id="E-41"),
         pytest.param(VALID_BODY, None, id="E-42"),
+        pytest.param(TOO_DEEP_BODY, "application/json", id="E-43"),
         pytest.param(b"15", "application/json", id="number"),
         pytest.param(b'"ES"', "application/json", id="string"),
         pytest.param(b"\xff\xfe", "application/json", id="not-utf-8"),
         pytest.param(VALID_BODY, "application/jsonx", id="similar-media-type"),
-        pytest.param(TOO_DEEP_BODY, "application/json", id="too-deep"),
     ],
 )
 def test_anything_but_a_json_object_with_json_content_type_is_rejected(

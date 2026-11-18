@@ -43,7 +43,7 @@ Cada carpeta tiene `spec.md` (qué), `plan.md` (cómo) y `tasks.md` (pasos; en 0
 | [007](specs/007-delete-customer/spec.md) | Borrar un cliente con todo su historial | 17 |
 | [008](specs/008-currency-decimals/spec.md) | Importes en yenes sin decimales: cada divisa con los suyos | 5 |
 
-Las specs 006, 007 y 008 no estaban en el plan inicial. Salieron de usar la aplicación terminada (prompts P-17, P-18 y P-20) y siguieron el mismo proceso. Hoy la suite tiene 1070 tests en el backend y 378 en el frontend.
+Las specs 006, 007 y 008 no estaban en el plan inicial. Salieron de usar la aplicación terminada (prompts P-17, P-18 y P-20) y siguieron el mismo proceso. Hoy la suite tiene 1071 tests en el backend y 378 en el frontend.
 
 ## Decisiones de arquitectura
 

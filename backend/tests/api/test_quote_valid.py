@@ -1,7 +1,7 @@
 """POST /pricing/quote happy path and body reading over HTTP (level I), spec 002 task T-11.
 
 Covers RF-1 (CA-1.1 to CA-1.3), RF-3 (CA-3.1, CA-3.6), RF-4 (CA-4.1 to CA-4.4) and RF-7
-(CA-7.1 to CA-7.3) with Q-1 to Q-20, O-1, O-2, O-6, O-7, O-9, O-15 and E-37 to E-42.
+(CA-7.1 to CA-7.3) with Q-1 to Q-20, O-1, O-2, O-6, O-7, O-9, O-15 and E-37 to E-43.
 """
 
 import pytest
@@ -50,6 +50,8 @@ TABLE_6_1: list[tuple[str, str, int, int, int, int]] = [
 ]
 
 Q4_BODY = '{"users": 15, "country": "ES"}'
+# E-43: deeper than the JSON parser can go, so it raises RecursionError instead of a JSON error.
+TOO_DEEP_BODY = b'{"users": ' + b"[" * 100_000 + b"]" * 100_000 + b', "country": "ES"}'
 BODY_DETAIL = {("body", "El cuerpo debe ser un objeto JSON")}
 
 
@@ -139,6 +141,7 @@ def test_every_number_in_the_response_is_an_integer(client: TestClient, body: st
         pytest.param(b"", "application/json", id="E-40"),
         pytest.param(Q4_BODY.encode(), "text/plain", id="E-41"),
         pytest.param(Q4_BODY.encode(), None, id="E-42"),
+        pytest.param(TOO_DEEP_BODY, "application/json", id="E-43"),
     ],
 )
 def test_bodies_that_are_not_a_json_object_are_rejected(

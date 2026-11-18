@@ -136,7 +136,7 @@ Todos los errores tienen el mismo formato, `{"error": {"code", "message", "detai
 - **El backend calcula y el frontend muestra.** Todos los importes salen de un único cálculo en el backend; el navegador solo los convierte a otra divisa para enseñarlos (ADR 0004 y 0005).
 - **Dinero exacto.** Céntimos enteros y tasas en puntos básicos (2100 = 21 %) en todas las capas, nunca `float`. El impuesto se redondea una sola vez, «mitad hacia arriba» (ADR 0002).
 - **Capas.** `api` → `services` → (`repositories`, `domain`). Las reglas de negocio (tramos, impuestos e identificador fiscal) son Python puro, sin FastAPI ni SQL, y un test falla si algún módulo rompe la regla (ADR 0003).
-- **Tests que salen de las specs.** Cada caso de las tablas de prueba, salvo las comprobaciones manuales, es un test que cita su identificador y su criterio de aceptación: 1070 tests en el backend y 378 en el frontend.
+- **Tests que salen de las specs.** Cada caso de las tablas de prueba, salvo las comprobaciones manuales, es un test que cita su identificador y su criterio de aceptación: 1071 tests en el backend y 378 en el frontend.
 
 ```text
 backend/app/        api · services · repositories · domain · schemas · db (modelos, migraciones y seed) · core
@@ -261,7 +261,7 @@ La configuración se lee de variables de entorno, con valores por defecto para t
 
 | | Backend (desde `backend/`) | Frontend (desde `frontend/`) |
 | --- | --- | --- |
-| Tests | `pytest` (1070) | `npm test` (378, una sola pasada) |
+| Tests | `pytest` (1071) | `npm test` (378, una sola pasada) |
 | Lint y formato | `ruff check .` y `ruff format --check .` | `npm run lint` |
 | Tipos | `mypy .` | TypeScript estricto, al compilar con `npm run build` |
 
