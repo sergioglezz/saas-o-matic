@@ -171,7 +171,7 @@ Consecuencia aceptada: un 500 lo genera Starlette por fuera de la capa de CORS, 
 | RF-4 | §4 `QuoteResponse` | Q-4, Q-20, O-9 |
 | RF-5 | DT-2 `extra="forbid"`, `field_errors` | E-32 a E-36 |
 | RF-6 | §4 `register_error_handlers`, DT-5, DT-6 | Todos los E, O-3 a O-5, O-8, O-13, O-14 |
-| RF-7 | §5 `read_json_object` | E-37 a E-42, O-1, O-2, O-15 |
+| RF-7 | §5 `read_json_object` | E-37 a E-43, O-1, O-2, O-15 |
 | RF-8 | Starlette 405 más el manejador que conserva `Allow` | O-3, O-4 |
 | RF-9 | DT-7 `CORSMiddleware` | O-10 a O-12 |
 

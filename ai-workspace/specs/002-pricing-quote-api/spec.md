@@ -1,6 +1,6 @@
 # 002 — Endpoint de cotización (`POST /pricing/quote`)
 
-**Estado:** ✅ completada (v1.1) · **Depende de:** [spec 001](../001-pricing-and-tax/spec.md) · **Fuentes:** [00-spec-first](../00-spec-first.md) y [constitución](../../docs/constitution.md)
+**Estado:** ✅ completada (v1.2) · **Depende de:** [spec 001](../001-pricing-and-tax/spec.md) · **Fuentes:** [00-spec-first](../00-spec-first.md) y [constitución](../../docs/constitution.md)
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al aclarar o revisar la spec 001 o esta spec. RF-1 a RF-8 vienen de la spec 001 v1.1 sin cambios de comportamiento, y cada uno indica de qué parte sale. RF-9 (CORS), CA-6.7 (404) y las ampliaciones de CA-7.1 y CA-8.1 se añadieron en la revisión de la v1.0.
 
@@ -242,6 +242,7 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 | E-40 | cuerpo vacío (0 bytes) | body/BODY |
 | E-41 | `{"users": 15, "country": "ES"}` con `Content-Type: text/plain` | body/BODY |
 | E-42 | `{"users": 15, "country": "ES"}` sin cabecera `Content-Type` | body/BODY |
+| E-43 | `{"users": [[…]], "country": "ES"}` con 100 000 corchetes anidados en `users`, más de los que puede seguir el analizador de JSON | body/BODY |
 
 ### 6.3 Protocolo y comportamiento general
 
@@ -280,7 +281,7 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 - **País con formato raro:** minúsculas, espacios exteriores, tabuladores y saltos de línea se normalizan (Q-11 a Q-19); espacios internos, ancho completo, espacio no separable, 1 o 3 letras y dígitos se rechazan (E-18 a E-25).
 - **País de tipo incorrecto:** número, `null`, lista y objeto (E-26 a E-29).
 - **Usuarios y país inválidos a la vez:** se informa de los dos (E-35).
-- **Cuerpo vacío o raro:** `{}`, cuerpo sin bytes, `null`, lista, JSON inválido y cabecera incorrecta o ausente (E-31, E-37 a E-42).
+- **Cuerpo vacío o raro:** `{}`, cuerpo sin bytes, `null`, lista, JSON inválido, JSON anidado más hondo de lo que admite el analizador y cabecera incorrecta o ausente (E-31, E-37 a E-43).
 - **Campos no definidos:** solos, varios a la vez, combinados con otros errores y con mayúsculas distintas (E-32 a E-36).
 - **Clave repetida:** gana el último valor (O-2).
 - **Métodos no permitidos y fallo interno:** O-3 a O-5; también `HEAD` y `OPTIONS` sin preflight (O-4).
@@ -301,7 +302,7 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 
 **Funcionalidad**
 
-- [x] Cada caso de las tablas 6.1 a 6.3 (Q-1 a Q-20, E-1 a E-42, O-1 a O-15) tiene un test de integración y todos pasan.
+- [x] Cada caso de las tablas 6.1 a 6.3 (Q-1 a Q-20, E-1 a E-43, O-1 a O-15) tiene un test de integración y todos pasan.
 - [x] Cada criterio CA-x de la sección 4 está cubierto por al menos un test que lo cita por su identificador.
 - [x] `POST /pricing/quote` responde exactamente el ejemplo de la sección 5 con `{ "users": 15, "country": "ES" }`.
 - [x] El endpoint aparece en la documentación interactiva con su ejemplo.
@@ -333,3 +334,4 @@ No hay dudas abiertas.
 | 1.1 | Al planificar, un prototipo mostró que una preflight de CORS aceptada responde 200 con texto plano. CA-6.6 excluye ahora del formato JSON todas las respuestas a preflight, aceptadas o rechazadas, y CA-9.2 aclara que su cuerpo no forma parte del contrato. No cambia ningún caso de prueba. Aprobada |
 | 1.1 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 383 tests en verde en un clon limpio con un entorno virtual nuevo, los 15 commits de código en verde uno a uno, los 33 CA con al menos un test que los cita y pasa, los 77 casos de las tablas con test por HTTP, y los 12 criterios de la sección 10 marcados. p95 de la cotización: 6,3 ms (RNF-2). Spec completada |
 | 1.1 (edición) | Sin cambios en los requisitos. Estado y referencias al día (specs 004 y 005, «Límites conocidos» del README), y los evaluadores ya no figuran como usuarios, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`) |
+| 1.2 | Caso E-43 en la tabla 6.2: un cuerpo anidado más hondo de lo que puede seguir el analizador de JSON también recibe 422 `body`. CA-7.2 no cambia, porque ya lo exigía para un cuerpo que no es JSON válido; lo que faltaba era un caso que llegara a ese límite. Lo encontró la revisión independiente (entrada 50 de `ai-review-log.md`) y lo aprobó el autor. También se actualizan §8 de esta spec, la lista de comprobación de §10 y la fila RF-7 de la trazabilidad del plan |
