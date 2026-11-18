@@ -238,7 +238,7 @@ Para cada uno indica qué test lo cubre y el resultado de ejecutarlo. Si algún 
 ### P-12 · Cierre y siguiente paso
 
 ```text
-He vuelto a renombrar el archivo: cambiar todas las referencias a ese nombre, quizá con un dígito, iba a dar mucho más lío. Cuando compruebes que todo está bien, haz un commit de todo lo que hemos hecho en la primera spec, haz push a GitHub y deja la spec 001 como completada. Después analiza la documentación para ver cuál es el siguiente paso para dejar el proyecto a punto.
+Cuando compruebes que todo está bien, haz un commit de todo lo que hemos hecho en la primera spec, haz push a GitHub y deja la spec 001 como completada. Después analiza la documentación para ver cuál es el siguiente paso para dejar el proyecto a punto.
 ```
 
 **Por qué influyó:** fijó el cierre que se repitió en todas las specs: comprobar, publicar y solo entonces decidir el siguiente paso a partir de la documentación.
