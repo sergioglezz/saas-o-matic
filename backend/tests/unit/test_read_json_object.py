@@ -14,6 +14,8 @@ from app.api.validation import read_json_object
 from app.core.errors import ApiError, FieldError
 
 VALID_BODY = b'{"users": 15, "country": "ES"}'
+# Deeper than the JSON parser can go: it gives up with RecursionError instead of a JSON error.
+TOO_DEEP_BODY = b'{"users": ' + b"[" * 100_000 + b"]" * 100_000 + b', "country": "ES"}'
 BODY_ERROR = FieldError(field="body", message="El cuerpo debe ser un objeto JSON")
 
 
@@ -43,6 +45,7 @@ def _read(body: bytes, content_type: str | None) -> dict[str, object]:
         pytest.param(b'"ES"', "application/json", id="string"),
         pytest.param(b"\xff\xfe", "application/json", id="not-utf-8"),
         pytest.param(VALID_BODY, "application/jsonx", id="similar-media-type"),
+        pytest.param(TOO_DEEP_BODY, "application/json", id="too-deep"),
     ],
 )
 def test_anything_but_a_json_object_with_json_content_type_is_rejected(

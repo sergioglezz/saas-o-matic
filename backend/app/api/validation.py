@@ -36,7 +36,9 @@ async def read_json_object(request: Request) -> dict[str, object]:
         raise _body_error()
     try:
         data = json.loads((await request.body()).decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError):
+    # A body nested deeper than the parser can follow raises RecursionError, not a JSON error;
+    # it cannot be read either, so it gets the same 422 instead of a 500.
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError):
         raise _body_error() from None
     if not isinstance(data, dict):
         raise _body_error()
