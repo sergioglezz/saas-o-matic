@@ -9,6 +9,7 @@ __pycache__/
 # Local configuration and data
 .env
 *.db
+.claude/
 
 # Frontend
 node_modules/
