@@ -104,3 +104,44 @@ describe('currency on the customer card (spec 005 §6.4)', () => {
     expect(termValue(historyCards(app)[0], 'Total mensual')).toBe('183,34 US$');
   });
 });
+
+// Spec 008 §4.2 (YN-9 to YN-11): RF-1, whole yen on the customer card.
+describe('yen on the customer card (spec 008 §4.2)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.useFakeTimers();
+    setNow(FRESH_NOW);
+    storeRates();
+  });
+
+  afterEach(() => vi.useRealTimers());
+
+  it('YN-9: JPY shows simulator and history in whole yen, asking nothing (CA-1.1, CA-1.2)', async () => {
+    const app = await cardWithQuoteAndHistory();
+    await chooseCurrency(app, 'JPY');
+    await settle(1000);
+    const jpy = ['22.578 JPY', '4.741 JPY', '27.319 JPY'];
+    expect(totals(simulator(app))).toEqual(jpy);
+    expect(totals(historyCards(app)[0])).toEqual(jpy);
+    app.http.verify();
+  });
+
+  it('YN-10: the breakdown of the history in whole yen (CA-1.2, CA-1.3)', async () => {
+    const app = await cardWithQuoteAndHistory();
+    await chooseCurrency(app, 'JPY');
+    const [card] = historyCards(app);
+    buttonNamed(card, 'Ver desglose')?.click();
+    await settle();
+    const rows = tierRows(card);
+    expect(rows.map((row) => row[3])).toEqual(['1.613 JPY', '1.290 JPY', '806 JPY']);
+    expect(rows.map((row) => row[4])).toEqual(['16.127 JPY', '6.451 JPY', '0 JPY']);
+  });
+
+  it('YN-11: with JPY, the rate of T-EQ keeps its decimals (CA-1.4)', async () => {
+    const app = await cardWithQuoteAndHistory();
+    await chooseCurrency(app, 'JPY');
+    const header = textOf(app.root.querySelector('header'));
+    expect(header).toContain('1 EUR = 161,27 JPY');
+    expect(header).toContain(ORI);
+  });
+});
