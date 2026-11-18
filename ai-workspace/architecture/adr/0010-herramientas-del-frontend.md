@@ -1,6 +1,6 @@
 # ADR 0010 — Herramientas del frontend: Angular 22, Node 26 y angular-eslint
 
-Estado: aceptado (redactado con el plan de la spec 005 y confirmado en la revisión del autor)
+Estado: aceptado (con el plan de la spec 005)
 
 ## Contexto
 
@@ -19,7 +19,7 @@ Al planificar la spec 005, la versión con soporte de Angular es la 22, que exig
   - limita los archivos a 300 líneas y las funciones a 40 (`AGENTS.md`), salvo las funciones de los archivos de test, cuyos `describe` agrupan casos.
 - **TypeScript con la biblioteca de ES2023** (`"lib": ["es2023", "dom"]`): el proyecto generado usa la de ES2022, que no tiene los tipos de `Intl` que necesita el formato de la spec 005 (plan 005, sección 10).
 
-## Alternativa descartada
+## Alternativas descartadas
 
 - **Angular 19 con Node 22.11:** sin cambiar el equipo, pero sin parches de seguridad y con tests que necesitan un navegador real (Karma).
 - **Solo `tsc --noEmit` como lint:** comprobaría los tipos, pero no las reglas de Angular, el `any` explícito ni las capas, y no cumpliría el principio 6.

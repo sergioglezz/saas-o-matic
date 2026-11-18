@@ -1,6 +1,6 @@
 # ADR 0011 — Tailwind CSS para el diseño del frontend
 
-Estado: propuesto (redactado con la spec 006; pendiente de la revisión del autor)
+Estado: aceptado (con la spec 006)
 
 ## Contexto
 

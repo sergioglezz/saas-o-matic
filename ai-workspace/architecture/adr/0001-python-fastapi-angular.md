@@ -9,7 +9,7 @@ El enunciado pide una API REST con base de datos y un dashboard web que se comun
 ## Decisión
 
 - `backend/`: Python 3.12+ con FastAPI, Pydantic v2 para validar toda entrada en el borde de la API, SQLAlchemy 2 para el acceso a datos y Alembic para las migraciones, sobre SQLite. Tests con pytest y httpx.
-- `frontend/`: Angular con componentes standalone, signals y HttpClient; RxJS solo para la espera tras escribir (debounce) y la cancelación de peticiones. Tests con el runner por defecto de Angular.
+- `frontend/`: Angular con componentes standalone, signals y HttpClient; RxJS solo para la espera tras escribir (debounce) y la cancelación de peticiones. Tests con el runner por defecto de Angular (Vitest, concretado en el ADR 0010).
 
 Las dos partes viven en un único repositorio. El principio 1 de la constitución cierra este stack: cualquier dependencia, servicio o herramienta que no esté aquí necesita su propio ADR, como el 0008 (mypy).
 

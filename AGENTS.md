@@ -2,19 +2,19 @@
 
 ## Proyecto
 
-SaaS-O-Matic es una herramienta interna para que un equipo comercial simule y presupueste suscripciones SaaS multi-divisa para clientes corporativos. Es un monorepo con una API REST en Python 3.12+ (FastAPI, SQLAlchemy 2, Pydantic v2, Alembic) sobre SQLite en `backend/`, y un dashboard Angular en `frontend/`. Todo el proceso (constitución, specs, ADRs, prompts y log de revisión) vive en `ai-workspace/`.
+SaaS-O-Matic es una herramienta interna para que un equipo comercial simule y presupueste suscripciones SaaS multi-divisa para clientes corporativos. Es un monorepo con una API REST en Python 3.12+ (FastAPI, SQLAlchemy 2, Pydantic v2, Alembic) sobre SQLite en `backend/`, y un dashboard Angular en `frontend/`. Todo el proceso (constitución, specs, ADRs, prompts y log de revisión) vive en `ai-workspace/`, con una guía en `ai-workspace/README.md`.
 
 El backend va por capas: `api` → `services` → (`repositories`, `domain`). `domain` solo contiene funciones puras (precios por tramos, impuestos, validación de identificadores fiscales). El backend calcula todos los importes; el frontend solo los muestra y convierte la divisa.
 
 ## Comandos
 
-Se confirman al crear cada scaffold. Si un comando no existe o falla, avísame y propón el cambio; no lo inventes.
+Todos se confirmaron al crear su parte del proyecto (002 T-16, 003 T-19 y 005 T-16): los del backend, con el entorno virtual activado; los del frontend, con Node 26 LTS (ADR 0010) y `npm install` hecho. Si un comando falla, avísame y propón el cambio; no lo inventes.
 
-* Ejecutar backend: `cd backend && uvicorn app.main:app --reload` (API en `localhost:8000`, documentación en `/docs`). ✅ Confirmado (002 T-16), con el entorno virtual activado y la base de datos migrada (`alembic upgrade head`).
-* Ejecutar frontend: `cd frontend && npm start` (`localhost:4200`). ✅ Confirmado (005 T-16), con Node 26 LTS (ADR 0010) y `npm install` hecho.
-* Migraciones y datos demo: `cd backend && alembic upgrade head && python -m app.db.seed`. ✅ Confirmado (003 T-19), con el entorno virtual activado; el seed se puede repetir sin duplicar datos.
-* Tests: `cd backend && pytest` y `cd frontend && npm test`. El de frontend ✅ confirmado (005 T-16): hace una sola pasada.
-* Lint/formato: `cd backend && ruff check . && ruff format . && mypy .` y `cd frontend && npm run lint`. El de frontend ✅ confirmado (005 T-16); `npm run build` compila para producción.
+* Migraciones y datos demo: `cd backend && alembic upgrade head && python -m app.db.seed`. El seed se puede repetir sin duplicar datos.
+* Ejecutar backend: `cd backend && uvicorn app.main:app --reload` (API en `http://127.0.0.1:8000`, documentación en `/docs`). Usa `127.0.0.1` y no `localhost`: en Windows, `localhost` añade unos 0,2 s a cada conexión.
+* Ejecutar frontend: `cd frontend && npm start` (`http://localhost:4200`, el único origen que admite CORS).
+* Tests: `cd backend && pytest` y `cd frontend && npm test` (una sola pasada).
+* Lint/formato: `cd backend && ruff check . && ruff format . && mypy .` y `cd frontend && npm run lint`; `npm run build` compila para producción.
 
 ## Estilo y convenciones
 

@@ -1,6 +1,6 @@
 # Tareas — 003 Clientes
 
-Estado: v1.0, redactadas y ejecutadas por delegación del autor, revisadas y aprobadas por el autor · Spec: `spec.md` v1.0 · Plan: `plan.md` v1.0
+**Estado:** ✅ todas las tareas completadas y revisadas por el autor · **Spec:** [spec.md](spec.md) v1.0 · **Plan:** [plan.md](plan.md)
 
 ## Reglas de ejecución
 

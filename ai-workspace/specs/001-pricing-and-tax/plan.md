@@ -1,10 +1,10 @@
 # Plan técnico — 001 Precios por tramos e impuestos
 
-Estado: aprobado · Spec: `spec.md` v1.2 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7 y §8 de `00-spec-first.md`
+**Estado:** ✅ ejecutado · **Spec:** [spec.md](spec.md) v1.2 · **Se apoya en:** §5, §7 y §8 de [00-spec-first](../00-spec-first.md)
 
 ## 1. Resumen y alcance
 
-- **Construye:** el cálculo puro (tramos, impuesto, total), la tabla `tax_rates` con su migración y la función de servicio que une ambos. Es lo que consumirán 002 y la futura spec de simulaciones.
+- **Construye:** el cálculo puro (tramos, impuesto, total), la tabla `tax_rates` con su migración y la función de servicio que une ambos. Es lo que consumen 002 y 004 (simulaciones).
 - **Cubre:** RF-1, RF-2, RF-3, RF-4, RF-6, RF-7 y RF-13.
 - **No cubre, por diseño:** RF-5 y RF-8 a RF-12, que se movieron a 002 y tendrán su propio plan.
 - **Fuera de este plan:** routers, esquemas Pydantic, el manejador de errores HTTP, clientes, simulaciones, el frontend y los datos de demostración.
@@ -25,7 +25,7 @@ Estado: aprobado · Spec: `spec.md` v1.2 (aprobada) · Constitución: `ai-worksp
 
 Las dependencias van en una sola dirección: `services → (domain, repositories)` y `repositories → db`. `domain` no importa nada externo (principio 3). Un test de arquitectura lo comprueba (sección 7).
 
-**Seed:** esta funcionalidad no aporta filas al seed. Las tasas por defecto van en la migración (spec D-5); el seed de datos de demostración lo creará la spec de clientes.
+**Seed:** esta funcionalidad no aporta filas al seed. Las tasas por defecto van en la migración (spec D-5); el seed de datos de demostración llegó con la spec 003.
 
 ## 3. Modelo de datos (RF-4, RF-13)
 

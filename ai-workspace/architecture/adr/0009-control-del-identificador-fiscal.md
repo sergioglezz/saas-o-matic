@@ -1,6 +1,6 @@
 # ADR 0009 — Control del identificador fiscal español
 
-Estado: aceptado (redactado por delegación del autor y confirmado en su revisión de la spec 003)
+Estado: aceptado (con la spec 003)
 
 ## Contexto
 
@@ -17,7 +17,7 @@ El enunciado exige validar de forma estricta el identificador fiscal con «el al
 - El identificador se normaliza antes de validarlo y se guarda normalizado (RN-11): mayúsculas, sin espacios, guiones ni puntos.
 - El algoritmo vive en `backend/app/domain/tax_id.py`, como Python puro (ADR 0003), y sus casos son las tablas 6.1 y 6.2 de la spec 003.
 
-## Alternativa descartada
+## Alternativas descartadas
 
 - Aceptar dígito o letra para cualquier entidad del CIF: más simple, pero daría por buenos identificadores que los validadores habituales rechazan (por ejemplo, una entidad `N` con dígito).
 - Usar una biblioteca de validación de identificadores: sería una dependencia nueva para unas 60 líneas de código, contra el principio 1 de la constitución.

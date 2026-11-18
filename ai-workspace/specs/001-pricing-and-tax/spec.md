@@ -1,24 +1,23 @@
 # 001 — Precios por tramos e impuestos
 
-Estado: v1.2 aprobada · ✅ Completada: implementada, verificada y con los 11 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Consumida por: `ai-workspace/specs/002-pricing-quote-api/spec.md` y la futura spec de simulaciones
+**Estado:** ✅ completada (v1.2) · **La usan:** specs 002 y 004 · **Fuentes:** [00-spec-first](../00-spec-first.md) y [constitución](../../docs/constitution.md)
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al aclarar o revisar esta spec.
 
 ## 1. Contexto y objetivo
 
-El comercial necesita saber en segundos cuánto pagará un cliente al mes según su número de usuarios, con el desglose por tramo y el impuesto de su país. Ese cálculo lo usan la cotización en vivo (spec 002) y el guardado de simulaciones (spec posterior), así que tiene que ser exacto, estar en un único sitio y poder probarse sin interfaz ni servidor web.
+El comercial necesita saber en segundos cuánto pagará un cliente al mes según su número de usuarios, con el desglose por tramo y el impuesto de su país. Ese cálculo lo usan la cotización en vivo (spec 002) y el guardado de simulaciones (spec 004), así que tiene que ser exacto, estar en un único sitio y poder probarse sin interfaz ni servidor web.
 
 **Objetivo:** dados un número de usuarios y un código de país ya normalizado, calcular el coste mensual con precio acumulativo por tramos, el impuesto del país según la tabla de tasas configurada y el total, todo en céntimos de euro y con el desglose de cada tramo.
 
 **Alcance:** el núcleo del cálculo y la tabla de tasas de impuesto. Cómo llega la petición, cómo se valida el JSON y cómo se presentan los errores al exterior es la spec 002.
 
-**Por qué ahora:** es la primera pieza del orden de construcción (§11, «dominio puro, con tests primero») y la que más pesa en «calidad del software»: el evaluador comprobará los tramos exactos.
+**Por qué primero:** es la primera pieza del orden de construcción (§11 del 00, dominio puro con tests primero) y la regla de negocio central: un error en los tramos o en el redondeo invalidaría cualquier presupuesto.
 
 ## 2. Usuarios
 
 - **Comercial** (usuario final, de forma indirecta): ve el resultado de este cálculo en el simulador.
-- **Specs consumidoras:** la 002 (cotización en vivo) y la futura de simulaciones usan la interfaz de la sección 5.
-- **Evaluadores** (audiencia indirecta): leen esta spec y comprueban que los tests salen de las tablas de casos.
+- **Specs consumidoras:** la 002 (cotización en vivo) y la 004 (simulaciones) usan la interfaz de la sección 5.
 
 ## 3. Historias de usuario
 
@@ -236,7 +235,7 @@ En el nivel D se configura para ES la tasa de la columna `tax_rate_bp` antes de 
 ## 9. Fuera de alcance
 
 - El endpoint `POST /pricing/quote`, la validación del JSON de entrada, la normalización del país, los mensajes de error y los códigos HTTP: spec 002.
-- Guardar simulaciones, el historial y los campos de almacenamiento y llamadas a la API (RN-8, RN-9, `POST /simulations`): spec posterior.
+- Guardar simulaciones, el historial y los campos de almacenamiento y llamadas a la API (RN-8, RN-9, `POST /simulations`): spec 004.
 - Calcular a partir de un cliente registrado: el país llega como dato.
 - Conversión a otras divisas (RN-7, solo en frontend) y la pantalla del simulador.
 - Impuestos especiales: IGIC de Canarias, Ceuta y Melilla, inversión del sujeto pasivo en la UE e impuesto sobre ventas de cada estado de EE. UU. (§7.2).
@@ -265,7 +264,7 @@ En el nivel D se configura para ES la tasa de la columna `tax_rate_bp` antes de 
 
 ## 11. Decisiones cerradas
 
-- **D-1. Nombre del campo de usuarios:** el cálculo y la cotización usan `users`. Si se unifica con `active_users` se decidirá en la spec de simulaciones.
+- **D-1. Nombre del campo de usuarios:** el cálculo y la cotización usan `users`. La spec 004 (D-1) lo cerró: las simulaciones usan `active_users` y la cotización conserva `users`.
 - **D-2. País en la respuesta de la cotización:** movida a 002.
 - **D-3. Valores de las tasas:** los de RN-4 son la configuración por defecto de la entrega (CA-4.3) y se documentan como supuesto en el README (§10 supuesto 3). Como son datos configurables (RF-13), cambiarlos no exige modificar esta spec salvo la tabla 6.2.
 - **D-4. División de la spec (v1.2):** esta spec queda en el núcleo del cálculo y la tabla de tasas; el endpoint pasa a la 002. Así cada spec tiene un plan, y el núcleo se construye antes que la API (§11).
@@ -279,3 +278,4 @@ En el nivel D se configura para ES la tasa de la columna `tax_rate_bp` antes de 
 | 1.1 | Revisión QA: 38 hallazgos resueltos. Mensajes de error fijados; definición de entero JSON; normalización del país acotada; RF-11 (cuerpo), RF-12 (métodos) y RF-13 (configuración de tasas); niveles U/I en los casos; tablas 6.4 y 6.6 nuevas; dudas D-1 a D-3 cerradas; checklist alineado con la constitución. Aprobada |
 | 1.2 | División: el endpoint, la validación JSON, la normalización del país, los mensajes y RNF-5 a RNF-8 pasan a la spec 002. Se añaden los errores de dominio (CA-3.3 a CA-3.5, CA-4.6, CA-4.7), los casos C-6 y X-1 a X-7, y las decisiones D-4 y D-5. Los niveles de test pasan a U y D. Ningún comportamiento observable de la v1.1 se pierde: lo que sale de aquí está en 002. Aprobada |
 | 1.2 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 188 tests en verde, cada CA con al menos un test que lo cita, y los 11 criterios de la sección 10 marcados. Spec completada |
+| 1.2 (edición) | Sin cambios en los requisitos. Estado, referencias (la «spec posterior» es la 004) y D-1 al día, y los evaluadores ya no figuran como usuarios, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`) |

@@ -1,6 +1,6 @@
 # Plan técnico — 005 Frontend
 
-Estado: v1.0, ejecutado según `tasks.md`, revisado y aprobado por el autor · Spec: `spec.md` v1.2 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5 de `00-spec-first.md` y ADR 0001, 0004, 0005 y 0010 · Base: los contratos de 002, 003 y 004, sin cambios
+**Estado:** ✅ ejecutado y revisado por el autor · **Spec:** [spec.md](spec.md) v1.2 · **Se apoya en:** §5 de [00-spec-first](../00-spec-first.md), los ADR 0001, 0004, 0005 y 0010, y los contratos de 002 a 004 sin cambios
 
 Antes de escribir este plan se comprobaron con Node las salidas de `Intl` para `es-ES` en las que se apoya el formato de RF-5. El resto del prototipo (runner, DOM simulado, reloj y peticiones falsas) necesitaba una versión de Node compatible con Angular 22 (finalmente Node 26.13.1 LTS, ADR 0010). Se hace en T-01, antes de cualquier código de la aplicación, y su resultado completa la sección 10.
 
@@ -31,7 +31,7 @@ Todo vive en `frontend/src/app/`, con las tres carpetas de §5 del 00: `core/` (
 | `core/rates/exchange-rates.ts` | `ExchangeRates`: estado de las tasas (`loading`, `fresh`, `stale`, `unavailable`), `load()` y `retry()` | `HttpClient`, `rates-snapshot`, `browser-storage`, `api-config` | 3 |
 | `core/rates/display-currency.ts` | `DisplayCurrency`: divisas ofrecidas, divisa elegida y recordada, `choose(code)` y la tasa activa | `exchange-rates`, `browser-storage` | 4 |
 | `shared/format/decimal.ts` | Puro: `exactDecimal`, `roundHalfUp` y `decimalText`, la aritmética exacta que comparten `money.ts` y `numbers.ts` (añadido en T-02) | Nada | 4, 5 |
-| `shared/format/money.ts` | Puro: `toHundredths(cents, rate)` exacto, `formatMoney(cents, display)` y `EUR_DISPLAY` | `decimal` | 5 |
+| `shared/format/money.ts` | Puro: `toHundredths(cents, rate)` exacto, `formatMoney(cents, display)` y `EUR_DISPLAY` (desde la spec 008, `toMinorUnits(cents, rate, decimals)` y `currencyDecimals(code)`) | `decimal` | 5 |
 | `shared/format/numbers.ts` | Puro: `formatCount`, `formatTaxRate`, `formatRate` y `tierRange` | Nada | 5 |
 | `shared/format/dates.ts` | Puro: `formatDateTime`, `formatDate` y `formatUnixDate` | Nada | 3, 5 |
 | `shared/format/format-pipes.ts` | Pipes puros `money`, `count`, `taxRate`, `dateTime` y `day` sobre las funciones anteriores | Angular, `shared/format` | 5 |
@@ -109,6 +109,7 @@ DisplayCurrency: offered(), selected(), rate() -> number | null, choose(code)
 # shared
 MoneyDisplay = { code: CurrencyCode, rate: number | null }            # null en EUR
 toHundredths(cents, rate) -> bigint                                   # redondeo exacto CA-5.2
+                                                                      # spec 008: toMinorUnits(cents, rate, decimals)
 formatMoney(cents, display) -> string                                 # CA-5.3, CA-5.4
 formatCount(n), formatTaxRate(bp), formatRate(rate), tierRange(from, to)
 formatDateTime(iso), formatDate(iso), formatUnixDate(seconds)
@@ -142,6 +143,8 @@ formatMoney(cents, display):
 ```
 
 `Intl` acepta el importe como texto decimal y lo formatea sin redondear otra vez. `formatRate` usa la misma vía, con un máximo de 4 decimales.
+
+**Desde la spec 008:** el desplazamiento del redondeo depende de los decimales de la divisa (2, o ninguno en JPY), y el formateador ya no fija 2 decimales: `Intl` usa los de la divisa. Está en el [plan de la 008](../008-currency-decimals/plan.md), DT-1 a DT-3.
 
 **Tasas (RF-3):**
 
@@ -280,7 +283,7 @@ Los RNF: RNF-1, regla de capas del lint y CO-12; RNF-2, DT-8 y MA-4; RNF-3, DT-1
 ## 9. Cumplimiento de la constitución
 
 1. **Simplicidad:** el proyecto base de la CLI más angular-eslint, con su ADR (0010). Nada fuera de la spec.
-2. **La spec manda:** cada tarea cita sus RF y CA; los commits, cuando el autor los autorice, también.
+2. **La spec manda:** cada tarea y cada commit citan sus RF y CA.
 3. **Capas:** el frontend no calcula importes (RNF-1); las reglas puras no importan Angular; solo `core/` habla HTTP. El lint lo impide.
 4. **Dinero exacto:** los importes llegan en céntimos de EUR y solo se convierten para mostrarlos, con enteros grandes y redondeo explícito (DT-3). Nunca se envían ni se guardan convertidos.
 5. **Tests y revisión:** tests primero en U y C; las comprobaciones M quedan anotadas; las correcciones al código generado se anotan en el log.
@@ -292,7 +295,7 @@ Comprobado con Node 22.11 (ICU 75.1), antes de este plan:
 
 | Comprobación | Resultado | Consecuencia |
 | --- | --- | --- |
-| Moneda `es-ES` con 2 decimales y agrupación siempre | «1.234,56 €», «1.234,56 US$», «1.234,56 GBP», «1.234,56 CHF», «1.234,56 JPY», con espacio no separable | CA-5.4 se cumple con `Intl`; los tests normalizan el espacio |
+| Moneda `es-ES` con 2 decimales y agrupación siempre | «1.234,56 €», «1.234,56 US$», «1.234,56 GBP», «1.234,56 CHF», «1.234,56 JPY», con espacio no separable | CA-5.4 se cumple con `Intl`; los tests normalizan el espacio. Desde la spec 008, JPY va sin decimales (plan de la 008, §4) |
 | Agrupación por defecto con 4 cifras | «1234»; con `useGrouping: "always"`, «1.234» | DT-5 |
 | Porcentaje `es-ES` con hasta 2 decimales | «21 %», «19,5 %», «21,25 %», «0 %», «100 %», «0,01 %» | CA-5.5 con `Intl` |
 | Fecha y hora con `Europe/Madrid` | «17/11/2026, 00:30» y «01/07/2026, 12:00» | DT-4: se compone sin la coma |

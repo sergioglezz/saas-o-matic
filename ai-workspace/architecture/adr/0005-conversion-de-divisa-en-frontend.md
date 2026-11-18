@@ -1,6 +1,6 @@
 # ADR 0005 — Conversión de divisa solo en el frontend, con caché y vuelta a EUR
 
-Estado: aceptado
+Estado: aceptado (los decimales de cada divisa, precisados por la spec 008)
 
 ## Contexto
 
@@ -9,7 +9,7 @@ El enunciado pide que el comercial vea los costes en la divisa que elija (EUR, U
 ## Decisión
 
 - Solo el servicio de divisas del frontend llama a `open.er-api.com/v6/latest/EUR`. El backend no sabe nada de divisas: calcula, guarda y devuelve en EUR (ADR 0002).
-- Importe mostrado = importe en EUR × tasa EUR→divisa, redondeado a 2 decimales al mostrarlo. Nunca se guarda (RN-7).
+- Importe mostrado = importe en EUR × tasa EUR→divisa, redondeado a 2 decimales al mostrarlo. Nunca se guarda (RN-7). Desde la spec 008, se redondea a los decimales de la divisa según ISO 4217: 2 en EUR, USD, GBP y CHF, y ninguno en JPY, que no tiene céntimos.
 - Las tasas se guardan en caché y se reutilizan hasta `time_next_update_utc`.
 - Si la API falla (red, 429 o `result` distinto de `success`), se usa la última tasa guardada con un aviso que indica de cuándo son; sin tasas guardadas, solo EUR con aviso (flujo 4 del 00).
 - Se ofrecen EUR, USD, GBP, CHF y JPY, solo las que devuelva la API, formateadas con `Intl.NumberFormat` (supuesto 12). La app recuerda la divisa elegida en el navegador y muestra la atribución junto a las tasas.

@@ -1,6 +1,6 @@
 # Plan técnico — 003 Clientes
 
-Estado: v1.0, redactado y ejecutado por delegación del autor, revisado y aprobado por el autor · Spec: `spec.md` v1.0 · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7.4 y §8 de `00-spec-first.md` · Base: specs y código de 001 y 002
+**Estado:** ✅ ejecutado y revisado por el autor · **Spec:** [spec.md](spec.md) v1.0 · **Se apoya en:** §5, §7.4 y §8 de [00-spec-first](../00-spec-first.md), y en las specs y el código de 001 y 002
 
 Los comportamientos de FastAPI, Starlette, Pydantic y SQLite en los que se apoya este plan se comprobaron antes de escribirlo, con un prototipo desechable fuera del repositorio. La sección 10 recoge lo que reveló.
 
@@ -283,4 +283,4 @@ Los RNF: RNF-1, test de arquitectura y tablas 6.1 y 6.2 sin base de datos; RNF-2
 | `OFFSET` enorme | `OverflowError` | Límite de `offset` (spec D-9) |
 | Caracteres de control de §7.4 | Los 14 casos coinciden con el cálculo | Tabla 6.1 |
 
-No quedan dudas abiertas. Las decisiones que el autor aún no ha confirmado están en la sección 11 de la spec.
+No quedan dudas abiertas. Las decisiones de la sección 11 de la spec las confirmó el autor al revisarla.

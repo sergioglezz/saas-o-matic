@@ -1,6 +1,19 @@
 # Log de revisión del trabajo generado por IA
 
-Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las funcionalidades 001 a 007, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
+Registro de los fallos reales encontrados en lo que generó la IA (documentos, código y tests) durante las specs 001 a 008, en la revisión final de la documentación y en la revisión independiente del proyecto terminado, cómo se detectaron y cómo se corrigieron. Cumple el principio 5 de la constitución: ningún código generado por IA se integra sin que el autor lo haya leído y sepa explicarlo.
+
+## Hallazgos destacados
+
+Ocho de las 54 entradas que muestran bien qué tipo de errores comete la IA y qué los detecta:
+
+- **Un principio que contradecía la fuente de verdad (entrada 1).** La IA propuso importes con `Decimal` y guardar el tipo de cambio. La revisión cruzada con `00-spec-first.md` lo paró, y el principio se reescribió con céntimos enteros y sin conversión guardada.
+- **38 problemas en una spec ya aprobada (entrada 3).** Una revisión QA que solo detecta, sin corregir, encontró ambigüedades, contradicciones y casos límite sin cubrir antes de escribir una línea de código.
+- **Un criterio «cubierto» sin ningún test (entrada 11).** El script de trazabilidad contaba una cita en cualquier parte del archivo. Desde entonces se cuenta por test y con su resultado, y se escribió el test que faltaba.
+- **Un formato de error único solo por casualidad (entrada 16).** Los tests pasaban, pero el módulo rompía las capas del plan y un error del framework habría salido con otro formato. Se corrigió en la spec 003, con un test de arquitectura que vigila `core/`.
+- **Tests que no comprobaban lo que decían (entradas 25 y 37).** Uno pasaba con la ruta todavía sin crear, y tres casos de GU-10 pasaban por la condición equivocada. Lo destaparon la fase roja y las mutaciones; se reforzaron hasta que cada mutación hace fallar el suyo.
+- **Un fallo que solo se ve en un navegador real (entrada 39).** A 360 px la ficha medía 528 px, y el primer arreglo partía las cabeceras letra a letra. Los tests de pantalla no calculan el diseño: lo encontró la comprobación manual MA-1.
+- **Un borrado que salió de su carpeta (entrada 48).** Al quitar una copia de trabajo, el borrado siguió un enlace y eliminó parte del `node_modules` real. Se repuso desde `package-lock.json` y quedó una regla: los enlaces se quitan antes de borrar.
+- **Una decisión de la IA que corrigió el autor (entrada 54).** La spec 005 mostraba los yenes con 2 decimales por seguir al pie de la letra una regla del enunciado, y los tests lo comprobaban. Lo detectó el autor al usar la aplicación terminada (P-20), y la corrección entró como la spec 008.
 
 ## Cómo se revisa
 
@@ -11,9 +24,15 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
    - instalación desde cero en un clon limpio con un entorno virtual nuevo (en el frontend, `npm ci`);
    - la suite, el lint y los tipos ejecutados en cada commit de código, uno a uno;
    - comprobación de que cada CA y cada caso de la spec aparecen citados en algún test.
-5. **Con la aplicación terminada:** el autor la usa como lo haría un comercial. Así detectó lo que ningún test podía detectar, porque no estaba en ninguna spec: una interfaz que había que modernizar y que no se podía borrar un cliente. Cada cambio entró por una spec nueva (006 y 007), con el mismo proceso desde el paso 1 (`prompts.md`, P-18 y P-19).
+5. **Con la aplicación terminada:** el autor la usa como lo haría un comercial. Así detectó lo que ningún test podía detectar, porque no estaba en ninguna spec: una interfaz que había que modernizar, que no se podía borrar un cliente y que los yenes salían con decimales. Cada cambio entró por una spec nueva (006, 007 y 008), con el mismo proceso desde el paso 1 (`prompts.md`, P-17, P-18 y P-20).
+6. **Al terminar:** una revisión de toda la documentación contra lo construido, para que ningún documento prometa algo que otro no cumple (entrada 49).
+7. **Revisión independiente:** una sesión sin historial previo audita el proyecto entero contra la constitución, `AGENTS.md` y las specs. Trabaja en un clon limpio y lo ejecuta todo (tests, lint, migraciones, seed, la API por HTTP y la app en un navegador a 360 px) en vez de dar nada por supuesto (entradas 50 a 53).
 
 ## Registro
+
+Por orden de aparición y agrupado por spec. Los números no cambian: las specs, las tareas y los prompts citan las entradas por ellos.
+
+### Constitución y spec 001
 
 | # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
 | --- | --- | --- | --- | --- | --- |
@@ -28,15 +47,30 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 9 | T-08, `tests/integration/conftest.py` | Docstring de 101 caracteres | Supera el límite de 100 de ruff (E501) | `ruff check` en la verificación del bloque | Docstring acortado antes del commit (`332451f`) |
 | 10 | T-12, script de verificación | `export PATH="C:/...:$PATH"` en bash | En bash `:` separa rutas, así que `C:` partía la ruta. Se ejecutó un `pytest` ajeno al entorno nuevo y ruff, mypy y alembic no se encontraron | Salida incoherente («1 error», «command not found») | Cada ejecutable se llama por su ruta completa. No afecta al código del repositorio |
 | 11 | T-12, comprobación de trazabilidad | Script que buscaba cada CA en el texto completo de los archivos de test | Contaba como cubierto un CA citado solo en el docstring de un archivo. Así dio por cubierto CA-4.2, que ningún test comprobaba entero: no había test de que un país añadido pasa a estar soportado. En T-12 se afirmó que los 29 CA estaban citados, y no era exacto | Revisión requisito por requisito con una trazabilidad más estricta, que solo cuenta los docstrings de cada test y cruza con el resultado de pytest | Nuevo test `test_supported_countries_are_exactly_the_configured_ones`: país sin tasa no soportado, con tasa soportado y, al quitarla, otra vez no soportado. Se comprobó que falla si el servicio deja de rechazar países sin tasa. Se quitó la cita inexacta del docstring del archivo de la migración |
+
+### Spec 002
+
+| # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
+| --- | --- | --- | --- | --- | --- |
 | 12 | Spec 002 v1.0, CA-6.6 | El criterio exigía JSON en toda respuesta salvo `HEAD` y las preflight de CORS rechazadas | Una preflight aceptada responde 200 con texto plano («OK»): el criterio no se podía cumplir sin escribir una preflight propia | Prototipo desechable antes de escribir el plan (plan 002, duda D-1) | Spec v1.1: CA-6.6 excluye todas las respuestas a preflight y CA-9.2 aclara que su cuerpo no es contrato (`1449733`) |
 | 13 | T-15, `/openapi.json` | Ejemplo de la respuesta 200 declarado en la ruta | FastAPI quita los valores `null` al generar el esquema, así que el ejemplo publicado perdía `"to_users": null` en el tramo 3 y dejaba de ser el de la sección 5 de la spec | Entrada reconstruida en T-18 a partir del mensaje del commit, que describe el problema | `app.openapi` restaura el ejemplo exacto, y un test lo compara con el de la spec (`db626bd`) |
 | 14 | T-02, mensaje del commit `f5ed03d` | «test: share database fixtures with the API tests (002 T-02)» | No cita ningún RF ni CA, y la regla de la entrada 8 lo pide también en las tareas de infraestructura. El commit da soporte a los tests por HTTP de RF-1 a RF-9 | Comprobación de los mensajes de los 15 commits de código en T-18 | No se reescribe: cambiaría todos los commits posteriores, aún sin publicar, y sus hashes en `tasks.md`, y esa decisión es del autor (como en la entrada 8). Queda como excepción anotada en el checklist de la spec 002 |
-| 15 | `AGENTS.md` y T-16: «API en `localhost:8000`» | Se daba por hecho que `localhost` y `127.0.0.1` eran equivalentes | `uvicorn` escucha solo en `127.0.0.1`. En Windows, un cliente que usa `localhost` prueba antes IPv6 y cada conexión nueva tarda unos 0,2 s más: más que el objetivo de RNF-2, aunque la API responde en 6 ms | Medición de T-17: 0,21 s con `localhost` frente a 0,006 s con `127.0.0.1` | Aviso en el README (`75ff2fd`). La URL base de la API se decidirá en la spec del frontend |
+| 15 | `AGENTS.md` y T-16: «API en `localhost:8000`» | Se daba por hecho que `localhost` y `127.0.0.1` eran equivalentes | `uvicorn` escucha solo en `127.0.0.1`. En Windows, un cliente que usa `localhost` prueba antes IPv6 y cada conexión nueva tarda unos 0,2 s más: más que el objetivo de RNF-2, aunque la API responde en 6 ms | Medición de T-17: 0,21 s con `localhost` frente a 0,006 s con `127.0.0.1` | Aviso en el README (`75ff2fd`). La spec del frontend lo cerró: el navegador llama a `http://127.0.0.1:8000` (005 D-1) |
 | 16 | `app/core/errors.py` (T-05, T-12 y T-13) | El módulo importa los mensajes de `app/schemas/pricing.py`, y cualquier estado HTTP distinto de 404 y 405 conserva el formato por defecto de FastAPI (`{"detail": ...}`) | El plan 002 (§2) solo le permitía importar FastAPI, Starlette y `domain.errors`. Y RF-6 dice que el formato único vale para cualquier ruta futura: un 422 propio de FastAPI o un 400 saldrían con otro formato. Hoy ningún caso lo alcanza, por eso los tests pasan | Revisión del código al retomar el proyecto, antes de T-16 | Corregido en la spec 003 (RF-7): el mapeo de errores de dominio pasa a `app/api/error_mapping.py` y un test de arquitectura vigila `app/core/` (`1014ff4`); los errores de validación y HTTP del framework usan el formato único (`e1a4be8`) |
+
+### Spec 003
+
+| # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
+| --- | --- | --- | --- | --- | --- |
 | 17 | 003 T-03, `_allowed_methods` en `app/core/errors.py` | Unía el atributo `methods` de las rutas de la aplicación que coincidían con la dirección | En esta versión de FastAPI, un router incluido con `include_router` es una única ruta anidada, sin `methods`: la cabecera `Allow` de `/pricing/quote` salía vacía. El prototipo del plan no lo vio porque declaraba sus rutas directamente en la aplicación | Verificación completa de la tarea: fallaron los 9 tests de 405 de la spec 002 | Se prueba cada método HTTP contra las rutas con `matches`, la interfaz pública, que también funciona con rutas anidadas (`b2356a0`) |
 | 18 | Plan 003, DT-3 (mensajes propios por campo) | Errores de Pydantic con tipo propio (`PydanticCustomError`), comprobados en el prototipo | `PydanticCustomError` se importa de `pydantic_core`, un paquete que `requirements.txt` no declara: habría sido una dependencia directa sin fijar, contra el principio 1 | Al escribir el esquema en T-11, antes de añadir el import | Un `ValueError` propio (`InvalidFieldError`) que lleva su mensaje; Pydantic lo entrega intacto y `field_errors` lo lee. DT-3 del plan actualizada (`8ee56cd`) |
 | 19 | 003 T-17, `/openapi.json` | FastAPI documenta por su cuenta un 422 con su propio esquema (`HTTPValidationError`) en toda ruta con parámetros | La API nunca responde con ese formato (RF-7): la documentación habría anunciado un error que no existe, también en la ficha, que no puede dar 422 | Test de documentación escrito antes del código en T-17 | Las rutas declaran sus errores con el formato único y `/openapi.json` se limpia del 422 del framework (`e6fa3cd`) |
 | 20 | 003, tests de clientes (T-09 a T-14) | La tabla de seis clientes de la spec escrita dos veces, en los tests de base de datos y en los de HTTP; y ningún test impedía que un router importase SQLAlchemy o un repositorio | Datos duplicados que podían divergir de la spec por separado, y una regla de capas (RNF-1) que solo se cumplía por disciplina | Revisión conjunta del código contra la spec y el plan en T-20 | Datos en `tests/customers_data.py` y test de arquitectura de `app/api/` (`7556365`) |
+
+### Spec 004
+
+| # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
+| --- | --- | --- | --- | --- | --- |
 | 21 | 004 T-01, docstring de `test_simulation_domain.py` | Un test citaba la decisión técnica DT-2 como origen del orden «almacenamiento antes que llamadas» | DT-2 trata de que el servicio vuelva a validar; ese orden lo fija la sección 4 del plan. Una cita equivocada rompe la trazabilidad | Revisión de la fase 1 contra el plan | Cita corregida a la sección 4 del plan (`5d02c4e`) |
 | 22 | 004 T-02, test DB-9 (borrar un cliente con simulaciones) | Tras el borrado rechazado, el test hacía `rollback()` y comprobaba que el cliente seguía | El `rollback()` deshacía también las filas que la fixture había insertado sin confirmar: el test fallaba aunque la base de datos rechazaba bien el borrado | El test falló con la migración ya correcta | La fixture confirma sus filas antes del borrado, y el test comprueba también que la simulación sigue (`6bbf745`) |
 | 23 | 004 T-02, `upgrade()` de la migración 0003 | Una sola función con las dos tablas, sus columnas y sus quince restricciones | 66 líneas, contra el límite de 40 de `AGENTS.md` | Comprobación de tamaños al revisar la fase 2 | Partida en funciones y tablas de restricciones de menos de 40 líneas; `compare_metadata` y `alembic check` confirman el mismo esquema (`6bbf745`) |
@@ -48,6 +82,11 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 29 | 004 T-14, informe de trazabilidad | Un plugin de pytest desechable que filtraba los tests de la 004 por el texto «spec 004» | Distinguía mayúsculas: el módulo de protocolo dice «Spec 004», y los diez casos ER y dos CA salieron como «sin test» | El informe contradecía tests que se sabía que existían y pasaban | Filtro insensible a mayúsculas: 43 de 43 CA y 86 de 86 casos |
 | 30 | 004 T-14, recuentos en la spec, las tareas y los mensajes al autor | «42 CA» y «11 de los 13 criterios» | Son 43 CA y 12 criterios (10 cumplidos entonces): cifras escritas de memoria | Al contar las casillas de la sección 10 | Cifras corregidas con un recuento sobre el propio documento (`34c0bb5`) |
 | 31 | 004, commit de T-05 | Prefijo `refactor:` | `AGENTS.md` solo admite `docs`, `feat`, `test`, `fix` y `chore` | Revisión del mensaje justo después de crear el commit | Mensaje cambiado a `chore:` con `--amend` antes del push, con el mismo árbol (`5d70bf4`) |
+
+### Spec 005
+
+| # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
+| --- | --- | --- | --- | --- | --- |
 | 32 | Spec 005 v1.0, casos LI-13, LI-17, AL-6, AL-17 y SM-10 | Tests de pantalla que escribían más caracteres que el límite, pulsaban Intro o movían el slider con el teclado | El DOM simulado de los tests no reproduce esos comportamientos nativos del navegador: los casos no se podían cumplir en el nivel C | Al planificar, antes de escribir código | Spec v1.1: el test C comprueba el control nativo que los garantiza y MA-3 el comportamiento en un navegador real (`f99d8d4`) |
 | 33 | Plan 005, §3 | El navegador guardaba tres campos de la respuesta de tasas | La spec 5.5 dice que se guardan los cinco campos de 5.4 | Revisión de la fase 2 contra la spec | El plan sigue a la spec, y lo guardado se valida con la misma función que la respuesta (`4b19bc2`, `1725a26`) |
 | 34 | Plan 005, sección 10 (prototipo de T-01) | «Los cambios de signals se pintan solos tras avanzar el reloj» | Sin zone.js, un cambio hecho dentro de un temporizador (el límite de 10 s) se pinta en el siguiente fotograma: TC-7 fallaba aunque el estado era correcto. El prototipo solo había probado cambios hechos desde el test | Depuración de TC-7 en T-05 | `settle()` de los tests avanza el reloj y llama a `TestBed.tick()`, que pinta sin mover el reloj; sección 10 corregida (`53c587d`, `1725a26`) |
@@ -57,6 +96,11 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 38 | 005 T-15, `api-errors.spec.ts` | Dos tests que abrían la app varias veces seguidas | El módulo de pruebas no admite configurarse dos veces sin reiniciarse | Los tests fallaron con el código correcto | Se reinicia el módulo entre aperturas (`9c13763`) |
 | 39 | 005, estilos de la ficha | Grids con columnas implícitas alrededor de la tabla de tramos; después, `overflow-wrap: anywhere` en todo el documento | A 360 px la ficha medía 528 px y obligaba a desplazarse en horizontal. El primer arreglo partía las cabeceras de la tabla letra a letra | Comprobación manual MA-1 en un navegador real (T-16) | Columnas con `minmax(0, 1fr)`, ajuste normal dentro de las tablas y, hasta 480 px, cada tramo como un bloque con sus etiquetas (`4ffae58`) |
 | 40 | 005 T-16, anotación de resultados en `tasks.md` | Texto con comillas invertidas pasado entre comillas dobles a un comando de bash | Bash las interpretó como órdenes: borró varias rutas del texto e intentó ejecutar `npm start` | Al leer el resultado del comando | Texto restaurado con el editor antes de seguir; sin efecto en el código (`4ffae58`) |
+
+### Specs 006 y 007
+
+| # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
+| --- | --- | --- | --- | --- | --- |
 | 41 | 006, test LY-7 | Un test que abría la app dos veces | El mismo fallo de la entrada 38: el módulo de pruebas no admite configurarse dos veces sin reiniciarse | El test falló con el código correcto | Se reinicia el módulo entre las dos aperturas |
 | 42 | 006, ayudante del test AN-4 | Buscaba el aviso con `find` entre los elementos con `role="status"` | Devolvía el contenedor exterior, no el aviso más interno, que es el que lleva la animación | El test falló con el código correcto | Se toma el último elemento que coincide, el más interno |
 | 43 | Plan 007, §4 | «El único test anterior que cambia es ER-3 de 003» | 004 ER-10 también comprobaba con `DELETE` que la ficha anunciaba `Allow: GET`. Con la ruta nueva, esa petición daba 404 y el test fallaba | La suite completa del backend en la verificación de T-02 (1 fallo de 1069) | El test sondea con `PUT`, que ninguna de sus tres rutas admite, y la ficha espera «DELETE, GET»: comprueba lo mismo que antes. Plan (§1 y §4) y spec (§8) actualizados |
@@ -66,31 +110,62 @@ Registro de los fallos reales encontrados en lo que generó la IA (documentos, c
 | 47 | Commits por tarea de 006 y 007, script que reconstruye el estado de cada tarea | Para sacar la 007 de `customer-detail-page.css`, cortaba el archivo desde el bloque de la 007 hasta el final | Detrás de ese bloque estaban los estilos de «Cliente no encontrado»: los commits de la 006 se quedaban sin ellos. Los tests no lo detectan porque no miran el CSS | El diff de T-03 de la 007 cambiaba 28 líneas de ese CSS, y el cambio real eran 7 | Se quita solo la regla `.card-footer`. Los commits se rehicieron desde T-02 de la 006, antes de terminar y sin publicar nada. Se comprobó que el último commit coincide exactamente con la carpeta de trabajo |
 | 48 | Mismo trabajo, al borrar la copia de trabajo aparte (`git worktree`) | La copia usaba un enlace (*junction*) al `node_modules` del proyecto para no reinstalar los paquetes, y se borró con `git worktree remove --force` | En Windows, el borrado siguió el enlace y eliminó parte del `node_modules` real, entre otros los paquetes de Angular. El servidor de desarrollo del autor dejó de compilar | El borrado terminó con un error, y `npm ls` mostró los paquetes que faltaban | Se quitó el enlace sin seguirlo y se repusieron los paquetes con `npm install`, a partir de `package-lock.json`, que no cambió. Tests, lint y compilación volvieron a pasar. Sin efecto en el repositorio |
 
+### Revisión final de la documentación
+
+| # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
+| --- | --- | --- | --- | --- | --- |
+| 49 | README, `AGENTS.md`, `00-spec-first.md`, ADR y specs | Documentos escritos o actualizados spec a spec, cada uno correcto en su momento | Incoherencias acumuladas entre documentos: (1) el README no recogía cuatro cosas que las specs y los ADR decían documentar allí (sin autenticación, límite de SQLite, sin límite de tamaño del cuerpo y una nota sobre AWS que nunca se escribió), y la guía `ai-workspace/README.md` que proponía el 00 §9 no existía; (2) `AGENTS.md` seguía diciendo `localhost:8000`, el fallo de la entrada 15; (3) estados viejos: «futura spec», «spec posterior», el ADR 0011 «propuesto» con la spec 006 cerrada y decisiones «pendientes de confirmar» ya confirmadas; (4) la estructura de carpetas y el modelo de datos del 00 no coincidían con lo construido | Revisión de toda la documentación con la aplicación terminada: cada «se documenta en…» se buscó en el documento de destino, y cada estado se comparó con el historial de git | README con «Límites conocidos» y sin la nota de AWS en el 00; `AGENTS.md` con `127.0.0.1:8000`; estados y referencias al día, con una nota donde la spec 007 cambió algo de una anterior; 00 alineado con el código; nueva guía `ai-workspace/README.md`. Enlaces y anclas de los 42 documentos comprobados con un script. Sin cambios en el código |
+
+### Revisión independiente
+
+| # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
+| --- | --- | --- | --- | --- | --- |
+| 50 | 002 T-10, `read_json_object` en `app/api/validation.py` | La lectura del cuerpo capturaba solo `UnicodeDecodeError` y `json.JSONDecodeError` | Un cuerpo anidado más hondo de lo que puede seguir el analizador de JSON (100 000 corchetes en `users`) lanza `RecursionError`, y la API respondía 500 `internal_error` en vez de 422. No filtraba detalles internos, pero una lista en `users` es un 422 (002 CA-7.2 y E-12). Ningún caso de la tabla de la spec llegaba a ese límite | Revisión independiente: una petición real a la API arrancada desde un clon limpio | También se captura `RecursionError`, con el mismo 422 `body`. Caso `too-deep` en `test_read_json_object.py`, visto en rojo antes del arreglo; 1070 tests, ruff y mypy en verde. Añadir el caso a la tabla 6.2 de la spec 002 queda pendiente de la aprobación del autor |
+| 51 | 005 T-01, `frontend/tsconfig.json` | El proyecto base de Angular 22, sin `"strict": true` ni `strictTemplates` | El modo estricto que exigen el principio 6 y `AGENTS.md` estaba activo solo porque TypeScript 6 y Angular 22 lo activan por defecto: no se veía en la configuración, y una versión con otros valores por defecto lo habría desactivado sin avisar | Revisión independiente: `tsc --showConfig` no mostraba `strict`; un archivo de prueba con un `any` implícito, un `null` en un `string` y una propiedad sin inicializar confirmó que estaba activo | Las dos opciones escritas en `tsconfig.json`. Lint, 365 tests y compilación de producción en verde |
+| 52 | Los 129 commits del proyecto | Commits creados con la identidad que tenía la configuración global de git, sin comprobarla | El autor de todos era «Tu Nombre», el texto de ejemplo de esa configuración. Las comprobaciones de commits de este registro miraban el mensaje y el contenido, no el autor (entradas 8, 14, 31 y 47) | Revisión independiente: `git log --format='%an' \| sort \| uniq -c` dio `129 Tu Nombre` | Un `.mailmap` asigna el email de los commits al nombre `sergioglezz` sin reescribir la historia, así que los hashes que citan `tasks.md` y este registro siguen valiendo. `user.name` configurado en el repositorio para los commits siguientes |
+| 53 | Specs 001 a 007, revisión de la entrada 49 | La revisión de la documentación cambió las siete specs aprobadas (estado, referencias, notas sobre lo que cambió la spec 007 e historias de usuario sin la figura del evaluador) | Ninguna spec lo registraba en su «Historial de cambios»: la 007 solo renombraba una fila existente. Una spec aprobada no cambia sin dejar rastro en ella misma (`AGENTS.md`) | Revisión independiente: `git diff` de cada `spec.md`, sin ninguna fila nueva en el historial | Una fila «(edición)» en las siete specs: sin cambios en los requisitos, con lo que cambió y la referencia a la entrada 49 |
+
+### Spec 008
+
+| # | Dónde | Qué había generado la IA | Problema | Cómo se detectó | Corrección |
+| --- | --- | --- | --- | --- | --- |
+| 54 | Spec 005, CA-5.4 y D-8; `shared/format/money.ts` | Todos los importes con 2 decimales, también en yenes: «27.319,14 JPY». D-8 lo justificaba con la lectura literal de RN-7 («redondeado a 2 decimales») y avisaba de que mostrarlos sin decimales exigiría cambiar esa regla | El yen no tiene subunidad (ISO 4217 le da 0 decimales): la app mostraba fracciones de yen que no aparecen en ningún precio real. La decisión quedó anotada, pero no se le preguntó al autor, y como CV-9, CV-10 y CV-15 la comprobaban, ningún test podía detectarla | El autor, al usar la aplicación terminada con la divisa en yenes (`prompts.md`, P-20) | Spec 008: cada divisa con los decimales de ISO 4217, que da `Intl.NumberFormat`, y en JPY un solo redondeo «mitad hacia arriba» a yenes enteros. CV-9, CV-10 y CV-15 pasan a ser YN-1 a YN-3, con 16 tests nuevos vistos en rojo antes del código. 378 tests, lint y compilación en verde; comprobado en un navegador real, también a 360 px. Con la aprobación del autor, notas en el 00 (§3, RN-7, supuesto 12 y §11), la spec 005, su plan y el ADR 0005, cada una con su fila en el historial de la spec |
+
 ## Reglas que salen de este registro
 
-- **Revisar cada documento nuevo contra `00-spec-first.md` y `AGENTS.md` antes de aprobarlo** (entradas 1, 2 y 5).
-- **En tests que deben funcionar en varios sistemas operativos, comparar estructuras y no textos renderizados** (entrada 7).
-- **Todo commit que toca código cita el RF o CA al que da soporte, también en las tareas de infraestructura** (entrada 8).
-- **Ningún comentario o ejemplo promete un comportamiento que el código no tiene** (entrada 6).
-- **La trazabilidad de un CA se comprueba a nivel de test y con su resultado, no buscando el identificador en el archivo** (entrada 11).
-- **Lo que depende del comportamiento de una biblioteca se comprueba con un prototipo antes de fijarlo en la spec o en el plan** (entradas 12 y 13).
-- **Un formato «global» se prueba también con lo que el código aún no usa: una ruta de prueba por cada tipo de error que el framework puede generar** (entrada 16).
-- **Las mediciones y los ejemplos usan la misma dirección que escucha el servidor** (entrada 15).
-- **Un prototipo monta las piezas igual que la aplicación real: mismas llamadas, mismo anidamiento** (entrada 17).
-- **Antes de importar un paquete se comprueba que está declarado en `requirements.txt`** (entrada 18).
-- **La documentación generada también se revisa: lo que el framework añade solo puede contradecir el contrato** (entrada 19).
-- **Cada regla de capas tiene un test que la vigila, y cada tabla de la spec se copia una sola vez en los tests** (entrada 20).
-- **Un test que pasa antes de que exista su código se refuerza, o se comprueba con una mutación que lo haga fallar** (entrada 25).
-- **Cada tarea se cierra en verde con sus propios tests: ninguno depende de una tarea posterior** (entrada 26).
-- **Un renombrado se hace sobre el identificador completo y se revisa el diff antes de seguir** (entrada 27).
-- **Solo se para o se borra lo que la propia sesión arrancó o creó** (entrada 28).
-- **Las cifras de un informe salen de un recuento, no de memoria** (entradas 29 y 30).
-- **El mensaje de cada commit se comprueba contra las convenciones de `AGENTS.md` antes de crearlo** (entrada 31).
-- **Un prototipo prueba también el caso difícil que usará la aplicación, no solo el más sencillo** (entrada 34).
-- **Cada condición de un criterio con varias se prueba en un caso donde solo ella decide el resultado** (entrada 37).
-- **El diseño se comprueba en un navegador real al ancho mínimo de la spec, con los datos más largos (JPY, desgloses abiertos)** (entrada 39).
-- **El texto con comillas invertidas se escribe con el editor o en un archivo, nunca entre comillas dobles de bash** (entrada 40).
-- **Antes de cambiar un contrato, se buscan en todos los tests las comprobaciones del contrato viejo, no solo en los de la spec que lo definió** (entrada 43).
-- **Cada vez que un test abre la app más de una vez, reinicia el módulo de pruebas entre aperturas** (entradas 38 y 41).
-- **Un fragmento que se recorta se delimita por su principio y por su final, y el diff de cada archivo se compara con el cambio esperado** (entrada 47).
-- **Nunca se deja un enlace a otra carpeta dentro de una carpeta que se va a borrar entera: los enlaces se quitan antes, sin seguirlos** (entrada 48).
+Lo que enseñaron estos fallos, convertido en reglas para las tareas siguientes y agrupado por tema:
+
+**Documentos y specs**
+
+- Cada documento nuevo se revisa contra `00-spec-first.md` y `AGENTS.md` antes de aprobarlo (entradas 1, 2 y 5).
+- Lo que depende del comportamiento de una biblioteca se comprueba con un prototipo antes de fijarlo en la spec o en el plan. El prototipo monta las piezas igual que la aplicación real y prueba también el caso difícil, no solo el sencillo (entradas 12, 13, 17 y 34).
+- Ningún comentario, ejemplo ni documentación generada promete algo que el código no hace: lo que añade el framework también se revisa (entradas 6 y 19).
+- Antes de cambiar un contrato, se buscan en todos los tests las comprobaciones del contrato viejo, no solo en los de la spec que lo definió (entrada 43).
+- Cuando un documento dice que algo «se documenta en» otro, se comprueba en ese otro al cerrar la spec; y al cerrar una spec se actualizan las referencias que otros documentos hacían a ella como «futura» o «pendiente» (entrada 49).
+- Todo cambio en una spec aprobada, aunque sea solo de redacción, deja una fila en su historial de cambios (entrada 53).
+- Una decisión que se aparta de lo que haría un usuario real por seguir una regla al pie de la letra (yenes con céntimos) se pregunta al autor antes de aprobar la spec: anotarla no basta (entrada 54).
+- Lo que exigen la constitución y `AGENTS.md` se escribe en la configuración aunque la herramienta ya lo haga por defecto (entrada 51).
+
+**Tests**
+
+- La trazabilidad de un CA se comprueba test a test y con su resultado, no buscando el identificador en el archivo (entrada 11).
+- Un test que pasa antes de que exista su código se refuerza o se comprueba con una mutación que lo haga fallar; y cada condición de un criterio con varias se prueba en un caso donde solo ella decide (entradas 25 y 37).
+- Cada tarea se cierra en verde con sus propios tests: ninguno depende de una tarea posterior (entrada 26).
+- Cada regla de capas tiene un test que la vigila, un formato «global» se prueba también con lo que el código aún no usa, y cada tabla de la spec se copia una sola vez en los tests (entradas 16 y 20).
+- En tests que deben funcionar en varios sistemas operativos se comparan estructuras, no textos renderizados; y si un test abre la app más de una vez, reinicia el módulo de pruebas entre aperturas (entradas 7, 38 y 41).
+- El diseño se comprueba en un navegador real, al ancho mínimo de la spec y con los datos más largos (JPY, desgloses abiertos) (entrada 39).
+- Una entrada que se lee a mano se prueba también con lo que rompe el analizador (profundidad, codificación), no solo con lo que no es válido (entrada 50).
+
+**Commits, cifras y dependencias**
+
+- Todo commit que toca código cita el RF o CA al que da soporte, también en las tareas de infraestructura, y su mensaje se comprueba contra `AGENTS.md` antes de crearlo (entradas 8 y 31).
+- Antes del primer commit se comprueba la identidad de git, no solo el mensaje (entrada 52).
+- Las cifras de un informe salen de un recuento, no de memoria (entradas 29 y 30).
+- Antes de importar un paquete se comprueba que está declarado en `requirements.txt` (entrada 18).
+- Las mediciones y los ejemplos usan la misma dirección que escucha el servidor (entrada 15).
+
+**Operación del asistente**
+
+- Solo se para o se borra lo que la propia sesión arrancó o creó, y los enlaces a otras carpetas se quitan, sin seguirlos, antes de borrar la carpeta que los contiene (entradas 28 y 48).
+- Un renombrado o un recorte se delimita por el identificador o el bloque completo, y el diff de cada archivo se compara con el cambio esperado antes de seguir (entradas 27 y 47).
+- El texto con comillas invertidas se escribe con el editor o en un archivo, nunca entre comillas dobles de bash (entrada 40).

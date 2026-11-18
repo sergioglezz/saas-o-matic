@@ -1,6 +1,6 @@
 # Plan técnico — 006 Interfaz moderna
 
-Estado: v1.0, ejecutado según `tasks.md`, revisado y aprobado por el autor · Spec: `spec.md` v1.0 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: plan 005 y ADR 0011 · Base: el frontend de 005, sin cambiar su comportamiento
+**Estado:** ✅ ejecutado y revisado por el autor · **Spec:** [spec.md](spec.md) v1.0 · **Se apoya en:** el plan 005, el ADR 0011 y el frontend de 005, sin cambiar su comportamiento
 
 ## 1. Resumen y alcance
 
@@ -61,5 +61,6 @@ Estado: v1.0, ejecutado según `tasks.md`, revisado y aprobado por el autor · S
 1. **Simplicidad:** tres dependencias de desarrollo con su ADR; ninguna en ejecución.
 2. **La spec manda:** cada tarea cita sus RF y casos.
 3. **Capas:** nada cambia en `core/`; `initials` es puro y lo vigila el lint.
+4. **Dinero:** no cambia; el frontend sigue sin calcular importes.
 5. **Tests:** primero los nuevos casos en rojo; la suite de 005 como red de seguridad.
 6. **Calidad e idioma:** lint, tipado estricto y textos en español.

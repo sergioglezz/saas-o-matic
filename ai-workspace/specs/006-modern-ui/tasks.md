@@ -1,6 +1,6 @@
 # Tareas — 006 Interfaz moderna
 
-Estado: v1.0 ejecutadas, revisadas y aprobadas por el autor · Spec: `spec.md` v1.0 (aprobada) · Plan: `plan.md` v1.0
+**Estado:** ✅ todas las tareas completadas y revisadas por el autor · **Spec:** [spec.md](spec.md) v1.0 · **Plan:** [plan.md](plan.md)
 
 ## Reglas de ejecución
 
@@ -12,7 +12,7 @@ Estado: v1.0 ejecutadas, revisadas y aprobadas por el autor · Spec: `spec.md` v
 
 | Tareas | RF | Estado |
 | --- | --- | --- |
-| T-01 a T-04 | RF-1 a RF-6 | ✅ Completadas: 352 tests en verde (los 319 de 005 sin modificar y 33 nuevos: IN-1 a IN-7, LY-1 a LY-8, SK-1 a SK-4 y AN-1 a AN-7), lint sin errores y compilación sin avisos; CSS final de 22,1 kB. Cada tarea empezó en rojo. Fallos propios corregidos: LY-7 abría la app dos veces sin reiniciar el módulo de pruebas, y el ayudante de AN-4 tomaba el contenedor de T-SOK en lugar del aviso |
+| T-01 a T-04 | RF-1 a RF-6 | ✅ Completadas: 352 tests en verde (los 319 de 005 sin modificar y 33 nuevos: IN-1 a IN-7, LY-1 a LY-8, SK-1 a SK-4 y AN-1 a AN-7), lint sin errores y compilación sin avisos; CSS final de 22,1 kB. Cada tarea empezó en rojo. Fallos corregidos: entradas 41 y 42 del log |
 | T-05 | Todos | ✅ Completada: MA-1 a MA-7 comprobados en el navegador integrado, con el backend y el frontend reales |
 
 ## Tareas

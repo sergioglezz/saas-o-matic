@@ -1,6 +1,6 @@
 # Plan técnico — 004 Simulaciones
 
-Estado: v1.0, ejecutado según `tasks.md`, revisado y aprobado por el autor · Spec: `spec.md` v1.0 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §7.3 y §8 de `00-spec-first.md` · Base: specs y código de 001, 002 y 003
+**Estado:** ✅ ejecutado y revisado por el autor · **Spec:** [spec.md](spec.md) v1.0 · **Se apoya en:** §5, §7.3 y §8 de [00-spec-first](../00-spec-first.md), y en las specs y el código de 001 a 003
 
 Antes de escribir este plan se comprobaron con un prototipo desechable, fuera del repositorio, los comportamientos de Pydantic, SQLAlchemy, SQLite y FastAPI en los que se apoya. Se montaron las piezas igual que la aplicación real (entrada 17 del log). La sección 10 recoge lo que salió.
 
@@ -293,4 +293,4 @@ Los RNF: RNF-1, tests de arquitectura (dominio y routers sin base de datos); RNF
 | Preflight de `POST /simulations` desde `http://localhost:4200` | 200 con `Access-Control-Allow-Origin` | DT-14, ER-7 |
 | `POST /simulations/` | 404 sin redirección | ER-4 |
 
-No quedan dudas abiertas. El siguiente paso es `tasks.md`, una tarea por paso de la sección 7.
+No quedan dudas abiertas.

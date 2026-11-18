@@ -1,8 +1,8 @@
 # 004 — Simulaciones: guardado e historial
 
-Estado: v1.0 aprobada por el autor, con las decisiones D-1 a D-11 confirmadas · ✅ Completada, revisada y aprobada por el autor, con los 12 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 001 (v1.2), 002 (v1.1) y 003 (v1.0), todas completadas
+**Estado:** ✅ completada (v1.0) · **Depende de:** specs [001](../001-pricing-and-tax/spec.md), [002](../002-pricing-quote-api/spec.md) y [003](../003-customers/spec.md) · **Fuentes:** [00-spec-first](../00-spec-first.md) y [constitución](../../docs/constitution.md)
 
-Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al redactar esta spec. Las decisiones nuevas están en la sección 11 para que el autor las confirme o las cambie.
+Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al redactar esta spec. Las decisiones tomadas al redactar están en la sección 11.
 
 ## 1. Contexto y objetivo
 
@@ -15,15 +15,14 @@ El comercial simula el consumo de un cliente, guarda la simulación y consulta d
 ## 2. Usuarios
 
 - **Comercial** (único usuario, sin autenticación): guarda simulaciones y consulta el historial de un cliente.
-- **Dashboard Angular** (consumidor técnico): el simulador guarda con `POST /simulations` y la ficha del cliente pinta el historial. Ambos se construyen en una spec de frontend posterior.
-- **Evaluadores** (audiencia indirecta): prueban los endpoints desde `/docs` y ven historiales de ejemplo tras cargar el seed.
+- **Dashboard Angular** (consumidor técnico): el simulador guarda con `POST /simulations` y la ficha del cliente pinta el historial. Ambos se construyen en la spec 005.
 
 ## 3. Historias de usuario
 
 - **HU-1.** Como comercial, quiero guardar la simulación que estoy viendo, para presentársela al cliente más adelante.
 - **HU-2.** Como comercial, quiero que una simulación guardada muestre siempre las mismas cifras, para que un presupuesto enviado no cambie solo.
 - **HU-3.** Como comercial, quiero ver las simulaciones de un cliente de la más reciente a la más antigua, para retomar la última conversación.
-- **HU-4.** Como evaluador, quiero ver historiales de ejemplo tras cargar el seed, para probar el dashboard sin crear datos a mano.
+- **HU-4.** Como quien instala la aplicación, quiero ver historiales de ejemplo tras cargar el seed, para probar el dashboard sin crear datos a mano.
 
 ## 4. Requisitos funcionales
 
@@ -333,7 +332,7 @@ Datos de partida: con el reloj en `10:00:00Z`, SI-1 para el cliente 1 (`id` 1); 
 | ER-7 | Preflight de `POST /simulations` y de `GET /customers/1/simulations` desde `http://localhost:4200` | 200 con `Access-Control-Allow-Origin` |
 | ER-8 | SI-1 y la preflight de ER-7 con `Origin: http://otro-origen.example` | Sin `Access-Control-Allow-Origin` |
 | ER-9 | Respuestas de SI-1, HI-1, SV-1, SC-1, HI-10 y ER-1 | `Content-Type: application/json` |
-| ER-10 | Métodos no permitidos sobre `/customers`, `/customers/1` y `/pricing/quote` | Siguen dando `Allow: GET, POST`, `Allow: GET` y `Allow: POST` |
+| ER-10 | Métodos no permitidos sobre `/customers`, `/customers/1` y `/pricing/quote` | Siguen dando `Allow: GET, POST`, `Allow: GET` y `Allow: POST` (desde la spec 007, la ficha sondea con `PUT` y responde `Allow: DELETE, GET`) |
 
 ### 6.8 Persistencia · D
 
@@ -399,11 +398,11 @@ Simulaciones de demostración (clientes de 003 RF-10):
 
 ## 9. Fuera de alcance
 
-- Editar o borrar simulaciones, y borrar clientes (§3 del 00).
+- Editar o borrar simulaciones, y borrar clientes (§3 del 00). Borrar un cliente con todo su historial se añadió después, con la spec 007.
 - Que el almacenamiento o las llamadas a la API cambien el precio: se guardan sin efecto en el precio (§10 supuesto 1).
 - Leer una simulación suelta (`GET /simulations/{id}`), comparar simulaciones o generar un PDF.
 - Guardar la divisa de visualización o el tipo de cambio: la conversión es solo presentación (RN-7).
-- Las pantallas del simulador y del historial: spec de frontend.
+- Las pantallas del simulador y del historial: spec 005.
 - Autenticación y registro de qué comercial guardó cada simulación (ADR 0007).
 
 ## 10. Criterios de finalización
@@ -423,7 +422,7 @@ Simulaciones de demostración (clientes de 003 RF-10):
 - [x] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa (los 12 commits de T-01 a T-12).
 - [x] Principio 3: los routers no contienen reglas de negocio ni SQL; los importes salen del cálculo de 001 (tests de arquitectura, SN-1 y SE-5).
 - [x] Principio 4: el esquema cambia solo con una migración nueva; 0001 y 0002 no se tocan; cada simulación guarda su instantánea.
-- [x] Principio 5: la suite completa pasa en cada commit; cada endpoint tiene test de integración; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`. Cumplido: la suite completa pasa en cada uno de los 12 commits de código, comprobado uno a uno en una copia aparte con un entorno virtual nuevo, y cada endpoint tiene test de integración. Las correcciones están anotadas en el log (entradas 21 a 31).
+- [x] Principio 5: la suite completa pasa en cada uno de los 12 commits de código (comprobado uno a uno en una copia aparte con un entorno virtual nuevo); cada endpoint tiene test de integración; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md` (entradas 21 a 31).
 - [x] Principio 6: `ruff check`, `ruff format --check` y `mypy` pasan sin errores; toda entrada se valida.
 
 ## 11. Decisiones tomadas al redactar
@@ -434,7 +433,7 @@ Todas son **[P]** y el autor las confirmó al aprobar la spec. Ninguna contradic
 - **D-2. Forma de la instantánea en la respuesta.** Los campos de la cotización menos `users`, que repetiría `active_users`. Alternativa: incluir también `users` para que el frontend reutilice el mismo tipo tal cual.
 - **D-3. Límites del tramo en la instantánea.** `simulation_tiers` guarda también `from_users` y `to_users`, que §8.5 no lista. Sin ellos, el historial tendría que reconstruir los límites con la constante actual del dominio y cambiaría si cambian los tramos, en contra de RN-8. Alternativa: seguir §8.5 al pie de la letra y reconstruirlos.
 - **D-4. Cliente cuyo país deja de estar soportado (cierra 003 D-7).** No se puede guardar una simulación nueva (422 CNS sobre `customer_id`, SC-3), pero su historial se sigue leyendo (SN-5). Se usa 422 porque §8.4 ya clasifica «país no soportado» como error de validación.
-- **D-5. Rangos de almacenamiento y llamadas.** RN-9 solo pide enteros ≥ 0. Se fijan máximos de 1 000 000 GB y 1 000 000 000 llamadas al mes para rechazar valores absurdos y números que SQLite no puede guardar. Son supuestos para documentar en el README junto a §10 supuesto 8.
+- **D-5. Rangos de almacenamiento y llamadas.** RN-9 solo pide enteros ≥ 0. Se fijan máximos de 1 000 000 GB y 1 000 000 000 llamadas al mes para rechazar valores absurdos y números que SQLite no puede guardar. Son supuestos, documentados en el README junto a §10 supuesto 8.
 - **D-6. Los cuatro campos son obligatorios.** Almacenamiento y llamadas no cambian el precio, pero el enunciado los registra en cada simulación; un valor por defecto escondería un olvido del formulario.
 - **D-7. Cliente inexistente en el cuerpo.** 404, como fija §8.2, aunque el identificador viaje en el cuerpo y no en la ruta; siempre después de validar (SV-18). En el historial, el 404 va antes que los parámetros (HP-4), porque sin cliente no hay nada que paginar.
 - **D-8. Historial paginado.** §8.2 no lo pide, pero se reutilizan `limit`, `offset` y la forma `{items, total}` de `GET /customers` para que la respuesta no crezca sin límite y el frontend use un único patrón.
@@ -450,3 +449,4 @@ Todas son **[P]** y el autor las confirmó al aprobar la spec. Ninguna contradic
 | 1.0 (aprobación) | Sin cambios en los requisitos. El autor aprobó la spec y confirmó las decisiones D-1 a D-11 |
 | 1.0 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 1051 tests en verde (744 de 001 a 003 sin modificar); los 43 CA y los 86 casos con un test que los cita en su nivel y pasa; verificación completa en una copia limpia con un entorno virtual nuevo y arranque real con guardado, errores, historial, CORS y `/docs`. Commits uno por tarea, cada uno verificado por separado |
 | 1.0 (revisión) | Sin cambios en los requisitos. El autor revisó la spec y el trabajo realizado y aprobó el cierre; las correcciones al código generado están anotadas en el log (entradas 21 a 31). Spec cerrada |
+| 1.0 (edición) | Sin cambios en los requisitos. Estado y referencias al día, una nota en ER-10 sobre el `Allow` que cambió la spec 007, y HU-4 sin la figura del evaluador, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`) |

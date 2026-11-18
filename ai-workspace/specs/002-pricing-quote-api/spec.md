@@ -1,6 +1,6 @@
 # 002 — Endpoint de cotización (`POST /pricing/quote`)
 
-Estado: v1.1 aprobada · ✅ Completada: implementada, verificada y con los 12 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: `ai-workspace/specs/001-pricing-and-tax/spec.md` (v1.2)
+**Estado:** ✅ completada (v1.1) · **Depende de:** [spec 001](../001-pricing-and-tax/spec.md) · **Fuentes:** [00-spec-first](../00-spec-first.md) y [constitución](../../docs/constitution.md)
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al aclarar o revisar la spec 001 o esta spec. RF-1 a RF-8 vienen de la spec 001 v1.1 sin cambios de comportamiento, y cada uno indica de qué parte sale. RF-9 (CORS), CA-6.7 (404) y las ampliaciones de CA-7.1 y CA-8.1 se añadieron en la revisión de la v1.0.
 
@@ -14,7 +14,6 @@ El simulador del dashboard pide una cotización al backend tras cada cambio del 
 
 - **Comercial** (único usuario, sin autenticación, §2 [P]): mueve el slider y ve la factura proyectada.
 - **Dashboard Angular** (consumidor técnico): llama al endpoint tras cada cambio del slider y pinta el resultado o el error.
-- **Evaluadores** (audiencia indirecta): prueban el endpoint desde la documentación interactiva de la API.
 
 ## 3. Historias de usuario
 
@@ -292,10 +291,10 @@ Mensajes abreviados: **OBL** = «Campo obligatorio»; **USR** = «Debe ser un n�
 ## 9. Fuera de alcance
 
 - Las reglas del cálculo (tramos, impuesto, redondeo, tabla de tasas): spec 001.
-- Guardar simulaciones y el historial: spec posterior.
-- La pantalla del simulador y la conversión de divisas: specs de frontend.
+- Guardar simulaciones y el historial: spec 004.
+- La pantalla del simulador y la conversión de divisas: spec 005.
 - Autenticación y límites de peticiones.
-- Límite de tamaño del cuerpo: es una herramienta interna sin exposición pública (§6 del documento 00); se documenta en el README.
+- Límite de tamaño del cuerpo: es una herramienta interna sin exposición pública (§6 del documento 00); el README lo recoge en «Límites conocidos».
 - Otros orígenes de CORS además del frontend, credenciales (cookies) en CORS y cabeceras distintas de `Content-Type`.
 
 ## 10. Criterios de finalización
@@ -333,3 +332,4 @@ No hay dudas abiertas.
 | 1.0 | Revisión antes de planificar:<br>(1) E-23 escrito como escape JSON visible `\u00a0ES`;<br>(2) RF-9, CORS limitado al origen del frontend, con O-10 a O-12;<br>(3) CA-6.7, 404 `not_found` con el formato único para cualquier ruta inexistente, también con barra final (O-13, O-14);<br>(4) `Content-Type` sin distinguir mayúsculas (O-15), y `HEAD` y `OPTIONS` sin preflight responden 405;<br>(5) criterio de arranque con el comando `uvicorn` de `AGENTS.md`.<br>Aprobada |
 | 1.1 | Al planificar, un prototipo mostró que una preflight de CORS aceptada responde 200 con texto plano. CA-6.6 excluye ahora del formato JSON todas las respuestas a preflight, aceptadas o rechazadas, y CA-9.2 aclara que su cuerpo no forma parte del contrato. No cambia ningún caso de prueba. Aprobada |
 | 1.1 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 383 tests en verde en un clon limpio con un entorno virtual nuevo, los 15 commits de código en verde uno a uno, los 33 CA con al menos un test que los cita y pasa, los 77 casos de las tablas con test por HTTP, y los 12 criterios de la sección 10 marcados. p95 de la cotización: 6,3 ms (RNF-2). Spec completada |
+| 1.1 (edición) | Sin cambios en los requisitos. Estado y referencias al día (specs 004 y 005, «Límites conocidos» del README), y los evaluadores ya no figuran como usuarios, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`) |

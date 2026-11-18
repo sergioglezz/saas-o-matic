@@ -1,6 +1,6 @@
 # 005 — Frontend: dashboard, simulador y divisas
 
-Estado: v1.2 aprobada por el autor, con las decisiones D-1 a D-22 confirmadas · ✅ Completada, revisada y aprobada por el autor, con los 13 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 002 (v1.1), 003 (v1.0) y 004 (v1.0), todas completadas; ADR 0004, 0005 y 0007
+**Estado:** ✅ completada (v1.2) · **Depende de:** specs [002](../002-pricing-quote-api/spec.md), [003](../003-customers/spec.md) y [004](../004-simulations/spec.md), y ADR 0004, 0005 y 0007 · **Fuentes:** [00-spec-first](../00-spec-first.md) y [constitución](../../docs/constitution.md)
 
 Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00, una respuesta del autor a las preguntas previas (P-1 a P-5) o una decisión tomada al redactar esta spec (D-x). Las respuestas y las decisiones están en la sección 11.
 
@@ -8,7 +8,7 @@ Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]*
 
 El backend ya calcula, guarda y devuelve en EUR los clientes, las cotizaciones y las simulaciones (specs 001 a 004). Falta la interfaz con la que el comercial hace sus tres acciones (§2 del 00): registrar un cliente, simular y guardar, y consultar clientes e historial en la divisa que quiera.
 
-El enunciado pide un dashboard web con buscador y listado de clientes, una ficha con tarjetas responsive y el historial de simulaciones, un simulador interactivo que proyecte la factura mensual en tiempo real y en la divisa elegida, y estados de carga y error de la API externa de tipos de cambio **[E]**. La evaluación puntúa expresamente un «frontend fluido (responsive, estados de carga y error de la API externa)» (§9 del 00).
+El enunciado pide un dashboard web con buscador y listado de clientes, una ficha con tarjetas responsive y el historial de simulaciones, un simulador interactivo que proyecte la factura mensual en tiempo real y en la divisa elegida, y estados de carga y error de la API externa de tipos de cambio **[E]**. Lo resume en un «frontend fluido (responsive, estados de carga y error de la API externa)» (§9 del 00).
 
 **Objetivo:** un dashboard que consume la API de 002 a 004 sin calcular ningún importe (ADR 0004) y que solo convierte, para mostrarlos, los importes en EUR a la divisa elegida, con las tasas de `open.er-api.com`, caché y vuelta a EUR (RN-7, ADR 0005). Cubre UC-1 a UC-6 y los flujos 1 a 4 del 00.
 
@@ -21,7 +21,6 @@ El enunciado pide un dashboard web con buscador y listado de clientes, una ficha
 ## 2. Usuarios
 
 - **Comercial** (único usuario, sin autenticación, ADR 0007): busca y registra clientes, simula, guarda y consulta el historial, desde el escritorio o desde el móvil.
-- **Evaluadores** (audiencia indirecta): levantan backend y frontend con el README, cargan el seed y recorren la app.
 - **Backend de SaaS-O-Matic** (dependencia): la API de 002 a 004.
 - **ExchangeRate API** (dependencia externa): `open.er-api.com`, gratuita; actualiza una vez al día, limita las peticiones y exige atribución.
 
@@ -97,9 +96,9 @@ Origen: UC-6 **[E]**, flujo 4 **[P]**, §10 supuesto 12; D-12 y D-13.
 Origen: RN-6 **[P]**, RN-7 **[E]**, §10 supuesto 12, ADR 0004 y 0005; D-6 a D-9.
 
 - **CA-5.1** El sistema deberá mostrar cada importe a partir del campo `*_cents` que devuelve el backend, sin calcular ningún importe por su cuenta: no suma tramos, no aplica impuestos ni recalcula subtotales o totales.
-- **CA-5.2** Donde la divisa elegida no es EUR, el sistema deberá convertir cada importe por separado como `*_cents` × tasa ÷ 100 y redondear a 2 decimales con la regla «mitad hacia arriba» sobre el resultado exacto de esa operación, tomando la tasa con los decimales con que la escribe la respuesta (100 céntimos × 1.005 = 1,005 → 1,01).
+- **CA-5.2** Donde la divisa elegida no es EUR, el sistema deberá convertir cada importe por separado como `*_cents` × tasa ÷ 100 y redondear a 2 decimales con la regla «mitad hacia arriba» sobre el resultado exacto de esa operación, tomando la tasa con los decimales con que la escribe la respuesta (100 céntimos × 1.005 = 1,005 → 1,01). (Desde la spec 008, en JPY se redondea a yenes enteros, una sola vez: 008 CA-1.2.)
 - **CA-5.3** Donde la divisa elegida es EUR, el sistema deberá mostrar los céntimos tal cual, sin multiplicar ni redondear (16940 → «169,40 €»).
-- **CA-5.4** El sistema deberá escribir los importes en formato español: coma decimal, punto como separador de miles también con 4 cifras («1.234,56»), siempre 2 decimales, también en JPY (RN-7), y detrás, tras un espacio, «€» para EUR, «US$» para USD y el código para GBP, CHF y JPY.
+- **CA-5.4** El sistema deberá escribir los importes en formato español: coma decimal, punto como separador de miles también con 4 cifras («1.234,56»), siempre 2 decimales, también en JPY (RN-7), y detrás, tras un espacio, «€» para EUR, «US$» para USD y el código para GBP, CHF y JPY. (Desde la spec 008, los importes en JPY se escriben sin decimales, «27.319 JPY», porque el yen no tiene céntimos: 008 CA-1.1 y CA-1.3.)
 - **CA-5.5** El sistema deberá escribir la tasa de impuesto (`tax_rate_bp`) como porcentaje en formato español, sin ceros decimales sobrantes y con un espacio antes de «%»: 2100 → «21 %», 1950 → «19,5 %», 2125 → «21,25 %», 0 → «0 %».
 - **CA-5.6** El sistema deberá escribir los números que no son importes (usuarios, unidades, almacenamiento, llamadas, `{n}` y `{total}`) sin decimales y con punto como separador de miles, también con 4 cifras (1000 → «1.000»).
 - **CA-5.7** El sistema deberá escribir las fechas con hora (`created_at` de una simulación) en la zona horaria del navegador como `dd/mm/aaaa hh:mm`, en formato de 24 horas, y las fechas sin hora como `dd/mm/aaaa`.
@@ -331,7 +330,7 @@ T-USR, T-STO y T-APC coinciden con los mensajes del backend para los mismos camp
 | Dato | Ejemplo |
 | --- | --- |
 | Importe en EUR | 16940 → «169,40 €»; 123456 → «1.234,56 €» |
-| Importe convertido | 16940 con USD 1.0823 → «183,34 US$»; con JPY 161.27 → «27.319,14 JPY» |
+| Importe convertido | 16940 con USD 1.0823 → «183,34 US$»; con JPY 161.27 → «27.319,14 JPY» (desde la spec 008, «27.319 JPY») |
 | Tasa de impuesto | 2100 → «21 %»; 1950 → «19,5 %» |
 | Número | 50000 → «50.000» |
 | Fecha y hora | `2026-11-16T10:00:00Z` en Madrid → «16/11/2026 11:00» |
@@ -355,13 +354,13 @@ Datos de partida de los casos C, salvo que se indique otra cosa: cliente 1 = Acm
 | CV-6 | 16940, USD 1.0823 | «183,34 US$» |
 | CV-7 | 16940, GBP 0.8452 | «143,18 GBP» |
 | CV-8 | 16940, CHF 0.9361 | «158,58 CHF» |
-| CV-9 | 16940, JPY 161.27 | «27.319,14 JPY» (2 decimales también en JPY) |
-| CV-10 | 60520570, JPY 161.27 | «97.601.523,24 JPY» |
+| CV-9 | 16940, JPY 161.27 | «27.319,14 JPY» (2 decimales también en JPY; desde la spec 008, «27.319 JPY», caso YN-1) |
+| CV-10 | 60520570, JPY 161.27 | «97.601.523,24 JPY» (desde la spec 008, «97.601.523 JPY», caso YN-2) |
 | CV-11 | 100, USD 1.005 | «1,01 US$» (1,005 exacto sube) |
 | CV-12 | 1, USD 1.5 | «0,02 US$» (0,015 exacto sube) |
 | CV-13 | 50, USD 1.09 | «0,55 US$» (0,545 exacto sube) |
 | CV-14 | 1, USD 1.4 | «0,01 US$» (0,014 baja) |
-| CV-15 | 0, JPY 161.27 | «0,00 JPY» |
+| CV-15 | 0, JPY 161.27 | «0,00 JPY» (desde la spec 008, «0 JPY», caso YN-3) |
 | CV-16 | Tasas de impuesto 2100, 1950, 2125, 0, 10000 y 1 | «21 %», «19,5 %», «21,25 %», «0 %», «100 %» y «0,01 %» |
 | CV-17 | Números 0, 15, 1000, 50000, 100000 y 1000000000 | «0», «15», «1.000», «50.000», «100.000» y «1.000.000.000» |
 | CV-18 | `created_at` `2026-11-16T10:00:00Z` | «16/11/2026 11:00» |
@@ -627,7 +626,7 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 - **Volver al valor mostrado:** no se pide otra cotización (CO-4).
 - **Redondeo exacto:** 1,005, 0,015 y 0,545 suben aunque su representación aproximada quede por debajo (CV-11 a CV-13).
 - **Importes convertidos que no cuadran:** en CHF, 131,05 + 27,52 = 158,57, pero el total convertido es 158,58 (DV-5). Es esperado: cada importe se convierte por separado (D-6) y T-ORI avisa de que la conversión es orientativa.
-- **JPY con 2 decimales** (CV-9) y **miles con 4 cifras** (CV-3).
+- **JPY con 2 decimales** (CV-9; desde la spec 008, sin decimales) y **miles con 4 cifras** (CV-3).
 - **Caducidad exacta de las tasas:** en el instante `time_next_update_unix` ya están caducadas (TC-3, VE-10).
 - **Tasas guardadas ilegibles o almacenamiento no disponible** (TC-11, TC-12).
 - **Divisa ausente, con valor no válido o desconocida** (VE-6, VE-7, DV-7, DV-8).
@@ -645,7 +644,7 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 ## 9. Fuera de alcance
 
 - Cualquier cambio en el backend; si hiciera falta, iría en una spec propia.
-- Editar o borrar clientes o simulaciones, ver una simulación suelta, comparar simulaciones y generar PDF (§3 del 00).
+- Editar o borrar clientes o simulaciones, ver una simulación suelta, comparar simulaciones y generar PDF (§3 del 00). Borrar clientes se añadió después, con la spec 007.
 - Simular sin cliente o con un país distinto del suyo.
 - Cargar en el simulador los valores de una simulación del historial.
 - Que el almacenamiento o las llamadas cambien el precio (§10 supuesto 1; D-22).
@@ -675,10 +674,10 @@ Respuesta de partida: Acme Telecom S.L. (`id` 1, `B12345674`, ES, `business`), A
 - [x] Principio 2: cada commit de código cita el RF-x o CA-x de esta spec que implementa (los 17 commits de T-01 a T-17).
 - [x] Principio 3: el navegador no calcula importes (CO-12 y revisión del código: ninguna operación con `*_cents` fuera de `money.ts`).
 - [x] Principio 4: los importes se reciben en céntimos de EUR y nunca se envían ni se guardan convertidos (ER-2 y CA-5.8).
-- [x] Principio 5: la suite pasa en cada commit; las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md`; el autor ha revisado la spec y el trabajo. Cumplido: cada commit se verificó por separado en una copia aparte (tests con el recuento de su tarea, lint y compilación); las correcciones son las entradas 32 a 40 del log; el autor aprobó el cierre.
+- [x] Principio 5: la suite pasa en cada commit, verificado uno a uno en una copia aparte (tests con el recuento de su tarea, lint y compilación); las correcciones al código generado están anotadas en `ai-workspace/ai-review-log.md` (entradas 32 a 40); el autor revisó la spec y el trabajo y aprobó el cierre.
 - [x] Principio 6: TypeScript estricto y lint sin errores; todos los textos visibles en español.
 
-## 11. Decisiones y dudas abiertas
+## 11. Decisiones
 
 ### 11.1 Respuestas del autor a las preguntas previas
 
@@ -699,7 +698,7 @@ Todas son **[P]** y el autor las confirmó al aprobar la spec. Ninguna contradic
 - **D-5. Límite de 10 s por petición**, al backend y a la API de tasas, para que ningún estado de carga sea infinito.
 - **D-6. Conversión importe a importe con redondeo «mitad hacia arriba» sobre el valor exacto**, la misma regla que RN-5. Los importes convertidos pueden no cuadrar por un céntimo (DV-5); se acepta porque la conversión es orientativa y T-ORI lo avisa. Alternativa: convertir solo el total, que dejaría el desglose en EUR.
 - **D-7. Formato español con miles agrupados también con 4 cifras.** La convención española no agrupa los números de 4 cifras («1234,56»); se agrupan para que las columnas de importes se lean igual. Símbolos: «€», «US$» y el código para GBP, CHF y JPY, los del formato español habitual.
-- **D-8. JPY con 2 decimales**, porque RN-7 **[E]** fija 2 decimales al mostrar. Mostrarlo sin decimales, lo habitual en yenes, exigiría cambiar RN-7.
+- **D-8. JPY con 2 decimales**, porque RN-7 **[E]** fija 2 decimales al mostrar. Mostrarlo sin decimales, lo habitual en yenes, exigiría cambiar RN-7. (Sustituida por la spec 008: al usar la aplicación terminada, el autor corrigió esta decisión, que no se le había preguntado. Desde entonces, RN-7 se lee como «a los céntimos de la divisa», y el yen se muestra sin decimales.)
 - **D-9. Fechas en la zona horaria del navegador**, con `dd/mm/aaaa hh:mm` en 24 horas.
 - **D-10. Tasas pedidas solo al cargar la app y con «Reintentar»**, válidas hasta `time_next_update_unix`; caducadas, solo sirven de respaldo si falla la API (ADR 0005, §10 supuesto 13).
 - **D-11. Atribución siempre visible**, también sin tasas: es más simple y cumple «junto a las tasas».
@@ -715,9 +714,7 @@ Todas son **[P]** y el autor las confirmó al aprobar la spec. Ninguna contradic
 - **D-21. Un `{id}` no numérico en la dirección se resuelve con el 404 del backend** (003 CA-6.3), sin repetir la regla en el navegador.
 - **D-22. Almacenamiento y llamadas a la API sin efecto en el precio** (§10 supuesto 1 del 00, RN-9): se guardan con cada simulación, pero el precio solo depende de los usuarios, porque la tarifa del enunciado solo define tramos por usuario. Por eso el simulador no pide otra cotización cuando cambian (CA-11.9, SM-13). Cobrarlos exigiría precios que el enunciado no da.
 
-### 11.3 Dudas abiertas
-
-No quedan dudas abiertas: el supuesto 1 del 00 se cerró como decisión D-22.
+No quedan dudas abiertas: el supuesto 1 del 00, la última, se cerró como decisión D-22.
 
 ## 12. Historial de cambios
 
@@ -727,3 +724,5 @@ No quedan dudas abiertas: el supuesto 1 del 00 se cerró como decisión D-22.
 | 1.1 | Al planificar: un DOM simulado no reproduce el teclado del slider, la activación con Intro ni el límite de caracteres al escribir, que son comportamientos nativos del navegador. LI-13, LI-17, AL-6, AL-17 y SM-10 comprueban en nivel C el control nativo que los garantiza, y MA-3 comprueba el comportamiento en un navegador real. No cambia ningún CA. El autor pidió seguir con el plan y la implementación y revisar la spec al final |
 | 1.1 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 319 tests en verde; los 117 CA y los 179 casos U y C con un test que los cita y pasa; copia limpia con `npm ci`, arranque real con el seed y MA-1 a MA-6 y MA-8 comprobados |
 | 1.2 (revisión) | El autor revisó la spec y el trabajo realizado y aprobó el cierre. El supuesto 1 del 00 se cierra como decisión D-22, sin cambiar ningún CA; las correcciones al código generado están anotadas en el log (entradas 32 a 40). Spec cerrada |
+| 1.2 (edición) | Sin cambios en los requisitos. Estado y referencias al día, y la sección 11 sin el apartado de dudas abiertas, ya cerradas, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`) |
+| 1.2 (edición, spec 008) | En JPY, los importes se muestran sin decimales: la spec 008 sustituye CA-5.2 y CA-5.4 en JPY, D-8 y los casos CV-9, CV-10 y CV-15 (YN-1 a YN-3). Aquí solo se añaden notas que remiten a ella, en esos puntos, en la tabla 5.7 y en §8. Es una corrección del autor (P-20 de `prompts.md` y entrada 54 de `ai-review-log.md`), aprobada por él |

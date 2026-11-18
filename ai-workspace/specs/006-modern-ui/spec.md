@@ -1,6 +1,6 @@
 # 006 — Interfaz moderna: diseño, disposición y animaciones
 
-Estado: v1.0 aprobada por el autor, con las decisiones D-1 a D-13 confirmadas · ✅ Completada, revisada y aprobada por el autor, con los 6 criterios de finalización cumplidos · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: spec 005 (aprobada); ADR 0011
+**Estado:** ✅ completada (v1.0) · **Depende de:** [spec 005](../005-frontend/spec.md) y ADR 0011 · **Fuentes:** [00-spec-first](../00-spec-first.md) y [constitución](../../docs/constitution.md)
 
 Leyenda de origen: **[E]** viene del enunciado; **[P]** es una propuesta (decisiones D-x de la sección 11) o una petición del autor.
 
@@ -242,3 +242,4 @@ Todas son **[P]**.
 | Versión | Cambio |
 | --- | --- |
 | 1.0 | Versión inicial, tras un prototipo con Tailwind 4 y las animaciones de Angular 22 (ADR 0011) |
+| 1.0 (edición) | Sin cambios en los requisitos. Línea de estado al día, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`) |

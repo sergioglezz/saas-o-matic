@@ -1,6 +1,6 @@
 # Tareas — 002 Endpoint de cotización
 
-Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Plan: `plan.md` (aprobado)
+**Estado:** ✅ todas las tareas completadas · **Spec:** [spec.md](spec.md) v1.1 · **Plan:** [plan.md](plan.md)
 
 ## Reglas de ejecución
 

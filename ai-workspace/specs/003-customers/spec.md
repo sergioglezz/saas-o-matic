@@ -1,12 +1,12 @@
 # 003 — Clientes: registro, búsqueda y ficha
 
-Estado: v1.0 · ✅ implementada y verificada por delegación expresa del autor, con los 13 criterios de finalización cumplidos · ✅ Completada, revisada y aprobada por el autor, con las decisiones D-1 a D-14 confirmadas · Fuente de verdad: `ai-workspace/specs/00-spec-first.md` · Constitución: `ai-workspace/docs/constitution.md` · Depende de: specs 001 (v1.2) y 002 (v1.1), ambas completadas
+**Estado:** ✅ completada (v1.0) · **Depende de:** specs [001](../001-pricing-and-tax/spec.md) y [002](../002-pricing-quote-api/spec.md) · **Fuentes:** [00-spec-first](../00-spec-first.md) y [constitución](../../docs/constitution.md)
 
-Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al redactar esta spec. Las decisiones nuevas están en la sección 11 para que el autor las confirme o las cambie.
+Leyenda de origen: **[E]** viene del enunciado y no se puede contradecir; **[P]** es una propuesta del documento 00 o una decisión tomada al redactar esta spec. Las decisiones tomadas al redactar están en la sección 11.
 
 ## 1. Contexto y objetivo
 
-El comercial necesita registrar clientes corporativos, encontrarlos y abrir su ficha (UC-1, UC-2 y UC-3). Es el primero de los dos `POST` obligatorios del enunciado, y la futura spec de simulaciones necesita que el cliente exista para calcular con su país.
+El comercial necesita registrar clientes corporativos, encontrarlos y abrir su ficha (UC-1, UC-2 y UC-3). Es el primero de los dos `POST` obligatorios del enunciado, y las simulaciones (spec 004) necesitan que el cliente exista para calcular con su país.
 
 **Objetivo:** exponer `POST /customers`, `GET /customers` y `GET /customers/{id}` sobre una tabla `customers`, con la validación estricta del identificador fiscal español, la unicidad del identificador y el formato único de error de 002. Incluye el script de datos de demostración con clientes inventados.
 
@@ -16,8 +16,7 @@ El comercial necesita registrar clientes corporativos, encontrarlos y abrir su f
 
 - **Comercial** (único usuario, sin autenticación): registra, busca y consulta clientes.
 - **Dashboard Angular** (consumidor técnico): pinta el listado, la ficha y los errores junto a cada campo.
-- **Spec de simulaciones** (consumidora futura): leerá el cliente y su país.
-- **Evaluadores** (audiencia indirecta): prueban los endpoints desde `/docs` y cargan los datos de demostración con un comando.
+- **Spec 004** (simulaciones): lee el cliente y su país.
 
 ## 3. Historias de usuario
 
@@ -25,7 +24,7 @@ El comercial necesita registrar clientes corporativos, encontrarlos y abrir su f
 - **HU-2.** Como comercial, quiero que un identificador fiscal español mal escrito se rechace al momento, para no guardar datos que luego no sirven.
 - **HU-3.** Como comercial, quiero buscar por nombre o por identificador fiscal, para encontrar un cliente en segundos.
 - **HU-4.** Como comercial, quiero abrir la ficha de un cliente, para ver sus datos.
-- **HU-5.** Como evaluador, quiero cargar clientes de ejemplo con un comando, para ver el dashboard con datos.
+- **HU-5.** Como quien instala la aplicación, quiero cargar clientes de ejemplo con un comando, para ver el dashboard con datos.
 
 ## 4. Requisitos funcionales
 
@@ -111,7 +110,7 @@ Origen: §3 «abrir la ficha de un cliente» **[E]**, §8.2 **[P]**.
 Origen: 002 RF-6 «el formato vale para cualquier ruta de la API, presente o futura» **[P]**, §8.4, entrada 16 de `ai-review-log.md`. Amplía 002 RF-6 y RF-8 sin cambiar nada de lo que ya cumplen.
 
 - **CA-7.1** El sistema deberá usar para el 409 el `code` `conflict` y el `message` de primer nivel «El recurso ya existe».
-- **CA-7.2** Si llega a una ruta existente un método que no admite y no es una preflight de CORS, entonces el sistema deberá responder 405 `method_not_allowed` con la cabecera `Allow` con **todos** los métodos que admite esa ruta: `GET, POST` en `/customers` y `GET` en `/customers/{id}`. `/pricing/quote` sigue respondiendo `Allow: POST`.
+- **CA-7.2** Si llega a una ruta existente un método que no admite y no es una preflight de CORS, entonces el sistema deberá responder 405 `method_not_allowed` con la cabecera `Allow` con **todos** los métodos que admite esa ruta: `GET, POST` en `/customers` y `GET` en `/customers/{id}`. `/pricing/quote` sigue respondiendo `Allow: POST`. (Desde la spec 007, `/customers/{id}` admite también `DELETE` y responde `Allow: DELETE, GET`; el caso ER-3 se actualizó con ella.)
 - **CA-7.3** Si el framework rechaza un parámetro por su tipo antes de llegar al código de la API, entonces el sistema deberá responder 422 `validation_error` «Datos no válidos» con un detalle `{field: <nombre del parámetro>, message: "Valor no válido"}` por parámetro.
 - **CA-7.4** Si el framework genera cualquier otro error HTTP (un estado distinto de 404 y 405), entonces el sistema deberá responder ese mismo estado con `code` = `http_error`, `message` «Error en la petición» y `details` vacío, sin el texto interno del error.
 - **CA-7.5** Las rutas de esta spec deberán cumplir 002 RF-6 igual que la cotización: 404 `not_found` con barra final (`/customers/`), 500 `internal_error` sin detalles internos ante un fallo inesperado y `Content-Type: application/json` en éxitos y errores.
@@ -434,7 +433,7 @@ Datos de partida, creados por la API en este orden:
 | --- | --- | --- |
 | ER-1 | `PUT`, `PATCH`, `DELETE` y `OPTIONS` sin preflight sobre `/customers` | 405 `method_not_allowed`, `details` vacío, `Allow: GET, POST` |
 | ER-2 | `HEAD /customers` | 405 con `Allow: GET, POST` y sin cuerpo |
-| ER-3 | `POST`, `PUT`, `PATCH` y `DELETE` sobre `/customers/1` | 405 con `Allow: GET` |
+| ER-3 | `POST`, `PUT`, `PATCH` y `DELETE` sobre `/customers/1` | 405 con `Allow: GET` (desde la spec 007, sin `DELETE` y con `Allow: DELETE, GET`) |
 | ER-4 | `GET /customers/` y `POST /customers/` (barra final) | 404 `not_found`, sin redirección |
 | ER-5 | Fallo interno forzado (almacén de clientes no disponible) en las tres rutas | 500 `internal_error`, `details` vacío, sin «Traceback», rutas de archivo ni nombres de módulos |
 | ER-6 | Ruta de prueba con un parámetro de ruta y uno de query tipados como enteros, llamada con textos | 422 `validation_error` con un detalle «Valor no válido» por parámetro |
@@ -494,9 +493,9 @@ Datos de partida, creados por la API en este orden:
 
 ## 9. Fuera de alcance
 
-- Editar o borrar clientes (§3 del 00).
-- Simulaciones y su historial: spec posterior. La ficha de esta spec solo devuelve los datos del cliente.
-- Las pantallas del dashboard: specs de frontend.
+- Editar o borrar clientes (§3 del 00). Borrar se añadió después, con la spec 007.
+- Simulaciones y su historial: spec 004. La ficha de esta spec solo devuelve los datos del cliente.
+- Las pantallas del dashboard: spec 005.
 - Equiparar letras con y sin tilde en la búsqueda, y el orden alfabético español de la `ñ`.
 - Direcciones de correo con caracteres no ASCII o con comillas, y comprobar que el buzón existe.
 - Identificadores fiscales de otros países más allá del formato básico; NIF `K`, `L` y `M`; validar que el identificador exista en la AEAT.
@@ -533,12 +532,12 @@ El autor delegó la redacción y confirmó estas decisiones **[P]** al revisar l
 - **D-4. Búsqueda sin distinguir mayúsculas también en `ñ` y tildes.** SQLite solo lo hace con letras ASCII, así que se registra una función propia en la conexión. No se equiparan letras con y sin tilde.
 - **D-5. Orden del listado.** Por nombre y, a igualdad, por `id`. El 00 no lo fija.
 - **D-6. Espacios en `company_name`.** «Sin espacios sobrantes» (§8.3) se interpreta como quitar los exteriores y compactar los interiores.
-- **D-7. `country` sin clave foránea a `tax_rates`.** §8.5 no la pide, y 001 permite quitar una tasa (caso C-4). Qué hacer con un cliente cuyo país deja de estar soportado es de la spec de simulaciones.
+- **D-7. `country` sin clave foránea a `tax_rates`.** §8.5 no la pide, y 001 permite quitar una tasa (caso C-4). Qué hacer con un cliente cuyo país deja de estar soportado lo decide la spec 004 (D-4).
 - **D-8. Sin cabecera `Location` en el 201.** El 00 no la menciona y la respuesta ya lleva el `id`.
 - **D-9. Límite de `offset`.** 1 000 000, para rechazar con 422 los números que SQLite no puede usar.
 - **D-10. `plan` sin normalizar.** Lo elige un desplegable; `Business` se rechaza.
 - **D-11. Índice de `company_name`.** Se crea porque lo pide §8.5, aunque la búsqueda por fragmento no puede aprovecharlo.
-- **D-12. El seed solo crea clientes.** Las simulaciones de demostración llegarán con su spec.
+- **D-12. El seed solo crea clientes.** Las simulaciones de demostración llegaron con la spec 004.
 - **D-13. `Allow` completa.** El framework solo devuelve los métodos de una de las rutas que comparten dirección; se calcula la lista completa.
 - **D-14. Unicidad del identificador entre países.** §8.5 define `tax_id` como único, sin el país.
 
@@ -551,3 +550,4 @@ No hay dudas abiertas que bloqueen la implementación.
 | 1.0 | Versión inicial, redactada por delegación del autor tras comprobar con un prototipo desechable los comportamientos de FastAPI, Starlette, Pydantic y SQLite en los que se apoya |
 | 1.0 (cierre) | Sin cambios en los requisitos. Implementada según `plan.md` y `tasks.md`: 744 tests en verde (383 de 001 y 002, sin modificar ninguno), verificación completa en un clon limpio con un entorno virtual nuevo y en cada commit de código, los 56 CA con al menos un test que los cita y pasa, y los 151 casos con test en su nivel. Dos decisiones del plan se corrigieron al implementar (entradas 17 y 18 del log) y la documentación dejó de anunciar el 422 propio del framework (entrada 19) |
 | 1.0 (revisión) | Sin cambios en los requisitos. Revisión del autor tras una verificación independiente en un clon limpio con un entorno virtual nuevo (744 tests, ruff, mypy, `alembic check` y el seed dos veces), la trazabilidad de los 56 CA y los 151 casos, y un arranque real con alta, duplicado, búsqueda, ficha y cotización. El autor confirmó las decisiones D-1 a D-14. Spec cerrada |
+| 1.0 (edición) | Sin cambios en los requisitos. Estado y referencias al día, notas en CA-7.2 y ER-3 sobre el `Allow` que cambió la spec 007, y HU-5 sin la figura del evaluador, tras revisar toda la documentación (entrada 49 de `ai-review-log.md`) |

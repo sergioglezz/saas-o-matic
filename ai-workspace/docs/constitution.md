@@ -1,5 +1,7 @@
 # Constitución de SaaS-O-Matic
 
+Seis principios que valen para todo el proyecto. Cada plan comprueba cómo los cumple, y cada spec los repasa en sus criterios de finalización.
+
 1. **Simplicidad.** Stack cerrado: FastAPI + SQLite y Angular. No entra ninguna dependencia, servicio ni funcionalidad que no pida la spec sin un ADR en `ai-workspace/architecture/adr/`.
 2. **La spec manda.** Cada cambio de código responde a un requisito identificado de la spec y lo cita en el commit. Si código y spec divergen, se actualiza primero la spec.
 3. **Capas separadas.** Las reglas de negocio (precios por tramos, impuestos, identificadores fiscales) son Python puro, sin FastAPI ni SQL. La API solo valida y traduce, y el acceso a SQLite vive únicamente en la capa de repositorio.

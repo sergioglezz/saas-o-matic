@@ -1,6 +1,6 @@
 # Tareas — 001 Precios por tramos e impuestos
 
-Estado: aprobado · ✅ Todas las tareas completadas · Spec: `spec.md` v1.2 (completada) · Plan: `plan.md` (aprobado)
+**Estado:** ✅ todas las tareas completadas · **Spec:** [spec.md](spec.md) v1.2 · **Plan:** [plan.md](plan.md)
 
 ## Progreso
 

@@ -1,6 +1,6 @@
 # Plan técnico — 002 Endpoint de cotización
 
-Estado: aprobado · Spec: `spec.md` v1.1 (aprobada) · Constitución: `ai-workspace/docs/constitution.md` · Arquitectura: §5, §6 y §8 de `00-spec-first.md` · Base: spec y código de 001
+**Estado:** ✅ ejecutado · **Spec:** [spec.md](spec.md) v1.1 · **Se apoya en:** §5, §6 y §8 de [00-spec-first](../00-spec-first.md), y en la spec y el código de 001
 
 Los comportamientos de FastAPI, Starlette y Pydantic en los que se apoya este plan se comprobaron antes de escribirlo, con un prototipo desechable fuera del repositorio. La sección 10 recoge lo que reveló.
 
